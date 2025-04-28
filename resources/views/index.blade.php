@@ -1,4 +1,8 @@
 @extends('layouts.template')
 @section('content')
-    <h1>INI INDEX</h1>
+    <div class="card">
+        <div class="card-body">
+            <h4>INI INDEX</h4>
+        </div>
+    </div>
 @endsection
