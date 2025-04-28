@@ -14,7 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
+    $breadcrumb = (object) [
+        'title' => 'Halaman Home',
+        'list' => ['Beranda', 'Dashboard']
+    ];
+    $page = (object) [
+        'title' => 'Selamat datang di halaman home'
+    ];
+    return view('index', compact('breadcrumb', 'page'));
 });
 
 Route::get('landing', function () {

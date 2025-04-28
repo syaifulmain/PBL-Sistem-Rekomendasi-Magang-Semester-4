@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ env('APP_NAME') }}</title>
+    <title>{{ $page->title ?? 'INI TITLE PAGE' }}</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
@@ -38,6 +38,8 @@
         <div class="main-panel">
             <div class="content-wrapper">
 
+                @include('layouts.breadcrumb')
+
                 @yield('content')
 
             </div>
@@ -54,8 +56,7 @@
 <script src="{{asset('skydash-v.01/vendors/js/vendor.bundle.base.js')}}"></script>
 <!-- endinject -->
 <!-- Plugin js for this page -->
-<script src="{{asset('skydash-v.01/vendors/chart.js/Chart.min.js')}}">
-</script>
+<script src="{{asset('skydash-v.01/vendors/chart.js/Chart.min.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/datatables.net/jquery.dataTables.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('skydash-v.01/js/dataTables.select.min.js')}}"></script>
