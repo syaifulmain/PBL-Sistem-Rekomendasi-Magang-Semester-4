@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('m_perusahaan', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('alamat')->comment('Gabungan dari lokasi perusahaan');
+            $table->string('alamat')->nullable()->comment('Gabungan dari lokasi perusahaan');
             $table->string('website')->nullable();
             $table->string('email')->nullable();
             $table->string('no_telepon', 20)->nullable();

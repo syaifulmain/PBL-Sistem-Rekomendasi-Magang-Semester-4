@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('kabupaten_id')->nullable()->constrained('m_kabupaten')->onDelete('cascade');
             $table->foreignId('kecamatan_id')->nullable()->constrained('m_kecamatan')->onDelete('cascade');
             $table->foreignId('desa_id')->nullable()->constrained('m_desa')->onDelete('cascade');
-            $table->string('alamat');
+            $table->string('alamat')->nullable();
             $table->timestamps();
         });
     }
