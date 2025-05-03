@@ -1,6 +1,6 @@
 <div class="row mb-2">
     <div class="col">
-        <h2>{{ $breadcrumb->title ?? 'INI TITLE BREADCRUMB' }}</h2>
+        <h2>{{ $breadcrumb->title ?? $breadcrumb ?? 'INI TITLE BREADCRUMB' }}</h2>
     </div>
     <div class="col">
         <ol class="breadcrumb float-sm-right border-0">
