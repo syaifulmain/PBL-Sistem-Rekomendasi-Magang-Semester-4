@@ -14,8 +14,11 @@ use Database\Seeders\masters\PerusahaanSeeder;
 use Database\Seeders\masters\ProgramStudiSeeder;
 use Database\Seeders\masters\UserSeeder;
 use Database\Seeders\masters\WilayahSeeder;
+use Database\Seeders\transactionals\DokumenUserSeeder;
 use Database\Seeders\transactionals\LowonganMagangSeeder;
+use Database\Seeders\transactionals\MagangSeeder;
 use Database\Seeders\transactionals\MinatUserSeeder;
+use Database\Seeders\transactionals\PengajuanMagangSeeder;
 use Database\Seeders\transactionals\PrefrensiLokasiUserSeeder;
 use Illuminate\Database\Seeder;
 
@@ -30,18 +33,20 @@ class DatabaseSeeder extends Seeder
             WilayahSeeder::class,
             UserSeeder::class,
             AdminSeeder::class,
+            JenisDokumenSeeder::class,
+            PeriodeMagangSeeder::class,
             DosenSeeder::class,
             ProgramStudiSeeder::class,
             MahasiswaSeeder::class,
-            JenisDokumenSeeder::class,
             BidangKeahlianSeeder::class,
             PerusahaanSeeder::class,
             LokasiPerusahaanSeeder::class,
-            PeriodeMagangSeeder::class,
 
             MinatUserSeeder::class,
             PrefrensiLokasiUserSeeder::class,
             LowonganMagangSeeder::class,
+            PengajuanMagangSeeder::class,
+            MagangSeeder::class,
         ]);
     }
 }

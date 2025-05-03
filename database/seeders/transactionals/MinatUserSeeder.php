@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\transactionals;
 
+use Database\Seeders\SeederCounts;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -16,22 +17,20 @@ class MinatUserSeeder extends Seeder
         $listMahasiswaID = DB::table('m_mahasiswa')->pluck('id');
         $listDosenID = DB::table('m_dosen')->pluck('id');
 
-        // Mengambil 3 bidang keahlian secara acak untuk setiap mahasiswa
         foreach ($listMahasiswaID as $id) {
-            DB::table('t_minat_mahasiswa')->insert([
-                ['mahasiswa_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-                ['mahasiswa_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-                ['mahasiswa_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-            ]);
+            for ($i = 0; $i < SeederCounts::MINAT_USER; $i++) {
+                DB::table('t_minat_mahasiswa')->insert([
+                    'mahasiswa_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random(),
+                ]);
+            }
         }
 
-        // Mengambil 3 bidang keahlian secara acak untuk setiap dosen
         foreach ($listDosenID as $id) {
-            DB::table('t_minat_dosen')->insert([
-                ['dosen_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-                ['dosen_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-                ['dosen_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random()],
-            ]);
+            for ($i = 0; $i < SeederCounts::MINAT_USER; $i++) {
+                DB::table('t_minat_dosen')->insert([
+                    'dosen_id' => $id, 'bidang_keahlian_id' => $listBidangKeahlian->random(),
+                ]);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\masters;
 
+use Database\Seeders\SeederCounts;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,7 +13,7 @@ class LokasiPerusahaanSeeder extends Seeder
      */
     public function run(): void
     {
-        $listProvinsiID = DB::table('m_provinsi')->pluck('id');
+        $listProvinsiID = collect(SeederCounts::PROVINSI ?: DB::table('m_provinsi')->pluck('id'));
 
         $listPerusahaanID = DB::table('m_perusahaan')->pluck('id');
 

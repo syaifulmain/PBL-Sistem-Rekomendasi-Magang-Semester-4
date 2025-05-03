@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\masters;
 
+use Database\Seeders\SeederCounts;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ class PerusahaanSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < SeederCounts::PERUSAHAAN; $i++) {
             $name = $faker->company;
             $website = $faker->url;
             $email = $faker->unique()->safeEmail;

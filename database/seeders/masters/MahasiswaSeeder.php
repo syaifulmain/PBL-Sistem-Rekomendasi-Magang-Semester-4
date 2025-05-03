@@ -16,6 +16,8 @@ class MahasiswaSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $listUserIDMahasiswa = DB::table('m_user')->where('level', 'MAHASISWA')->pluck('id');
         $listProgramStudiID = DB::table('m_program_studi')->pluck('id');
+        $listJenisDokumenID = DB::table('m_jenis_dokumen')->where('default', 1)->pluck('id');
+        $listTahunPeriodeGanjil = DB::table('m_periode_magang')->where('semester', 'Ganjil')->select('tanggal_mulai')->get();
 
         foreach ($listUserIDMahasiswa as $id) {
             $gender = $faker->randomElement(['L', 'P']);
@@ -25,6 +27,7 @@ class MahasiswaSeeder extends Seeder
             $address = $faker->address;
             $phoneNumber = $faker->phoneNumber;
             $nim = 2714320000 + $id;
+            $angkatan = date('Y', strtotime($listTahunPeriodeGanjil->random()->tanggal_mulai));
 
             DB::update(
                 'UPDATE m_user SET username = ? WHERE id = ?',
@@ -37,12 +40,21 @@ class MahasiswaSeeder extends Seeder
                     'nim' => $nim,
                     'nama' => $fullName,
                     'program_studi_id' => $listProgramStudiID->random(),
-                    'angkatan' => 2023,
+                    'angkatan' => $angkatan,
                     'jenis_kelamin' => $gender,
                     'alamat' => $address,
                     'no_telepon' => $phoneNumber
                 ],
             ]);
+
+            foreach ($listJenisDokumenID as $jenisDokumenID) {
+                DB::table('t_dokumen_user')->insert([
+                    'user_id' => $id,
+                    'jenis_dokumen_id' => $jenisDokumenID,
+                    'nama' => $faker->uuid() . '.pdf',
+                    'path' => 'user/dokumen/' . $jenisDokumenID . '/' . $id . '/'
+                ]);
+            }
         }
     }
 }

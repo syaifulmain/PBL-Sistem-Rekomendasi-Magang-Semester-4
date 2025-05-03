@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\masters;
 
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,8 +13,14 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('m_admin')->insert([
-            'user_id' => 1, 'nama' => 'Admin',
-        ]);
+        $faker = Faker::create('id_ID');
+
+        $listUserIDAdmin = DB::table('m_user')->where('level', 'ADMIN')->pluck('id');
+
+        foreach ($listUserIDAdmin as $id) {
+            DB::table('m_admin')->insert([
+                'user_id' => $id, 'nama' => $faker->name,
+            ]);
+        }
     }
 }

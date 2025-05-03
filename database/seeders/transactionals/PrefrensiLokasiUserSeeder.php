@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\transactionals;
 
+use Database\Seeders\SeederCounts;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +18,7 @@ class PrefrensiLokasiUserSeeder extends Seeder
         $listDosenID = DB::table('m_dosen')->pluck('id');
 
         foreach ($listMahasiswaID as $id) {
-            for ($i = 0; $i < 3; $i++) {
+            for ($i = 0; $i < SeederCounts::PREFRENSI_LOKASI_USER; $i++) {
                 $provinsi = DB::table('m_provinsi')->select('id', 'nama')->where('id', $listProvinsiID->random())->first();
                 $kabupaten = DB::table('m_kabupaten')->select('id', 'provinsi_id', 'nama')->where('provinsi_id', $provinsi->id)->inRandomOrder()->first();
                 $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
@@ -36,7 +37,7 @@ class PrefrensiLokasiUserSeeder extends Seeder
         }
 
         foreach ($listDosenID as $id) {
-            for ($i = 0; $i < 3; $i++) {
+            for ($i = 0; $i < SeederCounts::PREFRENSI_LOKASI_USER; $i++) {
                 $provinsi = DB::table('m_provinsi')->select('id', 'nama')->where('id', $listProvinsiID->random())->first();
                 $kabupaten = DB::table('m_kabupaten')->select('id', 'provinsi_id', 'nama')->where('provinsi_id', $provinsi->id)->inRandomOrder()->first();
                 $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
