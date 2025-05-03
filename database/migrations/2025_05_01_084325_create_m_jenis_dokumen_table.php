@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('m_jenis_dokumen', function (Blueprint $table) {
             $table->id();
             $table->string('nama', 100);
+            $table->boolean('default')->default(false);
             $table->timestamps();
         });
     }
