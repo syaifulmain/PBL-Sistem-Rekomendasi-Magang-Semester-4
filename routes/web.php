@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,4 +28,23 @@ Route::get('/', function () {
 
 Route::get('landing', function () {
     return view('landing.index');
+});
+
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postLogin']);
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('auth')->group(function () {
+    Route::middleware('role:ADMIN')->group(function () {
+    });
+    Route::middleware('role:DOSEN')->group(function () {
+        //
+    });
+    Route::middleware('role:MAHASISWA')->group(function () {
+        //
+    });
+    Route::middleware('role:DOSEN,MAHASISWA')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        //
+    });
 });

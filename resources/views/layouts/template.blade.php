@@ -5,7 +5,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ $page->title ?? 'INI TITLE PAGE' }}</title>
+    <title>{{ $page->title ?? $title ?? 'INI TITLE PAGE' }}</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
