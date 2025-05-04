@@ -15,7 +15,7 @@ class RoleHelper
         return $user->level->value === (string) $role;
     }
 
-    public static function isAny(UserRole ...$roles): bool
+    public static function isAny(UserRole|array ...$roles): bool
     {
         $user = Auth::user();
         if (!$user) return false;
