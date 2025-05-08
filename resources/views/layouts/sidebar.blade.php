@@ -113,28 +113,34 @@
             </a>
         </li>
         @if (has_role('ADMIN'))
-        <li class="nav-item">
-            <a class="nav-link" href="pages/documentation/documentation.html">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">ADMIN</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/documentation/documentation.html">
+                    <i class="icon-paper menu-icon"></i>
+                    <span class="menu-title">ADMIN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('admin.perusahaan.index')}}">
+                    <i class="icon-briefcase menu-icon"></i>
+                    <span class="menu-title">Mitra Perusahaan</span>
+                </a>
+            </li>
         @endif
         @if (has_role('DOSEN'))
-        <li class="nav-item">
-            <a class="nav-link" href="pages/documentation/documentation.html">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">DOSEN</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/documentation/documentation.html">
+                    <i class="icon-paper menu-icon"></i>
+                    <span class="menu-title">DOSEN</span>
+                </a>
+            </li>
         @endif
         @if (has_any_role(['MAHASISWA', 'DOSEN']))
-        <li class="nav-item">
-            <a class="nav-link" href="pages/documentation/documentation.html">
-                <i class="icon-paper menu-icon"></i>
-                <span class="menu-title">MAHASISWA</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a class="nav-link" href="pages/documentation/documentation.html">
+                    <i class="icon-paper menu-icon"></i>
+                    <span class="menu-title">MAHASISWA</span>
+                </a>
+            </li>
         @endif
     </ul>
 </nav>

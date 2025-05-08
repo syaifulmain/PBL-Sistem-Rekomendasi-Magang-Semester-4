@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PerusahaanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,11 +17,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $breadcrumb = (object) [
+    $breadcrumb = (object)[
         'title' => 'Halaman Home',
         'list' => ['Beranda', 'Dashboard']
     ];
-    $page = (object) [
+    $page = (object)[
         'title' => 'Selamat datang di halaman home'
     ];
     return view('index', compact('breadcrumb', 'page'));
@@ -36,6 +37,18 @@ Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::middleware('role:ADMIN')->group(function () {
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
+                Route::get('/', [PerusahaanController::class, 'index'])->name('index');
+                Route::get('/list', [PerusahaanController::class, 'list'])->name('list');
+                Route::get('/create', [PerusahaanController::class, 'create'])->name('create');
+                Route::post('/store', [PerusahaanController::class, 'store'])->name('store');
+                Route::get('/edit/{id}', [PerusahaanController::class, 'edit'])->name('edit');
+                Route::post('/update/{id}', [PerusahaanController::class, 'update'])->name('update');
+                Route::post('/delete/{id}', [PerusahaanController::class, 'destroy'])->name('delete');
+                Route::get('/detail/{id}', [PerusahaanController::class, 'detail'])->name('detail');
+            });
+        });
     });
     Route::middleware('role:DOSEN')->group(function () {
         //
