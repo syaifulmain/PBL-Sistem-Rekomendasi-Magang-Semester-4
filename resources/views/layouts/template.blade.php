@@ -73,6 +73,14 @@
 <script src="{{asset('skydash-v.01/js/dashboard.js')}}"></script>
 <script src="{{asset('skydash-v.01/js/Chart.roundedBarCharts.js')}}"></script>
 
+{{-- Sweet Alert --}}
+<script src="{{asset('skydash-v.01/vendors/sweetalert/sweetalert.min.js')}}"></script>
+
+<!-- jquery-validation -->
+<script src="{{ asset('assets/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+<script src="{{ asset('assets/plugins/jquery-validation/additional-methods.min.js') }}"></script>
+{{-- Localization --}}
+<script src="{{ asset('assets/plugins/jquery-validation/localization/messages_id.js') }}"></script>
 @stack('js')
 
 <!-- End custom js for this page-->
