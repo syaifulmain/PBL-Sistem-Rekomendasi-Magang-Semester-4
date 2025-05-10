@@ -18,6 +18,13 @@ class UserSeeder extends Seeder
         $id = 1;
         $password = Hash::make('12345678');
 
+        // Insert default users
+        DB::table('m_user')->insert([
+            ['id' => $id++, 'username' => 'admin', 'password' => $password, 'level' => 'ADMIN'],
+            ['id' => $id++, 'username' => 'dosen', 'password' => $password, 'level' => 'DOSEN'],
+            ['id' => $id++, 'username' => 'mahasiswa', 'password' => $password, 'level' => 'MAHASISWA'],
+        ]);
+
         for ($i = 0; $i < SeederCounts::ADMIN; $i++) {
             DB::table('m_user')->insert([
                 'id' => $id++, 'username' => 'admin' . $i + 1, 'password' => $password, 'level' => 'ADMIN'
