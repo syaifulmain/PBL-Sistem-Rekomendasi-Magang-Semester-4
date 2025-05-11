@@ -43,12 +43,10 @@
     <header id="header" class="header d-flex align-items-center fixed-top">
         <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-            <a href="#" class="logo d-flex align-items-center me-auto">
+            <a href="index.html" class="logo d-flex align-items-center me-auto">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
                 <img src="{{ asset('arsha-1.0.0/assets/img/logo_jti.png')}}" alt="">
-                <span class="sitename"
-                    style="font-size:24px; font-weight:bold; font-family:'Poppins', sans-serif; color:white;">SIMagang</span>
-
+                <h1 class="sitename">SIMagang</h1>
             </a>
 
             <nav id="navmenu" class="navmenu">
@@ -66,42 +64,40 @@
         </div>
         <style>
             .hero {
-                position: relative;
-                width: 100%;
-                height: 100vh;
-                background: linear-gradient(to right, rgba(0, 0, 0, 0.4), #0e2b5c 70%),
-                    url("{{ URL::asset('arsha-1.0.0/assets/img/JTI Polinema.png') }}") no-repeat center center;
-                background-size: cover;
-                display: flex;
-                align-items: center;
-                color: white;
-                padding-left: 50px;
-                box-sizing: border-box;
-            }
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.4), #0e2b5c 70%), 
+                  url("{{ URL::asset('arsha-1.0.0/assets/img/JTI Polinema.png') }}") no-repeat center center;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      color: white;
+      padding-left: 50px;
+      box-sizing: border-box;
+    }
 
-            .hero-text {
-                max-width: 600px;
-            }
+    .hero-text {
+      max-width: 600px;
+    }
 
-            h1 {
-                font-size: 2.5em;
-                margin-bottom: 0.5em;
-            }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 0.5em;
+    }
 
-            p {
-                font-size: 1.2em;
-                line-height: 1.5;
-            }
-
-            .copyright {
-                background-color: #17366d;
-                /* Warna biru tua sesuai gambar */
-                color: white;
-                text-align: center;
-                padding: 15px 0;
-                font-family: 'Arial', sans-serif;
-                font-size: 14px;
-            }
+    p {
+      font-size: 1.2em;
+      line-height: 1.5;
+    }
+    .copyright {
+      background-color: #17366d; /* Warna biru tua sesuai gambar */
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      font-family: 'Arial', sans-serif;
+      font-size: 14px;
+    }
         </style>
     </header>
 
@@ -113,13 +109,12 @@
 
                     <!-- Gambar di kiri -->
                     <div class="col-lg-6" data-aos="zoom-out" data-aos-delay="200">
-                        <!-- <img src="{{ asset('arsha-1.0.0/assets/img/JTI Polinema.png')}}" class="img-fluid animated"
-                            alt=""> -->
                     </div>
 
                     <!-- Teks di kanan -->
+                    
                     <div class="col-lg-6" data-aos="fade-up">
-                        <h2><strong>SELAMAT DATANG <br> DI SIMagang</strong></h2>
+                        <h2><strong>SELAMAT DATANG <br>DI SIMagang</strong></h2>
                         <p>
                             Solusi Praktis dan Terintegrasi untuk<br>
                             Informasi dan Pengajuan Magang<br>
@@ -165,7 +160,7 @@
                             <span>Ullamco laboris nisi ut aliquip ex ea commodo</span></li>
                     </ul> -->
                         <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                            <a href="#" class="read-more"><span><strong>Get Started</strong></span></a>
+                            <a href="#" class="read-more"><span>Get Started</span><i class="bi bi-arrow-right"></i></a>
                         </div>
 
                     </div>
@@ -188,36 +183,25 @@
             <div class="container">
 
                 <div class="row gy-4">
-
-                    <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+                    <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
                         <div class="service-item position-relative">
                             <!-- Ganti ikon dengan gambar -->
                             <div class="icon">
                                 <img src="arsha-1.0.0/assets/img/building.png" alt="Icon"
                                     style="width: 40px; height: 40px;">
-                                <strong>PASURUAN</strong>
+                                    <strong>PASURUAN</strong>
                             </div>
                             <h4><a href="" class="stretched-link">PT. Amerta Indah Otsuka</a></h4>
-
-                            <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
-                            67172
-
-                            <p><i class="bi bi-clock"
-                                    style="font-size: 20px; margin-right: 10px;"></i><strong>01-04-2025 S/D
-                                    03-05-2025</strong></p>
-
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha
-                            Perjalanan Wisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Komunikasi Bisnis dan Profesional
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Industri Pariwisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Elektronika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Informatika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem
-                            Informasi
+                            <p>PT. Amerta Indah Otsuka
+                                <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa
+                                Timur 67172
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha Perjalanan Wisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Komunikasi Bisnis dan Profesional
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Industri Pariwisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Elektronika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Informatika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem Informasi
+                            </p>
                         </div>
                     </div><!-- End Service Item -->
 
@@ -227,29 +211,20 @@
                             <div class="icon">
                                 <img src="arsha-1.0.0/assets/img/building.png" alt="Icon"
                                     style="width: 40px; height: 40px;">
-                                <strong>PASURUAN</strong>
+                                    <strong>PASURUAN</strong>
                             </div>
                             <h4><a href="" class="stretched-link">PT. Amerta Indah Otsuka</a></h4>
+                            <p>PT. Amerta Indah Otsuka
 
-                            <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
-                            67172
+                                <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
+                                67172
 
-                            <p><i class="bi bi-clock"
-                                    style="font-size: 20px; margin-right: 10px;"></i><strong>01-04-2025 S/D
-                                    03-05-2025</strong></p>
-
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha
-                            Perjalanan Wisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Komunikasi Bisnis dan Profesional
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Industri Pariwisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Elektronika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Informatika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem
-                            Informasi
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha Perjalanan Wisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Komunikasi Bisnis dan Profesional
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Industri Pariwisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Elektronika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Informatika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem Informasi
                         </div>
                     </div><!-- End Service Item -->
 
@@ -259,65 +234,46 @@
                             <div class="icon">
                                 <img src="arsha-1.0.0/assets/img/building.png" alt="Icon"
                                     style="width: 40px; height: 40px;">
-                                <strong>PASURUAN</strong>
+                                    <strong>PASURUAN</strong>
                             </div>
                             <h4><a href="" class="stretched-link">PT. Amerta Indah Otsuka</a></h4>
+                            <p>PT. Amerta Indah Otsuka
 
-                            <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
-                            67172
+                                <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
+                                67172
 
-                            <p><i class="bi bi-clock"
-                                    style="font-size: 20px; margin-right: 10px;"></i><strong>01-04-2025 S/D
-                                    03-05-2025</strong></p>
-
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha
-                            Perjalanan Wisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Komunikasi Bisnis dan Profesional
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Industri Pariwisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Elektronika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Informatika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem
-                            Informasi
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>  D-IV Usaha Perjalanan Wisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Komunikasi Bisnis dan Profesional
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris Untuk Industri Pariwisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Elektronika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik Informatika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem Informasi
                         </div>
                     </div><!-- End Service Item -->
 
-                    <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+                    <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
                         <div class="service-item position-relative">
                             <!-- Ganti ikon dengan gambar -->
                             <div class="icon">
                                 <img src="arsha-1.0.0/assets/img/building.png" alt="Icon"
                                     style="width: 40px; height: 40px;">
-                                <strong>PASURUAN</strong>
+                                    <strong>PASURUAN</strong>
                             </div>
                             <h4><a href="" class="stretched-link">PT. Amerta Indah Otsuka</a></h4>
+                            <p>PT. Amerta Indah Otsuka
 
-                            <br>Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa
-                            Timur 67172
+                                Jl. Raya Pasuruan No.KM11, Tromo Barat, Pacar Keling, Kec. Kejayan, Pasuruan, Jawa Timur
+                                67172
 
-                            <p><i class="bi bi-clock"
-                                    style="font-size: 20px; margin-right: 10px;"></i><strong>01-04-2025 S/D
-                                    03-05-2025</strong></p>
-
-
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Usaha
-                            Perjalanan Wisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Komunikasi Bisnis dan Profesional
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Bahasa Inggris
-                            Untuk Industri Pariwisata
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Elektronika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Teknik
-                            Informatika
-                            <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i> D-IV Sistem
-                            Informasi
-                            </p>
+                               
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>D-IV Bahasa Inggris Untuk Komunikasi Bisnis dan Profesional
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>D-IV Bahasa Inggris Untuk Industri Pariwisata
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>D-IV Teknik Elektronika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>D-IV Teknik Informatika
+                                <br><i class="bi bi-circle-fill" style="font-size: 8px !important;"></i>D-IV Sistem Informasi
                         </div>
                     </div><!-- End Service Item -->
+
                 </div>
 
             </div>
@@ -344,27 +300,24 @@
                                 <div class="row">
                                     <!-- Kolom Telepon -->
                                     <div class="col-md-4">
-                                        <p class="bi bi-telephone"><span>+0341 - 404424/404425</span></p>
-                                        <p class="bi bi-envelope"
-                                            style="font-family: Arial, sans-serif; text-decoration: underline; font-size: 18px;">
-                                            <span>humas@polinema.ac.id</span>
-                                        </p>
-
+                                        <p class="bi bi-telephone"><span>+1 5589 55488 55</span></p>
+                                        <p class="bi bi-telephone"><span>+1 5589 55488 55</span></p>
                                     </div>
 
                                     <!-- Kolom Email -->
                                     <div class="col-md-4">
-                                        <p class="bi bi-instagram"><span> polinema.campus</span></p>
-                                        <p class="bi bi-instagram"><span> jtipolinema</span></p>
+                                        <p class="bi bi-instagram"><span>info@example.com</span></p>
+                                        <p class="bi bi-instagram"><span>info@example.com</span></p>
                                     </div>
 
                                     <!-- Kolom Logo -->
+                                    
                                 </div>
 
                             </div>
                             <div class="col-md-6 col-lg-4 d-flex center align-items-start">
-                                <img src="{{ asset('arsha-1.0.0/assets/img/logo_jti_baru.png') }}" alt="Logo JTI"
-                                    class="img-fluid" style="max-height: 400px;">
+                                <img src="{{ asset('arsha-1.0.0/assets/img/logo_jti_baru.png') }}"
+                                    alt="Logo JTI" class="img-fluid" style="max-height: 400px;">
                             </div>
 
                         </div>
@@ -372,17 +325,14 @@
                 </footer>
             </section>
 
-            <div class="copyright">
-                &copy; Copyright 2023 Pusat Komputer Politeknik Negeri Malang
-                <!-- <div class="credits"> -->
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you've purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                <!-- Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> Distributed by <a
-                        href="https://themewagon.com" target="_blank">ThemeWagon</a> -->
-                <!-- </div> -->
-            </div>
+            
+                <div class="copyright">
+                    &copy; Copyright 2023 Pusat Komputer Politeknik Negeri Malang
+                </div>
+            
+
+
+            
 
             </footer>
 
