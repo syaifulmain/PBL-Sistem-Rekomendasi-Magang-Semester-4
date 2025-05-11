@@ -10,14 +10,18 @@
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/feather/feather.css')}}">
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/css/vendor.bundle.base.css')}}">
+    <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/font-awesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/mdi/css/materialdesignicons.min.css')}}">
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/js/select.dataTables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/css/vertical-layout-light/style.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/custom.css')}}">
 
     @stack('css')
 
@@ -40,6 +44,25 @@
 
                 @include('layouts.breadcrumb')
 
+                {{-- Flash Messages --}}
+                @if (session('success'))
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ session('success') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Tutup">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ session('error') }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Tutup">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                @endif
+
                 @yield('content')
 
             </div>
@@ -60,6 +83,7 @@
 <script src="{{asset('skydash-v.01/vendors/datatables.net/jquery.dataTables.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('skydash-v.01/js/dataTables.select.min.js')}}"></script>
+<script src="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 
 <!-- End plugin js for this page -->
 <!-- inject:js -->
@@ -81,6 +105,67 @@
 <script src="{{ asset('assets/plugins/jquery-validation/additional-methods.min.js') }}"></script>
 {{-- Localization --}}
 <script src="{{ asset('assets/plugins/jquery-validation/localization/messages_id.js') }}"></script>
+
+<script>
+    $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+    });
+
+    function swalAlertConfirm(options) {
+        const {
+            title = 'Apakah Anda yakin?',
+            text = 'Tindakan ini tidak dapat dibatalkan!',
+            icon = 'warning',
+            confirmButtonText = 'Ya, Hapus!',
+            cancelButtonText = 'Batal',
+            url,
+            method = 'DELETE',
+            data = {},
+            onSuccess = function () {},
+            onError = function () {}
+        } = options;
+
+        swal({
+            title: title,
+            text: text,
+            icon: icon,
+            buttons: {
+                cancel: {
+                    text: cancelButtonText,
+                    visible: true,
+                    closeModal: true,
+                },
+                confirm: {
+                    text: confirmButtonText,
+                    value: true,
+                    closeModal: false,
+                },
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: url,
+                    type: method,
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                        ...data
+                    },
+                    success: function (response) {
+                        swal('Berhasil!', response.success ?? 'Tindakan berhasil dilakukan.', 'success');
+                        onSuccess(response);
+                    },
+                    error: function (xhr) {
+                        swal('Gagal!', 'Terjadi kesalahan saat memproses data.', 'error');
+                        onError(xhr);
+                    }
+                });
+            }
+        });
+    }
+</script>
+
 @stack('js')
 
 <!-- End custom js for this page-->

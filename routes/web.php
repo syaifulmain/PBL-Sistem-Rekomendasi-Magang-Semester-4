@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\PeriodeMagangController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,6 +39,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/update/{id}', [PerusahaanController::class, 'update'])->name('update');
             Route::post('/delete/{id}', [PerusahaanController::class, 'destroy'])->name('delete');
             Route::get('/detail/{id}', [PerusahaanController::class, 'detail'])->name('detail');
+        });
+        Route::prefix('periode-magang')->name('periode-magang.')->group(function(){
+            Route::get('/', [PeriodeMagangController::class, 'index'])->name('index');
+            Route::get('/create', [PeriodeMagangController::class, 'create'])->name('create');
+            Route::post('/create', [PeriodeMagangController::class, 'store']);
+            Route::get('/{id}/edit', [PeriodeMagangController::class, 'edit'])->name('edit');
+            Route::put('/{id}/edit', [PeriodeMagangController::class, 'update']);
+            Route::delete('/{id}/delete', [PeriodeMagangController::class, 'show'])->name('delete');
         });
     });
 
