@@ -8,6 +8,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{{route('admin.manajemen-pengguna.index')}}">
+                    <i class="icon-head menu-icon"></i>
+                    <span class="menu-title">Manajemen Pengguna</span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{route('admin.perusahaan.index')}}">
                     <i class="icon-briefcase menu-icon"></i>
                     <span class="menu-title">Mitra Perusahaan</span>

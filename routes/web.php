@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
+use App\Http\Controllers\PerusahaanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +48,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [PeriodeMagangController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [PeriodeMagangController::class, 'update']);
             Route::delete('/{id}/delete', [PeriodeMagangController::class, 'show'])->name('delete');
+        });
+        Route::prefix('manajemen-pengguna')->name('manajemen-pengguna.')->group(function(){
+            Route::get('/', [ManajemenPenggunaController::class, 'index'])->name('index');
+            Route::get('/create', [ManajemenPenggunaController::class, 'create'])->name('create');
+            Route::post('/create', [ManajemenPenggunaController::class, 'store']);
+            Route::get('/{id}/edit', [ManajemenPenggunaController::class, 'edit'])->name('edit');
+            Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
+            Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
         });
     });
 
