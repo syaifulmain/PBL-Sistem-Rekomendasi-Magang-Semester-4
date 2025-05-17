@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\ProgramStudiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +57,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [ManajemenPenggunaController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
             Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
+        });
+        Route::prefix('program-studi')->name('program-studi.')->group(function () {
+            Route::get('/', [ProgramStudiController::class, 'index'])->name('index');
+            Route::get('/create', [ProgramStudiController::class, 'create'])->name('create');
+            Route::post('/store', [ProgramStudiController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update'); // ← perbaikan di sini
+            Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('destroy');
         });
     });
 
