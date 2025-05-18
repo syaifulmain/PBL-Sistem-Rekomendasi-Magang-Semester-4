@@ -54,4 +54,13 @@ class UserModel extends Authenticatable
 
         return null;
     }
+
+    public function getFotoProfilPath()
+    {
+        if ($this->path_foto_profil && file_exists(storage_path('app/public/' . $this->path_foto_profil))) {
+            return asset('storage/' . $this->path_foto_profil);
+        } else {
+            return asset('images/default-profile.png');
+        }
+    }
 }
