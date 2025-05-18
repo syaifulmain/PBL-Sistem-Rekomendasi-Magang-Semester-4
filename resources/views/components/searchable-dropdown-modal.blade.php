@@ -83,7 +83,7 @@
 
 @once
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        $(document).ready(function () {
             const dataCache = {};
 
             window.initSearchableDropdown = function(id, dataUrl) {

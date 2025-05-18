@@ -28,6 +28,7 @@ class MahasiswaSeeder extends Seeder
             $phoneNumber = $faker->phoneNumber;
             $nim = 2714320000 + $id;
             $angkatan = date('Y', strtotime($listTahunPeriodeGanjil->random()->tanggal_mulai));
+            $ipk = $faker->randomFloat(2, 2.5, 4);
 
             DB::update(
                 'UPDATE m_user SET username = ? WHERE id = ?',
@@ -43,7 +44,8 @@ class MahasiswaSeeder extends Seeder
                     'angkatan' => $angkatan,
                     'jenis_kelamin' => $gender,
                     'alamat' => $address,
-                    'no_telepon' => $phoneNumber
+                    'no_telepon' => $phoneNumber,
+                    'ipk' => $ipk,
                 ],
             ]);
 
