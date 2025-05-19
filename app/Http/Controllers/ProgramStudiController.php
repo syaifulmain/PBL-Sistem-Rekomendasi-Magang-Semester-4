@@ -6,7 +6,6 @@ use App\Models\ProgramStudiModel;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
-use Illuminate\Support\Facades\Validator;
 
 class ProgramStudiController extends Controller
 {
@@ -74,13 +73,17 @@ class ProgramStudiController extends Controller
             'list' => ['Program Studi', 'Edit']
         ];
 
-        return view('admin.program-studi.edit', compact('prodi', 'title', 'breadcrumb'));
+        return view('admin.program-studi.form', compact('prodi', 'title', 'breadcrumb'));
     }
 
     public function update(Request $request, $id)
     {
         $request->validate([
-            'kode' => 'required|max:5',
+            'kode' => [
+                'required',
+                'max:5',
+                Rule::unique('m_program_studi')->ignore($id),
+            ],
             'nama' => 'required|max:100',
             'jenjang' => 'required|in:D3,D4',
         ]);
@@ -93,7 +96,6 @@ class ProgramStudiController extends Controller
 
         return redirect()->route('admin.program-studi.index')->with('success', 'Program Studi berhasil diperbarui.');
     }
-
 
     public function destroy($id)
     {

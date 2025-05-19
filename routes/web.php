@@ -62,9 +62,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [ProgramStudiController::class, 'index'])->name('index');
             Route::get('/create', [ProgramStudiController::class, 'create'])->name('create');
             Route::post('/store', [ProgramStudiController::class, 'store'])->name('store');
-            Route::get('/edit/{id}', [ProgramStudiController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update'); // ← perbaikan di sini
-            Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('destroy');
+            Route::get('/edit/{id}', [ProgramStudiController::class, 'edit']);
+            Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('delete');
         });
     });
 
