@@ -16,4 +16,24 @@ class DosenModel extends Model
         'nama',
         'nip'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(UserModel::class, 'user_id');
+    }
+
+    public function minatDosen()
+    {
+        return $this->hasMany(MinatDosenModel::class, 'dosen_id');
+    }
+
+    public function preferensiLokasiDosen()
+    {
+        return $this->hasMany(preferensiLokasiDosenModel::class, 'dosen_id');
+    }
+
+    public function getGenderName()
+    {
+        return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+    }
 }

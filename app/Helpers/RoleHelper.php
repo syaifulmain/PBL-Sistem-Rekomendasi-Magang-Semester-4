@@ -22,4 +22,12 @@ class RoleHelper
 
         return in_array($user->level, $roles, true);
     }
+
+    public static function getRoleName(): string|null
+    {
+        $user = Auth::user();
+        if (!$user) return null;
+
+        return strtolower($user->level->value);
+    }
 }

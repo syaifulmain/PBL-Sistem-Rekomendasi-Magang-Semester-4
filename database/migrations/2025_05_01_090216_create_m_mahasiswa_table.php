@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('jenis_kelamin', ['L', 'P'])->nullable();
             $table->text('alamat')->nullable();
             $table->string('no_telepon', 20)->nullable();
+            $table->decimal('ipk', 3, 2)->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });

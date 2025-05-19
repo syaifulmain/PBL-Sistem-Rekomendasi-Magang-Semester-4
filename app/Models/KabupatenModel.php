@@ -10,4 +10,10 @@ class KabupatenModel extends Model
     use HasFactory;
 
     protected $table = 'm_kabupaten';
+
+    public function provinsi()
+    {
+        return $this->belongsTo(ProvinsiModel::class, 'provinsi_id');
+    }
+
 }
