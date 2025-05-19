@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\ProfilAdminModel;
 use App\Http\Controllers\ProfilDosenController;
 use App\Http\Controllers\ProfilMahasiswaController;
@@ -61,10 +62,15 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
             Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
         });
+        Route::prefix('program-studi')->name('program-studi.')->group(function () {
+            Route::get('/', [ProgramStudiController::class, 'index'])->name('index');
+            Route::get('/create', [ProgramStudiController::class, 'create'])->name('create');
+            Route::post('/store', [ProgramStudiController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [ProgramStudiController::class, 'edit']);
+            Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('delete');
         Route::prefix('profil')->name('profil.')->group(function () {
-
             Route::get('/', [ProfilAdminModel::class, 'index'])->name('index');
-
             Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
                 Route::get('/', [ProfilAdminModel::class, 'editInformasiPengguna'])->name('index');
                 Route::post('/update', [ProfilAdminModel::class, 'updateInformasiPengguna'])->name('update');

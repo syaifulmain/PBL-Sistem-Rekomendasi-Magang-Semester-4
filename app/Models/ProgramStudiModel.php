@@ -10,4 +10,10 @@ class ProgramStudiModel extends Model
     use HasFactory;
 
     protected $table = 'm_program_studi';
+
+    protected $fillable = [
+        'kode',
+        'nama',
+        'jenjang',
+    ];
 }
