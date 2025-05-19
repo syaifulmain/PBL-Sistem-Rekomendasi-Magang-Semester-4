@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\BidangKeahlianModel;
 use App\Models\DesaModel;
+use App\Models\DokumenUserModel;
 use App\Models\DosenModel;
+use App\Models\JenisDokumenModel;
 use App\Models\KabupatenModel;
 use App\Models\KecamatanModel;
 use App\Models\MinatDosenModel;
@@ -18,12 +20,13 @@ class ProfilDosenController extends Controller
     {
         $data = DosenModel::with('minatDosen', 'preferensiLokasiDosen')
             ->where('id', auth()->user()->dosen->id)->first();
+        $dokumenTambahan = JenisDokumenModel::where('default', 0)->get();
         $title = 'Profil Pengguna';
         $breadcrumb = [
             'title' => 'Profil Pengguna',
             'list' => ['Profil Pengguna']
         ];
-        return view('profil.dosen.index', compact('title', 'breadcrumb', 'data'));
+        return view('profil.dosen.index', compact('title', 'breadcrumb', 'data', 'dokumenTambahan'));
     }
 
     public function editInformasiPengguna()
@@ -50,8 +53,8 @@ class ProfilDosenController extends Controller
                 $file = $request->file('foto_profil');
                 $extension = $file->getClientOriginalExtension();
                 $fileName = uniqid('profile_') . '_' . time() . '.' . $extension;
-                $file->storeAs('public/foto_profil', $fileName);
-                $dosen->user->path_foto_profil = 'foto_profil/' . $fileName;
+                $file->storeAs('public/users/foto_profil', $fileName);
+                $dosen->user->path_foto_profil = 'users/foto_profil/' . $fileName;
                 $dosen->user->save();
             }
 
@@ -334,5 +337,75 @@ class ProfilDosenController extends Controller
                 'message' => 'Gagal menghapus minat: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function tambahDokumen()
+    {
+        $title = "Tambah Dokumen";
+        $dokumenTambahan = JenisDokumenModel::where('default', 0)->get();
+
+        return view('profil.dosen.form-dokumen', compact('title', 'dokumenTambahan'));
+    }
+
+    public function storeDokumen(Request $request)
+    {
+        $request->validate([
+            'label' => 'required|string|max:255',
+            'file' => 'required|mimes:pdf,jpg,jpeg,png,doc,docx|max:5000',
+            'jenis_dokumen_id' => 'required|exists:m_jenis_dokumen,id',
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = uniqid() . '_' . time() . '.' . $extension;
+            $file->storeAs('public/users/dokumen', $fileName);
+        }
+
+        $dokumen = new DokumenUserModel();
+        $dokumen->user_id = auth()->user()->id;
+        $dokumen->jenis_dokumen_id = $request->input('jenis_dokumen_id');
+        $dokumen->label = $request->input('label');
+        $dokumen->nama = $fileName;
+        $dokumen->path = 'users/dokumen/';
+
+        $dokumen->save();
+
+        return redirect()->route('dosen.profil.index')->with('success', 'Dokumen berhasil diunggah');
+    }
+
+    public function editDokumen($id)
+    {
+        $title = "Edit Dokumen";
+        $dokumen = DokumenUserModel::findOrFail($id);
+        $dokumenTambahan = JenisDokumenModel::where('default', 0)->get();
+
+        return view('profil.dosen.form-dokumen', compact('title', 'dokumen', 'dokumenTambahan'));
+    }
+
+    public function updateDokumen(Request $request, $id)
+    {
+        $request->validate([
+            'label' => 'required|string|max:255',
+            'file' => 'nullable|mimes:pdf,jpg,jpeg,png,doc,docx|max:5000',
+            'jenis_dokumen_id' => 'required|exists:m_jenis_dokumen,id',
+        ]);
+
+        $dokumen = DokumenUserModel::findOrFail($id);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = uniqid() . '_' . time() . '.' . $extension;
+            $file->storeAs('public/users/dokumen', $fileName);
+            $dokumen->nama = $fileName;
+        }
+
+        $dokumen->label = $request->input('label');
+        $dokumen->jenis_dokumen_id = $request->input('jenis_dokumen_id');
+
+        $dokumen->save();
+
+        return redirect()->route('dosen.profil.index')->with('success', 'Dokumen berhasil diperbarui');
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
@@ -100,6 +101,13 @@ Route::middleware('auth')->group(function () {
                 Route::post('/store', [ProfilDosenController::class, 'storePreferensiLokasi'])->name('store');
                 Route::delete('/{id}/delete', [ProfilDosenController::class, 'destroyPreferensiLokasi'])->name('delete');
             });
+
+            Route::prefix('dokumen')->name('dokumen.')->group(function () {
+                Route::get('/', [ProfilDosenController::class, 'tambahDokumen'])->name('index');
+                Route::post('/store', [ProfilDosenController::class, 'storeDokumen'])->name('store');
+                Route::get('/{id}/edit', [ProfilDosenController::class, 'editDokumen'])->name('edit');
+                Route::put('/{id}/update', [ProfilDosenController::class, 'updateDokumen'])->name('update');
+            });
         });
     });
 
@@ -137,6 +145,13 @@ Route::middleware('auth')->group(function () {
                 Route::post('/store', [ProfilMahasiswaController::class, 'storePreferensiLokasi'])->name('store');
                 Route::delete('/{id}/delete', [ProfilMahasiswaController::class, 'destroyPreferensiLokasi'])->name('delete');
             });
+
+            Route::prefix('dokumen')->name('dokumen.')->group(function () {
+                Route::get('/', [ProfilMahasiswaController::class, 'tambahDokumen'])->name('index');
+                Route::post('/store', [ProfilMahasiswaController::class, 'storeDokumen'])->name('store');
+                Route::get('/{id}/edit', [ProfilMahasiswaController::class, 'editDokumen'])->name('edit');
+                Route::put('/{id}/update', [ProfilMahasiswaController::class, 'updateDokumen'])->name('update');
+            });
         });
     });
 
@@ -144,4 +159,10 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
+
+    Route::prefix('dokumen')->name('dokumen.')->group(function () {
+        Route::post('upload-dokumen-user', [\App\Http\Controllers\DokumenUserController::class, 'storeDokumenUser'])->name('upload-dokumen-user');
+        Route::put('update-dokumen-user/{id}', [\App\Http\Controllers\DokumenUserController::class, 'updateDokumenUser'])->name('update-dokumen-user');
+        Route::delete('delete-dokumen-user/{id}', [\App\Http\Controllers\DokumenUserController::class, 'destroyDokumenUser'])->name('delete-dokumen-user');
+    });
 });
