@@ -54,7 +54,7 @@ class MahasiswaSeeder extends Seeder
                     'user_id' => $id,
                     'jenis_dokumen_id' => $jenisDokumenID,
                     'nama' => $faker->uuid() . '.pdf',
-                    'path' => 'user/dokumen/' . $jenisDokumenID . '/' . $id . '/'
+                    'path' => 'users/dokumen/'
                 ]);
             }
         }

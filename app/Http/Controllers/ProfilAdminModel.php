@@ -41,8 +41,8 @@ class ProfilAdminModel extends Controller
                 $file = $request->file('foto_profil');
                 $extension = $file->getClientOriginalExtension();
                 $fileName = uniqid('profile_') . '_' . time() . '.' . $extension;
-                $file->storeAs('public/foto_profil', $fileName);
-                $admin->user->path_foto_profil = 'foto_profil/' . $fileName;
+                $file->storeAs('public/users/foto_profil', $fileName);
+                $admin->user->path_foto_profil = 'users/foto_profil/' . $fileName;
                 $admin->user->save();
             }
 

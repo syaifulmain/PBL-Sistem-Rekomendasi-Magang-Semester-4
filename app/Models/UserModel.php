@@ -42,6 +42,11 @@ class UserModel extends Authenticatable
         return $this->hasOne(MahasiswaModel::class, 'user_id');
     }
 
+    public function dokumenUser()
+    {
+        return $this->hasMany(DokumenUserModel::class, 'user_id');
+    }
+
     public function getNama()
     {
         if ($this->level === UserRole::ADMIN) {

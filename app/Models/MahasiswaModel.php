@@ -44,6 +44,11 @@ class MahasiswaModel extends Model
         return $this->hasMany(KeahlianMahasiswaModel::class, 'mahasiswa_id');
     }
 
+    public function dokumenUser()
+    {
+        return $this->hasMany(DokumenUserModel::class, 'user_id', 'user_id');
+    }
+
     public function getGenderName()
     {
         return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';

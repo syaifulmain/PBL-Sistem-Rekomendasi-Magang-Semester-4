@@ -131,13 +131,44 @@
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
-                    <p class="card-title mb-0">DOKUMEN</p>
-{{--                    <button onclick="modalAction('{{route('dosen.profil.preferensi-lokasi.index')}}')" class="btn btn-outline-secondary btn-sm">--}}
-{{--                        <i class="ti-pencil-alt"></i>--}}
-{{--                    </button>--}}
+                    <p class="card-title mb-0">DOKUMEN TAMBAHAN</p>
+                    <button onclick="modalAction('{{route('dosen.profil.dokumen.index')}}')"
+                            class="btn btn-outline-secondary btn-sm">
+                        <i class="ti-pencil-alt"></i>
+                    </button>
                 </div>
                 <hr>
-                <div class="template-demo">
+                <div class="template-demo col-md-6">
+                    @foreach($dokumenTambahan as $dokumen)
+                        @if($dokumen->getDokumenIdUser($data->user_id) !== null)
+                            <div class="alert alert-fill-primary mb-2 mr-2">
+                                {{ $dokumen->getDokumenLabelUser($data->user_id) }} - {{ $dokumen->nama }}
+                            </div>
+
+                            <label style="cursor: pointer;">
+                                <div class="mb-2 ">
+                                    <img src="{{$dokumen->getDokumenPathFromUser($data->user_id)}}"
+                                         alt="Dokumen"
+                                         width="150" height="150">
+                                </div>
+                            </label>
+
+                            <div class="input-group">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <button type="button" class="btn btn-warning"
+                                            onclick="modalAction('{{ route('dosen.profil.dokumen.edit', $dokumen->getDokumenIdUser($data->user_id)) }}')">
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-delete"
+                                            data-url="{{ route('dokumen.delete-dokumen-user', $dokumen->getDokumenIdUser($data->user_id)) }}"
+                                    >
+                                        Hapus
+                                    </button>
+                                </div>
+                            </div>
+                            <hr>
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>
