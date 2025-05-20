@@ -103,7 +103,7 @@ class PeriodeMagangController extends Controller
         return redirect()->route('admin.periode-magang.index')->with('success', 'Periode magang berhasil diperbarui.');
     }
 
-    public function destroy(string $id)
+    public function destroy( $id)
     {
         $periode = PeriodeMagangModel::findOrFail($id);
         $periode->delete();

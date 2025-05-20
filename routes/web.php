@@ -43,8 +43,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/create', [PerusahaanController::class, 'create'])->name('create');
             Route::post('/store', [PerusahaanController::class, 'store'])->name('store');
             Route::get('/edit/{id}', [PerusahaanController::class, 'edit'])->name('edit');
-            Route::post('/update/{id}', [PerusahaanController::class, 'update'])->name('update');
-            Route::post('/delete/{id}', [PerusahaanController::class, 'destroy'])->name('delete');
+            Route::put('/update/{id}', [PerusahaanController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [PerusahaanController::class, 'destroy'])->name('delete');
             Route::get('/detail/{id}', [PerusahaanController::class, 'detail'])->name('detail');
         });
         Route::prefix('periode-magang')->name('periode-magang.')->group(function () {
@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [PeriodeMagangController::class, 'store']);
             Route::get('/{id}/edit', [PeriodeMagangController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [PeriodeMagangController::class, 'update']);
-            Route::delete('/{id}/delete', [PeriodeMagangController::class, 'show'])->name('delete');
+            Route::delete('/{id}/delete', [PeriodeMagangController::class, 'destroy'])->name('delete');
         });
         Route::prefix('manajemen-pengguna')->name('manajemen-pengguna.')->group(function () {
             Route::get('/', [ManajemenPenggunaController::class, 'index'])->name('index');
@@ -70,6 +70,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [ProgramStudiController::class, 'edit']);
             Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('delete');
+
+        });
         Route::prefix('profil')->name('profil.')->group(function () {
             Route::get('/', [ProfilAdminModel::class, 'index'])->name('index');
             Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {

@@ -126,6 +126,7 @@
                         $.ajax({
                             url: `/admin/perusahaan/delete/${id}`,
                             type: 'POST',
+                            method: 'DELETE',
                             data: {
                                 _token: '{{ csrf_token() }}'
                             },

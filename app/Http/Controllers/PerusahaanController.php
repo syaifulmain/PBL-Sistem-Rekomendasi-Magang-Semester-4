@@ -204,4 +204,80 @@ class PerusahaanController extends Controller
             ]);
         }
     }
+
+    public function update(Request $request, $perusahaan_id)
+    {
+        try {
+            DB::beginTransaction();
+            $validator = Validator::make($request->all(), [
+                'nama' => 'required|string|max:255',
+                'alamat' => 'required|string|max:255',
+                'website' => 'nullable|url|max:255',
+                'email' => 'nullable|email|max:255',
+                'no_telopon' => 'nullable|string|max:20',
+                'provinsi_id' => 'required|integer',
+                'provinsi_id-input' => 'required|string|max:255',
+                'kabupaten_id' => 'required|integer',
+                'kabupaten_id-input' => 'required|string|max:255',
+                'kecamatan_id' => 'required|integer',
+                'kecamatan_id-input' => 'required|string|max:255',
+                'desa_id' => 'required|integer',
+                'desa_id-input' => 'required|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'error' => $validator->errors(),
+                    'message' => 'Validasi gagal'
+                ]);
+            }
+
+            $fullAddress = $request->input('alamat') . ', ' .
+                $request->input('desa_id-input') . ', ' .
+                $request->input('kecamatan_id-input') . ', ' .
+                $request->input('kabupaten_id-input') . ', ' .
+                $request->input('provinsi_id-input') . ', ' .
+                'INDONESIA';
+
+            $perusahaan = PerusahaanModel::find($perusahaan_id);
+            if (!$perusahaan) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "Perusahaan tidak ditemukan"
+                ]);
+            }
+
+            $perusahaan->update([
+                'nama' => $request->input('nama'),
+                'alamat' => $fullAddress,
+                'website' => $request->input('website'),
+                'email' => $request->input('email'),
+                'no_telepon' => $request->input('no_telopon')
+            ]);
+
+            LokasiPerusahaanModel::where('perusahaan_id', $perusahaan_id)->update([
+                'negara_id' => 1,
+                'provinsi_id' => $request->input('provinsi_id'),
+                'kabupaten_id' => $request->input('kabupaten_id'),
+                'kecamatan_id' => $request->input('kecamatan_id'),
+                'desa_id' => $request->input('desa_id'),
+                'alamat' => $request->input('alamat')
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil diperbarui'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'error' => $e->getMessage(),
+                'message' => 'Gagal memperbarui data'
+            ]);
+        }
+    }
 }
