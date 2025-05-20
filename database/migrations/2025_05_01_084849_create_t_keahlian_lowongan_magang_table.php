@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('t_keahlian_lowongan_kerja', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lowongan_magang_id')->constrained('t_lowongan_magang')->onDelete('cascade');
-            $table->foreignId('bidang_keahlian_id')->constrained('m_bidang_keahlian')->onDelete('cascade');
+            $table->foreignId('bidang_keahlian_id')->constrained('m_bidang_keahlian')->onDelete('restrict');
             $table->timestamps();
         });
     }
