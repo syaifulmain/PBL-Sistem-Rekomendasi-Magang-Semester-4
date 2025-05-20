@@ -280,18 +280,14 @@ class ManajemenPenggunaController extends Controller
 
             DB::commit();
 
-            return redirect()
-                ->route('admin.manajemen-pengguna.index')
-                ->with('success', 'Pengguna berhasil dihapus.');
+            return response()->json(['success' => 'Data berhasil dihapus.']);
 
         } catch (\Exception $e) {
             DB::rollBack();
 
             Log::error('User deletion failed: ' . $e->getMessage());
 
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal menghapus pengguna: ' . $e->getMessage());
+            return response()->json(['error' => 'Gagal menghapus data: ' . $e->getMessage()], 500);
         }
     }
 }

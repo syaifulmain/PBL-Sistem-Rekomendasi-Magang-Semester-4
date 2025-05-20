@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="text-center mb-3">
                     <label for="foto_profil" style="cursor: pointer;">
-                        <img id="preview_foto_profil" src="{{$informasiPengguna->getFotoProfilPath()}}" alt="Profile Picture" class="rounded-circle"
+                        <img id="preview_foto_profil" src="{{$informasiPengguna->user->getFotoProfilPath()}}" alt="Profile Picture" class="rounded-circle"
                              width="150" height="150" style="object-fit: cover;">
                         <input type="file" id="foto_profil" name="foto_profil" class="d-none" accept="image/*" onchange="previewImage(this);">
                     </label>

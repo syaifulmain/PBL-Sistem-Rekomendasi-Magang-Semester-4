@@ -19,7 +19,7 @@
             </div>
         </div>
         <a class="btn btn-primary mb-4" href="{{ route('admin.manajemen-pengguna.create') }}"><i class="fa fa-plus"></i> Tambah</a>
-        <table class="table table-striped table-bordered" id="periode-table">
+        <table class="table table-striped table-bordered" id="manajemen-pengguna">
             <thead>
                 <tr>
                     <th>Username</th>
@@ -36,7 +36,7 @@
 @push('js')
     <script>
         $(function () {
-            $('#periode-table').DataTable({
+            $('#manajemen-pengguna').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
@@ -56,20 +56,19 @@
             // Delete handler
             $(document).on('click', '.btn-delete', function (e) {
                 e.preventDefault();
-
                 swalAlertConfirm({
                     title: 'Hapus data ini?',
                     text: 'Data yang dihapus tidak bisa dikembalikan!',
                     url: $(this).data('url'),
                     onSuccess: function () {
-                        $('#periode-table').DataTable().ajax.reload();
+                        $('#manajemen-pengguna').DataTable().ajax.reload();
                     }
                 });
             });
 
             // Filter handler
             $('#filter-level').on('change', function () {
-                $('#periode-table').DataTable().ajax.reload();
+                $('#manajemen-pengguna').DataTable().ajax.reload();
             });
         });
     </script>
