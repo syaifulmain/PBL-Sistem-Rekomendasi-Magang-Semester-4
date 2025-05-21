@@ -6,11 +6,13 @@ use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ProgramStudiController;
+use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\ProfilAdminModel;
 use App\Http\Controllers\ProfilDosenController;
 use App\Http\Controllers\ProfilMahasiswaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+ use App\Http\Controllers\PengajuanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +24,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('/pengajuan', [PengajuanController::class, 'index'])->name('pengajuan.index');
+Route::post('/pengajuan', [PengajuanController::class, 'store'])->name('pengajuan.store');
+
 
 Route::get('/', [\App\Http\Controllers\IndexController::class, 'index'])->name('index');
 
@@ -69,12 +75,21 @@ Route::middleware('auth')->group(function () {
             Route::get('/edit/{id}', [ProgramStudiController::class, 'edit']);
             Route::put('/update/{id}', [ProgramStudiController::class, 'update'])->name('update');
             Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('delete');
+        });
+        Route::prefix('pengajuan_magang')->name('pengajuan_magang.')->group(function () {
+            Route::get('/', [PengajuanMagangController::class, 'index'])->name('index');
+            Route::get('/create', [PengajuanMagangController::class, 'create'])->name('create');
+            Route::post('/store', [PengajuanMagangController::class, 'store'])->name('store');
+            Route::get('/edit/{id}', [PengajuanMagangController::class, 'edit']);
+            Route::put('/update/{id}', [PengajuanMagangController::class, 'update'])->name('update');
+            Route::delete('/delete/{id}', [PengajuanMagangController::class, 'destroy'])->name('delete');
+        });
         Route::prefix('profil')->name('profil.')->group(function () {
             Route::get('/', [ProfilAdminModel::class, 'index'])->name('index');
             Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
-                Route::get('/', [ProfilAdminModel::class, 'editInformasiPengguna'])->name('index');
-                Route::post('/update', [ProfilAdminModel::class, 'updateInformasiPengguna'])->name('update');
-            });
+            Route::get('/', [ProfilAdminModel::class, 'editInformasiPengguna'])->name('index');
+            Route::post('/update', [ProfilAdminModel::class, 'updateInformasiPengguna'])->name('update');
+            
         });
     });
 
@@ -150,4 +165,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
+    });
 });
+
+
+

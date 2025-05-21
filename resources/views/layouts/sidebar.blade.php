@@ -31,6 +31,12 @@
                     <span class="menu-title">Program Studi</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.pengajuan_magang.index') }}">
+                    <i class="mdi mdi-briefcase-upload menu-icon"></i>
+                    <span class="menu-title">Pengajuan Magang</span>
+                </a>
+            </li>
         @endif
         @if (has_role('DOSEN'))
             <li class="nav-item">
@@ -43,7 +49,7 @@
         @if (has_any_role(['MAHASISWA', 'DOSEN']))
             <li class="nav-item">
                 <a class="nav-link" href="pages/documentation/documentation.html">
-                    <i class="icon-paper menu-icon"></i>
+                    <i class="mdi-briefcase-upload menu-icon"></i>
                     <span class="menu-title">MAHASISWA</span>
                 </a>
             </li>
