@@ -134,11 +134,15 @@
                         </div>
                     </div>
                 @endif
-
+                
                 <div class="text-right">
+                    <a href="{{ route('password.reset', $data->id) }}" class="btn btn-warning">
+                        Reset Password
+                    </a>
                     <button type="submit" class="btn btn-primary">
                         {{ isset($data) ? 'Update' : 'Simpan' }}
                     </button>
+
                 </div>
             </form>
         </div>
