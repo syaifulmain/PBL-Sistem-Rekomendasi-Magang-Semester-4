@@ -31,6 +31,12 @@
                     <span class="menu-title">Program Studi</span>
                 </a>
             </li>
+             <li class="nav-item">
+                 <a class="nav-link" href="{{ route('admin.lowongan-magang.index') }}">
+                    <i class="mdi mdi-clipboard-text menu-icon"></i>
+                    <span class="menu-title">Lowongan Magang</span>
+                </a>
+            </li>
         @endif
         @if (has_role('DOSEN'))
             <li class="nav-item">

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders\transactionals;
 
+use App\Enums\LevelTeknis;
 use Carbon\Carbon;
 use Database\Seeders\SeederCounts;
 use Faker\Factory as Faker;
@@ -22,6 +23,8 @@ class LowonganMagangSeeder extends Seeder
         $listDokumenWajibID = DB::table('m_jenis_dokumen')->where('default', 1)->pluck('id');
 
         $listBidangKeahlianID = DB::table('m_bidang_keahlian')->pluck('id');
+        
+        $listKeahlianTeknisID = DB::table('m_keahlian_teknis')->pluck('id');
 
         $faker = Faker::create('id_ID');
 
@@ -58,6 +61,8 @@ class LowonganMagangSeeder extends Seeder
                     'deskripsi' => $data['deskripsi'],
                     'persyaratan' => $data['persyaratan'],
                     'kuota' => $data['kuota'],
+                    'minimal_ipk' => rand(0, 4),
+                    'insentif' => rand(500000, 5000000),
                     'status' => $status,
                     'tanggal_mulai_daftar' => $tanggalMulai,
                     'tanggal_selesai_daftar' => $tanggalMulai->copy()->addDays(14),
@@ -76,6 +81,14 @@ class LowonganMagangSeeder extends Seeder
                     DB::table('t_keahlian_lowongan_kerja')->insert([
                         'lowongan_magang_id' => $lowongan_magang_id,
                         'bidang_keahlian_id' => $listBidangKeahlianID->random(),
+                    ]);
+                }
+                
+                for ($i = 0; $i < SeederCounts::KEAHLIAN_TEKNIS_MAGANG; $i++) {
+                    DB::table('t_keahlian_teknis_lowongan')->insert([
+                        'lowongan_magang_id' => $lowongan_magang_id,
+                        'keahlian_teknis_id' => $listKeahlianTeknisID->random(),
+                        'level' => $faker->randomElement(LevelTeknis::cases()),
                     ]);
                 }
             }

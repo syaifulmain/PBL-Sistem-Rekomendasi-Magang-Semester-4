@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('t_dokumen_lowongan_magang', function (Blueprint $table) {
+        Schema::create('t_keahlian_teknis_lowongan', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lowongan_magang_id')->constrained('t_lowongan_magang')->onDelete('cascade');
-            $table->foreignId('jenis_dokumen_id')->constrained('m_jenis_dokumen')->onDelete('restrict');
-            $table->timestamps();
+            $table->foreignId('keahlian_teknis_id')->constrained('m_keahlian_teknis')->onDelete('restrict');
+            $table->enum('level', ['pemula', 'senior', 'ahli']);
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('t_dokumen_lowongan_magang');
+        Schema::dropIfExists('t_keahlian_teknis_lowongan');
     }
 };

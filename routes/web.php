@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\LowonganMagangController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
@@ -25,10 +26,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [\App\Http\Controllers\IndexController::class, 'index'])->name('index');
-
-Route::get('landing', function () {
-    return view('landing.index');
-});
 
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postLogin']);
@@ -63,6 +60,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
             Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
         });
+
         Route::prefix('program-studi')->name('program-studi.')->group(function () {
             Route::get('/', [ProgramStudiController::class, 'index'])->name('index');
             Route::get('/create', [ProgramStudiController::class, 'create'])->name('create');
@@ -78,6 +76,21 @@ Route::middleware('auth')->group(function () {
                 Route::get('/', [ProfilAdminModel::class, 'editInformasiPengguna'])->name('index');
                 Route::post('/update', [ProfilAdminModel::class, 'updateInformasiPengguna'])->name('update');
             });
+        });
+
+        Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function(){
+            Route::get('/', [LowonganMagangController::class, 'index'])->name('index');
+            Route::get('/create', [LowonganMagangController::class, 'create'])->name('create');
+            Route::post('/create', [LowonganMagangController::class, 'store']);
+            Route::get('/{id}/detail', [LowonganMagangController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [LowonganMagangController::class, 'edit'])->name('edit');
+            Route::put('/{id}/edit', [LowonganMagangController::class, 'update']);
+            Route::delete('/{id}/delete', [LowonganMagangController::class, 'destroy'])->name('delete');
+            Route::get('/perusahaan', [LowonganMagangController::class, 'getPerusahaan'])->name('perusahaan');
+            Route::get('/periode-magang', [LowonganMagangController::class, 'getPeriodeMagang'])->name('periode-magang');
+            Route::get('/keahlian', [LowonganMagangController::class, 'getKeahlian'])->name('keahlian');
+            Route::get('/dokumen', [LowonganMagangController::class, 'getDokumen'])->name('dokumen');
+            Route::get('/teknis', [LowonganMagangController::class, 'getKeahlianTeknis'])->name('teknis');
         });
     });
 

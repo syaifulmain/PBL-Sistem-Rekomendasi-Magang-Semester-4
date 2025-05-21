@@ -4,8 +4,8 @@
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $page->title ?? $title ?? 'INI TITLE PAGE' }}</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/feather/feather.css')}}">
@@ -16,9 +16,12 @@
     <!-- endinject -->
     <!-- Plugin css for this page -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+    <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.responsive.min.css')}}"/>
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/js/select.dataTables.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/select2/select2.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/css/vertical-layout-light/style.css')}}">
@@ -64,8 +67,17 @@
                     </div>
                 @endif
 
-                @yield('content')
+               <!-- Spinner -->
+                <div id="loading-spinner" style="position: relative; top: 40%; left: 0; right: 0; text-align: center;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
 
+                <!-- Konten -->
+                <div id="main-content" style="display: none;">
+                    @yield('content')
+                </div>
             </div>
             <!-- content-wrapper ends -->
             @include('layouts.footer')
@@ -83,8 +95,10 @@
 <script src="{{asset('skydash-v.01/vendors/chart.js/Chart.min.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/datatables.net/jquery.dataTables.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
+<script src="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.responsive.min.js')}}"></script>
 <script src="{{asset('skydash-v.01/js/dataTables.select.min.js')}}"></script>
 <script src="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
+<script src="{{asset('skydash-v.01/vendors/select2/select2.min.js')}}"></script>
 
 <!-- End plugin js for this page -->
 <!-- inject:js -->
@@ -108,6 +122,11 @@
 <script src="{{ asset('assets/plugins/jquery-validation/localization/messages_id.js') }}"></script>
 
 <script>
+    $(function () {
+        $('#loading-spinner').hide();
+        $('#main-content').show();
+    })
+
     $('.datepicker').datepicker({
         format: 'yyyy-mm-dd',
         autoclose: true,

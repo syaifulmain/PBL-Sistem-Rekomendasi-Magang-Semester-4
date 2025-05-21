@@ -29,6 +29,7 @@ class SeederCounts
         ];
     public const PERIODE_MAGANG = 6; // jumlah lowongan PERUSAHAAN * PERIODE_MAGANG
     public const KEAHLIAN_LOWONGAN_MAGANG = 3;
+    public const KEAHLIAN_TEKNIS_MAGANG = 3;
     public const MINAT_USER = 3;
     public const PREFRENSI_LOKASI_USER = 3;
 }

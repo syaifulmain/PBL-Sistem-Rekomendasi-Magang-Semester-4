@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,16 @@ class AuthController extends Controller
 {
     public function login()
     {
+        $user = Auth::user();
+        if ($user) {
+            $role = $user->level;
+
+            return match ($role) {
+                UserRole::ADMIN     => redirect()->route('admin.dashboard'),
+                UserRole::DOSEN     => redirect()->route('dosen.dashboard'),
+                UserRole::MAHASISWA => redirect()->route('mahasiswa.dashboard'),
+            };
+        }
         return view('auth.login');
     }
 
@@ -30,7 +41,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('index');
+
+            $user = Auth::user();
+            $role = $user->level;
+
+            return match ($role) {
+                UserRole::ADMIN     => redirect()->route('admin.dashboard'),
+                UserRole::DOSEN     => redirect()->route('dosen.dashboard'),
+                UserRole::MAHASISWA => redirect()->route('mahasiswa.dashboard'),
+            };
         }
 
         return redirect()->back()

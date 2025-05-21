@@ -61,7 +61,7 @@
                 <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
             </nav>
 
-            <a class="btn-getstarted" href="#about">Login</a>
+            <a class="btn-getstarted" href="/login">Login</a>
 
         </div>
         <style>
@@ -165,7 +165,7 @@
                             <span>Ullamco laboris nisi ut aliquip ex ea commodo</span></li>
                     </ul> -->
                         <div class="col-lg-6" data-aos="fade-up" data-aos-delay="200">
-                            <a href="#" class="read-more"><span><strong>Get Started</strong></span></a>
+                            <a href="/login" class="read-more"><span><strong>Get Started</strong></span></a>
                         </div>
 
                     </div>
