@@ -36,7 +36,7 @@
         @if($data->teknis->count() > 0)
             <ul>
                 @foreach($data->teknis as $teknis)
-                    <li>{{ $teknis->nama }}</li>
+                    <li>{{ $teknis->nama }} ({{ $teknis->pivot->level }})</li>
                 @endforeach
             </ul>
         @else
