@@ -121,31 +121,38 @@
                     <p class="card-title mb-0">GANTI PASSWORD</p>
                 </div>
                 <hr>
-                <div class="form-group">
-                    <label>Password Saat Ini</label>
-                    <input type="password" name="current_password" id="current_password" class="form-control"
-                           required>
-                    @error('current_password')
-                    <small id="error-current_password"
-                           class="error-text form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                <div class="form-group">
-                    <label>Password Baru</label>
-                    <input type="password" name="password" id="password" class="form-control" required>
-                    @error('password')
-                    <small id="error-password" class="error-text form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
-                <div class="form-group">
-                    <label>Konfirmasi Password Baru</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation"
-                           class="form-control" required>
-                    @error('password_confirmation')
-                    <small id="error-password_confirmation"
-                           class="error-text form-text text-danger">{{ $message }}</small>
-                    @enderror
-                </div>
+                <form action="{{route('password.update') }}" method="POST" id="ganti-passeord">
+                    @csrf
+                    @method('PUT')
+                    <div class="form-group">
+                        <label>Password Saat Ini</label>
+                        <input type="password" name="current_password" id="current_password" class="form-control"
+                               required>
+                        @error('current_password')
+                        <small id="error-current_password"
+                               class="error-text form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Password Baru</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                        @error('password')
+                        <small id="error-password" class="error-text form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label>Konfirmasi Password Baru</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation"
+                               class="form-control" required>
+                        @error('password_confirmation')
+                        <small id="error-password_confirmation"
+                               class="error-text form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

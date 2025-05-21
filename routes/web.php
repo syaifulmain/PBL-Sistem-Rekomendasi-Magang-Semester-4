@@ -180,6 +180,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
+    Route::get('password/reset/{id}', [UserController::class, 'resetPassword'])->name('password.reset');
 
     Route::prefix('dokumen')->name('dokumen.')->group(function () {
         Route::post('upload-dokumen-user', [\App\Http\Controllers\DokumenUserController::class, 'storeDokumenUser'])->name('upload-dokumen-user');
