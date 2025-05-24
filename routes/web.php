@@ -2,15 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FileController;
 use App\Http\Controllers\LowonganMagangController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProgramStudiController;
-use App\Http\Controllers\ProfilAdminModel;
-use App\Http\Controllers\ProfilDosenController;
-use App\Http\Controllers\ProfilMahasiswaController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -70,13 +67,6 @@ Route::middleware('auth')->group(function () {
             Route::delete('/delete/{id}', [ProgramStudiController::class, 'destroy'])->name('delete');
 
         });
-        Route::prefix('profil')->name('profil.')->group(function () {
-            Route::get('/', [ProfilAdminModel::class, 'index'])->name('index');
-            Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
-                Route::get('/', [ProfilAdminModel::class, 'editInformasiPengguna'])->name('index');
-                Route::post('/update', [ProfilAdminModel::class, 'updateInformasiPengguna'])->name('update');
-            });
-        });
 
         Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function(){
             Route::get('/', [LowonganMagangController::class, 'index'])->name('index');
@@ -97,86 +87,59 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:DOSEN')->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('profil')->name('profil.')->group(function () {
-
-            Route::get('/', [ProfilDosenController::class, 'index'])->name('index');
-
-            Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
-                Route::get('/', [ProfilDosenController::class, 'editInformasiPengguna'])->name('index');
-                Route::post('/update', [ProfilDosenController::class, 'updateInformasiPengguna'])->name('update');
-            });
-
-            Route::prefix('informasi-detail')->name('informasi-detail.')->group(function () {
-                Route::get('/', [ProfilDosenController::class, 'editInformasiDetail'])->name('index');
-                Route::post('/update', [ProfilDosenController::class, 'updateInformasiDetail'])->name('update');
-            });
-
-            Route::prefix('minat')->name('minat.')->group(function () {
-                Route::get('/', [ProfilDosenController::class, 'editMinat'])->name('index');
-                Route::post('/store', [ProfilDosenController::class, 'storeMinat'])->name('store');
-                Route::delete('/{id}/delete', [ProfilDosenController::class, 'destroyMinat'])->name('delete');
-            });
-
-            Route::prefix('preferensi-lokasi')->name('preferensi-lokasi.')->group(function () {
-                Route::get('/', [ProfilDosenController::class, 'editPrefrensiLokasi'])->name('index');
-                Route::post('/store', [ProfilDosenController::class, 'storePreferensiLokasi'])->name('store');
-                Route::delete('/{id}/delete', [ProfilDosenController::class, 'destroyPreferensiLokasi'])->name('delete');
-            });
-
-            Route::prefix('dokumen')->name('dokumen.')->group(function () {
-                Route::get('/', [ProfilDosenController::class, 'tambahDokumen'])->name('index');
-                Route::post('/store', [ProfilDosenController::class, 'storeDokumen'])->name('store');
-                Route::get('/{id}/edit', [ProfilDosenController::class, 'editDokumen'])->name('edit');
-                Route::put('/{id}/update', [ProfilDosenController::class, 'updateDokumen'])->name('update');
-            });
-        });
     });
 
     Route::middleware('role:MAHASISWA')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::prefix('profil')->name('profil.')->group(function () {
 
-            Route::get('/', [ProfilMahasiswaController::class, 'index'])->name('index');
-
-            Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'editInformasiPengguna'])->name('index');
-                Route::post('/update', [ProfilMahasiswaController::class, 'updateInformasiPengguna'])->name('update');
-            });
-
-            Route::prefix('informasi-detail')->name('informasi-detail.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'editInformasiDetail'])->name('index');
-                Route::post('/update', [ProfilMahasiswaController::class, 'updateInformasiDetail'])->name('update');
-            });
-
-            Route::prefix('keahlian')->name('keahlian.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'editKeahlian'])->name('index');
-                Route::post('/store', [ProfilMahasiswaController::class, 'storeKeahlian'])->name('store');
-                Route::delete('/{id}/delete', [ProfilMahasiswaController::class, 'destroyKeahlian'])->name('delete');
-
-            });
-
-            Route::prefix('minat')->name('minat.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'editMinat'])->name('index');
-                Route::post('/store', [ProfilMahasiswaController::class, 'storeMinat'])->name('store');
-                Route::delete('/{id}/delete', [ProfilMahasiswaController::class, 'destroyMinat'])->name('delete');
-            });
-
-            Route::prefix('preferensi-lokasi')->name('preferensi-lokasi.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'editPrefrensiLokasi'])->name('index');
-                Route::post('/store', [ProfilMahasiswaController::class, 'storePreferensiLokasi'])->name('store');
-                Route::delete('/{id}/delete', [ProfilMahasiswaController::class, 'destroyPreferensiLokasi'])->name('delete');
-            });
-
-            Route::prefix('dokumen')->name('dokumen.')->group(function () {
-                Route::get('/', [ProfilMahasiswaController::class, 'tambahDokumen'])->name('index');
-                Route::post('/store', [ProfilMahasiswaController::class, 'storeDokumen'])->name('store');
-                Route::get('/{id}/edit', [ProfilMahasiswaController::class, 'editDokumen'])->name('edit');
-                Route::put('/{id}/update', [ProfilMahasiswaController::class, 'updateDokumen'])->name('update');
-            });
-        });
     });
 
     Route::middleware('role:DOSEN,MAHASISWA')->group(function () {
+    });
+
+    Route::prefix('profil')->name('profil.')->group(function () {
+        Route::get('/', [ProfilController::class, 'index'])->name('index');
+
+        Route::middleware('role:ADMIN,DOSEN,MAHASISWA')->group(function () {
+            Route::prefix('informasi-pengguna')->name('informasi-pengguna.')->group(function () {
+                Route::get('/', [ProfilController::class, 'informasiPengguna'])->name('index');
+                Route::post('/update', [ProfilController::class, 'informasiPenggunaUpdate'])->name('update');
+            });
+        });
+
+        Route::middleware('role:DOSEN,MAHASISWA')->group(function () {
+            Route::prefix('informasi-detail')->name('informasi-detail.')->group(function () {
+                Route::get('/', [ProfilController::class, 'informasiDetail'])->name('index');
+                Route::post('/update', [ProfilController::class, 'informasiDetailUpdate'])->name('update');
+            });
+
+            Route::prefix('minat')->name('minat.')->group(function () {
+                Route::get('/', [ProfilController::class, 'minat'])->name('index');
+                Route::post('/store', [ProfilController::class, 'storeMinat'])->name('store');
+                Route::delete('/{id}/delete', [ProfilController::class, 'destroyMinat'])->name('delete');
+            });
+
+            Route::prefix('preferensi-lokasi')->name('preferensi-lokasi.')->group(function () {
+                Route::get('/', [ProfilController::class, 'preferensiLokasi'])->name('index');
+                Route::post('/store', [ProfilController::class, 'storePreferensiLokasi'])->name('store');
+                Route::delete('/{id}/delete', [ProfilController::class, 'destroyPreferensiLokasi'])->name('delete');
+            });
+
+            Route::prefix('dokumen')->name('dokumen.')->group(function () {
+                Route::get('/', [ProfilController::class, 'tambahDokumen'])->name('index');
+                Route::post('/store', [ProfilController::class, 'storeDokumen'])->name('store');
+                Route::get('/{id}/edit', [ProfilController::class, 'editDokumen'])->name('edit');
+                Route::put('/{id}/update', [ProfilController::class, 'updateDokumen'])->name('update');
+            });
+        });
+
+        Route::middleware('role:MAHASISWA')->group(function () {
+            Route::prefix('keahlian')->name('keahlian.')->group(function () {
+                Route::get('/', [ProfilController::class, 'keahlian'])->name('index');
+                Route::post('/store', [ProfilController::class, 'storeKeahlian'])->name('store');
+                Route::delete('/{id}/delete', [ProfilController::class, 'destroyKeahlian'])->name('delete');
+            });
+        });
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
@@ -186,5 +149,6 @@ Route::middleware('auth')->group(function () {
         Route::post('upload-dokumen-user', [\App\Http\Controllers\DokumenUserController::class, 'storeDokumenUser'])->name('upload-dokumen-user');
         Route::put('update-dokumen-user/{id}', [\App\Http\Controllers\DokumenUserController::class, 'updateDokumenUser'])->name('update-dokumen-user');
         Route::delete('delete-dokumen-user/{id}', [\App\Http\Controllers\DokumenUserController::class, 'destroyDokumenUser'])->name('delete-dokumen-user');
+        Route::get('download-dokumen-user/{id}', [\App\Http\Controllers\DokumenUserController::class, 'downloadDokumenUser'])->name('download-dokumen-user');
     });
 });

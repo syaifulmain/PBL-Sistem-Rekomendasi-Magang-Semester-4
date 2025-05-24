@@ -34,11 +34,9 @@
                     </div>
                 </div>
             </form>
-
             <hr>
-
-            <div id="keahlian-container">
-                @include('partials.keahlian-list-mahasiswa')
+            <div id="tag-cross-delete">
+                @include('partials._tag_cross_delete')
             </div>
         </div>
     </div>
@@ -52,43 +50,20 @@
             const formData = new FormData($('#form-tambah')[0]);
 
             $.ajax({
-                url: "{{ route('mahasiswa.profil.keahlian.store') }}",
+                url: "{{ route('profil.keahlian.store') }}",
                 type: "POST",
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function(response) {
                     if (response.success) {``
-                        $('#keahlian-container').html(response.html);``
+                        $('#tag-cross-delete').html(response.html);``
                         $('#keahlian_id-hidden').val('').trigger('change');
                         $('#keahlian_id-input').val('');
                     }
                 },
                 error: function(xhr) {
                     console.error(xhr.responseText);``
-                }
-            });
-        });
-        ``
-        $(document).on('click', '.btn-delete-keahlian', function(e) {
-            e.preventDefault();
-
-            const deleteUrl = $(this).closest('form').attr('action');
-
-            $.ajax({
-                url: deleteUrl,
-                type: "POST",
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    '_method': 'DELETE'
-                },
-                success: function(response) {
-                    if (response.success) {``
-                        $('#keahlian-container').html(response.html);
-                    }
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
                 }
             });
         });

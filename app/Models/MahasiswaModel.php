@@ -17,40 +17,61 @@ class MahasiswaModel extends Model
         'nim',
         'program_studi_id',
         'angkatan',
+        'jenis_kelamin',
+        'no_telepon',
+        'ipk'
     ];
-
-    public function programStudi()
-    {
-        return $this->belongsTo(ProgramStudiModel::class, 'program_studi_id');
-    }
 
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'user_id');
     }
 
-    public function minatMahasiswa()
+    public function minat()
     {
         return $this->hasMany(MinatMahasiswaModel::class, 'mahasiswa_id');
     }
 
-    public function preferensiLokasiMahasiswa()
+    public function preferensiLokasi()
     {
         return $this->hasMany(PreferensiLokasiMahasiswa::class, 'mahasiswa_id');
     }
 
-    public function keahlianMahasiswa()
+    public function keahlian()
     {
         return $this->hasMany(KeahlianMahasiswaModel::class, 'mahasiswa_id');
     }
 
-    public function dokumenUser()
+    public function programStudi()
     {
-        return $this->hasMany(DokumenUserModel::class, 'user_id', 'user_id');
+        return $this->belongsTo(ProgramStudiModel::class, 'program_studi_id');
     }
 
-    public function getGenderName()
+    public function getProgramStudiNameAttribute()
+    {
+        return $this->programStudi ? "{$this->programStudi->jenjang} {$this->programStudi->nama}" : 'Tidak ada';
+    }
+
+    public function getGenderNameAttribute()
     {
         return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+    }
+
+    public function getDokumenWajibAttribute()
+    {
+        return JenisDokumenModel::where('default', 1)->get();
+    }
+
+    public function getDokumenTambahanAttribute()
+    {
+        return JenisDokumenModel::where('default', 0)->get();
+    }
+
+    public function getDokumenTambahan()
+    {
+        return DokumenUserModel::where('user_id', $this->user_id)
+            ->whereHas('jenisDokumen', function ($query) {
+                $query->where('default', 0);
+            })->get();
     }
 }

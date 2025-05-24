@@ -46,7 +46,7 @@
                 </a>
             </li>
         @endif
-        @if (has_any_role(['MAHASISWA', 'DOSEN']))
+        @if (has_any_role('MAHASISWA', 'DOSEN'))
             <li class="nav-item">
                 <a class="nav-link" href="pages/documentation/documentation.html">
                     <i class="icon-paper menu-icon"></i>

@@ -24,8 +24,8 @@
                 </div>
             </form>
             <hr>
-            <div id="minat-container">
-                @include('partials.minat-list-mahasiswa')
+            <div id="tag-cross-delete">
+                @include('partials._tag_cross_delete')
             </div>
         </div>
     </div>
@@ -40,39 +40,16 @@
             const formData = new FormData($('#form-tambah')[0]);
 
             $.ajax({
-                url: "{{ route('mahasiswa.profil.minat.store') }}",
+                url: "{{ route('profil.minat.store') }}",
                 type: "POST",
                 data: formData,
                 processData: false,
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
-                        $('#minat-container').html(response.html);
+                        $('#tag-cross-delete').html(response.html);
                         $('#minat_id-hidden').val('').trigger('change');
                         $('#minat_id-input').val('');
-                    }
-                },
-                error: function (xhr) {
-                    console.error(xhr.responseText);
-                }
-            });
-        });
-
-        $(document).on('click', '.btn-delete-minat', function (e) {
-            e.preventDefault();
-
-            const deleteUrl = $(this).closest('form').attr('action');
-
-            $.ajax({
-                url: deleteUrl,
-                type: "POST",
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    '_method': 'DELETE'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $('#minat-container').html(response.html);
                     }
                 },
                 error: function (xhr) {
