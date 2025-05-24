@@ -78,7 +78,7 @@
                     <img src="{{auth()->user()->getFotoProfilPath()}}" alt="profile"/>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item" href="{{ route(get_role_name().'.profil.index') }}"> <i
+                    <a class="dropdown-item" href="{{ route('profil.index') }}"> <i
                             class="ti-user text-primary"></i>
                         Profile
                     </a>

@@ -6,12 +6,9 @@
                     aria-hidden="true">&times;</span></button>
         </div>
         <div class="modal-body">
-            <form id="form-tambah" enctype="multipart/form-data" action="{{ isset($dokumen) ? route('mahasiswa.profil.dokumen.update', $dokumen->id) : route('mahasiswa.profil.dokumen.store') }}"
+            <form id="form-tambah" enctype="multipart/form-data" action="{{ isset($dokumen) ? route('profil.dokumen.update', $dokumen->id) : route('profil.dokumen.store') }}"
                   method="POST">
                 @csrf
-                @if(isset($dokumen))
-                    @method('PUT')
-                @endif
                 <div class="form-group">
                     <label for="label">Label Dokumen</label>
                     <input type="text" name="label" id="label" class="form-control"

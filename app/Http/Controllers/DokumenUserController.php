@@ -35,6 +35,8 @@ class DokumenUserController extends Controller
         $file = $request->file('file');
         $filename = time() . '_' . $file->getClientOriginalName();
         $file->move(public_path('uploads'), $filename);
+
+        return response()->json(['success' => 'Data berhasil disimpan.']);
     }
 
     public function updateDokumenUser(Request $request, $id)
@@ -62,6 +64,8 @@ class DokumenUserController extends Controller
             'nama' => $fileName,
             'path' => 'users/dokumen/'
         ]);
+
+        return response()->json(['success' => 'Data berhasil diupdate.']);
     }
 
     public function destroyDokumenUser($id)
@@ -70,5 +74,22 @@ class DokumenUserController extends Controller
         $dokumen->delete();
 
         return response()->json(['success' => 'Data berhasil dihapus.']);
+    }
+
+    public function downloadDokumenUser($id)
+    {
+        $dokumen = DokumenUserModel::findOrFail($id);
+
+        if (!$dokumen->nama) {
+            return response()->json(['error' => 'Dokumen tidak ditemukan.'], 404);
+        }
+
+        $filePath = storage_path('app/public/' . $dokumen->path . $dokumen->nama);
+
+        if (!file_exists($filePath)) {
+            return response()->json(['error' => 'File tidak ditemukan.'], 404);
+        }
+
+        return response()->download($filePath, $dokumen->nama);
     }
 }

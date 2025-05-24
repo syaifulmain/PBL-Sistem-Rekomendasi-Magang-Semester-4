@@ -12,15 +12,19 @@ class RoleHelper
         $user = Auth::user();
         if (!$user) return false;
 
-        return $user->level->value === (string) $role;
+        return $role instanceof UserRole
+            ? $user->level === $role
+            : $user->level->value === $role;
     }
 
-    public static function isAny(UserRole|array ...$roles): bool
+    public static function isAny(UserRole|string ...$roles): bool
     {
         $user = Auth::user();
         if (!$user) return false;
 
-        return in_array($user->level, $roles, true);
+        return $roles instanceof UserRole
+            ? in_array($user->level, $roles, true)
+            : in_array($user->level->value, $roles, true);
     }
 
     public static function getRoleName(): string|null

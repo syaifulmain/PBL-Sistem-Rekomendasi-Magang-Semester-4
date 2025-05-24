@@ -11,6 +11,11 @@ class MinatDosenModel extends Model
 
     protected $table = 't_minat_dosen';
 
+    protected $fillable = [
+        'dosen_id',
+        'bidang_keahlian_id',
+    ];
+
     public function bidangKeahlian()
     {
         return $this->belongsTo(BidangKeahlianModel::class, 'bidang_keahlian_id');

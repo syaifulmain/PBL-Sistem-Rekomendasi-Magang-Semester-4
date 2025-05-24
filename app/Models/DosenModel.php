@@ -22,18 +22,31 @@ class DosenModel extends Model
         return $this->belongsTo(UserModel::class, 'user_id');
     }
 
-    public function minatDosen()
+    public function minat()
     {
         return $this->hasMany(MinatDosenModel::class, 'dosen_id');
     }
 
-    public function preferensiLokasiDosen()
+    public function preferensiLokasi()
     {
         return $this->hasMany(preferensiLokasiDosenModel::class, 'dosen_id');
     }
 
-    public function getGenderName()
+    public function getGenderNameAttribute()
     {
         return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+    }
+
+    public function getDokumenTambahanAttribute()
+    {
+        return JenisDokumenModel::where('default', 0)->get();
+    }
+
+    public function getDokumenTambahan()
+    {
+        return DokumenUserModel::where('user_id', $this->user_id)
+            ->whereHas('jenisDokumen', function ($query) {
+                $query->where('default', 0);
+            })->get();
     }
 }

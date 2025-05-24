@@ -15,6 +15,7 @@ class DokumenUserModel extends Model
     protected $fillable = [
         'user_id',
         'jenis_dokumen_id',
+        'label',
         'nama',
         'path',
     ];
@@ -24,9 +25,9 @@ class DokumenUserModel extends Model
         return $this->belongsTo(JenisDokumenModel::class, 'jenis_dokumen_id', 'id');
     }
 
-    public function getJenisDokumenName()
+    public function getLabelNamaAttribute()
     {
-        return $this->jenisDokumen ? $this->jenisDokumen->nama : null;
+        return $this->label ? "{$this->label} : {$this->jenisDokumen->nama}" : $this->jenisDokumen->nama;
     }
 
     public function getDokumenPath()
