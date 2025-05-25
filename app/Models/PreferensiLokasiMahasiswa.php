@@ -10,4 +10,9 @@ class PreferensiLokasiMahasiswa extends Model
     use HasFactory;
 
     protected $table = 't_prefrensi_lokasi_mahasiswa';
+
+    protected $casts = [
+        'longitude' => 'float',
+        'latitude' => 'float',
+    ];
 }

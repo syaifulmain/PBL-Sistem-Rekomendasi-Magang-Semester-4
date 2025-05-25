@@ -13,9 +13,30 @@ class WilayahSeeder extends Seeder
      */
     public function run(): void
     {
-        $path = database_path('seeders/sql/wilayah.sql');
-        $sql = File::get($path);
+        DB::table('m_negara')->insert([
+            'id' => 1,
+            'nama' => 'Indonesia',
+            'kode' => 'ID',
+        ]);
 
-        DB::unprepared($sql);
+        $sqlPath = database_path('seeders/sql/provinsi.sql');
+        if (File::exists($sqlPath)) {
+            DB::unprepared(File::get($sqlPath));
+        }
+
+        $sqlPath = database_path('seeders/sql/kabupaten.sql');
+        if (File::exists($sqlPath)) {
+            DB::unprepared(File::get($sqlPath));
+        }
+
+        $sqlPath = database_path('seeders/sql/kecamatan.sql');
+        if (File::exists($sqlPath)) {
+            DB::unprepared(File::get($sqlPath));
+        }
+
+        $sqlPath = database_path('seeders/sql/desa.sql');
+        if (File::exists($sqlPath)) {
+            DB::unprepared(File::get($sqlPath));
+        }
     }
 }

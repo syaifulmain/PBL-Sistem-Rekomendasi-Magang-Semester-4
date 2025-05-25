@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LowonganMagangController;
+use App\Http\Controllers\mahasiswa\LowonganMagangMahasiswaController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
@@ -29,7 +30,7 @@ Route::post('login', [AuthController::class, 'postLogin']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::middleware('role:ADMIN')->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware('role:ADMIN,MAHASISWA')->prefix('admin')->name('admin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
             Route::get('/', [PerusahaanController::class, 'index'])->name('index');
@@ -87,11 +88,17 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:DOSEN')->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
     });
 
     Route::middleware('role:MAHASISWA')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function () {
+            Route::get('/', [LowonganMagangMahasiswaController::class, 'index'])->name('index');
+            Route::get('/{id}/detail', [LowonganMagangMahasiswaController::class, 'show'])->name('detail');
+
+        });
     });
 
     Route::middleware('role:DOSEN,MAHASISWA')->group(function () {

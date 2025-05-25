@@ -17,6 +17,10 @@ class KeahlianMahasiswaModel extends Model
         'level',
     ];
 
+    protected $casts = [
+        'level' => 'integer',
+    ];
+
     public function keahlianTeknis()
     {
         return $this->belongsTo(KeahlianTeknisModel::class, 'keahlian_teknis_id');

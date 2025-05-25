@@ -16,6 +16,7 @@ use App\Models\MinatMahasiswaModel;
 use App\Models\PreferensiLokasiDosen;
 use App\Models\preferensiLokasiDosenModel;
 use App\Models\PreferensiLokasiMahasiswa;
+use App\Models\ProvinsiModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -275,19 +276,32 @@ class ProfilController extends Controller
 
         if ($validated['preferensi_lokasi_id_type'] == 'provinsi') {
             $preferensiLokasi->provinsi_id = $validated['preferensi_lokasi_id'];
+            $provinsi = ProvinsiModel::find($preferensiLokasi->provinsi_id);
+            $preferensiLokasi->longitude = $provinsi->longitude;
+            $preferensiLokasi->latitude = $provinsi->latitude;
         } elseif ($validated['preferensi_lokasi_id_type'] == 'kabupaten') {
+            $kabupaten = KabupatenModel::find($validated['preferensi_lokasi_id']);
+            $preferensiLokasi->longitude = $kabupaten->longitude;
+            $preferensiLokasi->latitude = $kabupaten->latitude;
             $preferensiLokasi->kabupaten_id = $validated['preferensi_lokasi_id'];
             $provinsi_id = KabupatenModel::where('id', $validated['preferensi_lokasi_id'])->first()->provinsi_id;
             $preferensiLokasi->provinsi_id = $provinsi_id;
         } elseif ($validated['preferensi_lokasi_id_type'] == 'kecamatan') {
+            $kecamatan = KecamatanModel::find($validated['preferensi_lokasi_id']);
+            $preferensiLokasi->longitude = $kecamatan->longitude;
+            $preferensiLokasi->latitude = $kecamatan->latitude;
             $preferensiLokasi->kecamatan_id = $validated['preferensi_lokasi_id'];
             $kabupaten_id = KecamatanModel::where('id', $validated['preferensi_lokasi_id'])->first()->kabupaten_id;
             $preferensiLokasi->kabupaten_id = $kabupaten_id;
             $provinsi_id = KabupatenModel::where('id', $kabupaten_id)->first()->provinsi_id;
             $preferensiLokasi->provinsi_id = $provinsi_id;
         } elseif ($validated['preferensi_lokasi_id_type'] == 'desa') {
+
             $preferensiLokasi->desa_id = $validated['preferensi_lokasi_id'];
             $kecamatan_id = DesaModel::where('id', $validated['preferensi_lokasi_id'])->first()->kecamatan_id;
+            $kecamatan = KecamatanModel::find($kecamatan_id);
+            $preferensiLokasi->longitude = $kecamatan->longitude;
+            $preferensiLokasi->latitude = $kecamatan->latitude;
             $preferensiLokasi->kecamatan_id = $kecamatan_id;
             $kabupaten_id = KecamatanModel::where('id', $kecamatan_id)->first()->kabupaten_id;
             $preferensiLokasi->kabupaten_id = $kabupaten_id;
