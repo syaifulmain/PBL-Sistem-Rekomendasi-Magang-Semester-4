@@ -14,4 +14,9 @@ class BidangKeahlianLowonganModel extends Model
         'lowongan_magang_id',
         'bidang_keahlian_id',
     ];
+
+    public function bidangKeahlian()
+    {
+        return $this->belongsTo(BidangKeahlianModel::class, 'bidang_keahlian_id');
+    }
 }

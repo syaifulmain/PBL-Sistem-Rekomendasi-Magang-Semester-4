@@ -20,7 +20,7 @@ class LokasiPerusahaanSeeder extends Seeder
         foreach ($listPerusahaanID as $id) {
             $provinsi = DB::table('m_provinsi')->select('id', 'nama')->where('id', $listProvinsiID->random())->first();
             $kabupaten = DB::table('m_kabupaten')->select('id', 'provinsi_id', 'nama')->where('provinsi_id', $provinsi->id)->inRandomOrder()->first();
-            $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
+            $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama', 'longitude', 'latitude')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
             $desa = DB::table('m_desa')->select('id', 'kecamatan_id', 'nama')->where('kecamatan_id', $kecamatan->id)->inRandomOrder()->first();
 
             DB::table('m_lokasi_perusahaan')->insert([
@@ -30,6 +30,8 @@ class LokasiPerusahaanSeeder extends Seeder
                 'kabupaten_id' => $kabupaten->id,
                 'kecamatan_id' => $kecamatan->id,
                 'desa_id' => $desa->id,
+                'longitude' => $kecamatan->longitude,
+                'latitude' => $kecamatan->latitude,
             ]);
 
             DB::table('m_perusahaan')->where('id', $id)->update([

@@ -20,4 +20,9 @@ class LokasiPerusahaanModel extends Model
         'desa_id',
         'alamat'
     ];
+
+    protected $casts = [
+        'longitude' => 'float',
+        'latitude' => 'float',
+    ];
 }

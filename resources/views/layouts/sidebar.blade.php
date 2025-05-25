@@ -46,6 +46,14 @@
                 </a>
             </li>
         @endif
+        @if (has_role('MAHASISWA'))
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('mahasiswa.lowongan-magang.index')}}">
+                    <i class="mdi mdi-bag-checked menu-icon"></i>
+                    <span class="menu-title">Lowongan Magang</span>
+                </a>
+            </li>
+        @endif
         @if (has_any_role('MAHASISWA', 'DOSEN'))
             <li class="nav-item">
                 <a class="nav-link" href="pages/documentation/documentation.html">

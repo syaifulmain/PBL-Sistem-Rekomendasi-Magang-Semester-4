@@ -21,7 +21,7 @@ class PrefrensiLokasiUserSeeder extends Seeder
             for ($i = 0; $i < SeederCounts::PREFRENSI_LOKASI_USER; $i++) {
                 $provinsi = DB::table('m_provinsi')->select('id', 'nama')->where('id', $listProvinsiID->random())->first();
                 $kabupaten = DB::table('m_kabupaten')->select('id', 'provinsi_id', 'nama')->where('provinsi_id', $provinsi->id)->inRandomOrder()->first();
-                $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
+                $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama', 'longitude', 'latitude')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
                 $desa = DB::table('m_desa')->select('id', 'kecamatan_id', 'nama')->where('kecamatan_id', $kecamatan->id)->inRandomOrder()->first();
 
                 DB::table('t_prefrensi_lokasi_mahasiswa')->insert([
@@ -31,6 +31,8 @@ class PrefrensiLokasiUserSeeder extends Seeder
                     'kabupaten_id' => $kabupaten->id,
                     'kecamatan_id' => $kecamatan->id,
                     'desa_id' => $desa->id,
+                    'longitude' => $kecamatan->longitude,
+                    'latitude' => $kecamatan->latitude,
                     'nama_tampilan' => "{$desa->nama}, {$kecamatan->nama}, {$kabupaten->nama}, {$provinsi->nama}, INDONESIA"
                 ]);
             }
@@ -40,7 +42,7 @@ class PrefrensiLokasiUserSeeder extends Seeder
             for ($i = 0; $i < SeederCounts::PREFRENSI_LOKASI_USER; $i++) {
                 $provinsi = DB::table('m_provinsi')->select('id', 'nama')->where('id', $listProvinsiID->random())->first();
                 $kabupaten = DB::table('m_kabupaten')->select('id', 'provinsi_id', 'nama')->where('provinsi_id', $provinsi->id)->inRandomOrder()->first();
-                $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
+                $kecamatan = DB::table('m_kecamatan')->select('id', 'kabupaten_id', 'nama', 'longitude', 'latitude')->where('kabupaten_id', $kabupaten->id)->inRandomOrder()->first();
                 $desa = DB::table('m_desa')->select('id', 'kecamatan_id', 'nama')->where('kecamatan_id', $kecamatan->id)->inRandomOrder()->first();
 
                 DB::table('t_prefrensi_lokasi_dosen')->insert([
@@ -50,6 +52,8 @@ class PrefrensiLokasiUserSeeder extends Seeder
                     'kabupaten_id' => $kabupaten->id,
                     'kecamatan_id' => $kecamatan->id,
                     'desa_id' => $desa->id,
+                    'longitude' => $kecamatan->longitude,
+                    'latitude' => $kecamatan->latitude,
                     'nama_tampilan' => "{$desa->nama}, {$kecamatan->nama}, {$kabupaten->nama}, {$provinsi->nama}, INDONESIA"
                 ]);
             }
