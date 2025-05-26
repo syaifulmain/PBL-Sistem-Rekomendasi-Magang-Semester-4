@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KecamatanModel;
 use App\Models\LokasiPerusahaanModel;
 use App\Models\PerusahaanModel;
 use Illuminate\Http\Request;
@@ -122,7 +123,9 @@ class PerusahaanController extends Controller
                 'kabupaten_id' => $request->input('kabupaten_id'),
                 'kecamatan_id' => $request->input('kecamatan_id'),
                 'desa_id' => $request->input('desa_id'),
-                'alamat' => $request->input('alamat')
+                'alamat' => $request->input('alamat'),
+                'longitude' => KecamatanModel::find($request->input('kecamatan_id'))->longitude ?? null,
+                'latitude' => KecamatanModel::find($request->input('kecamatan_id'))->latitude ?? null
             ]);
             DB::commit();
 

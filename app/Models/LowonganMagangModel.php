@@ -26,6 +26,10 @@ class LowonganMagangModel extends Model
         'status',
     ];
 
+    protected $casts = [
+        'minimal_ipk' => 'float',
+    ];
+
     public function perusahaan()
     {
         return $this->belongsTo(PerusahaanModel::class, 'perusahaan_id');
@@ -47,4 +51,48 @@ class LowonganMagangModel extends Model
     public function teknis() {
         return $this->belongsToMany(KeahlianTeknisModel::class, 't_keahlian_teknis_lowongan', 'lowongan_magang_id', 'keahlian_teknis_id')->withPivot('level');
     }
+
+    public function bidangKeahlianLowongan()
+    {
+        return $this->hasMany(BidangKeahlianLowonganModel::class, 'lowongan_magang_id');
+    }
+
+    public function keahlianTeknisLowongan()
+    {
+        return $this->hasMany(KeahlianTeknisLowonganModel::class, 'lowongan_magang_id');
+    }
+
+
+
+    public function getNamaPerusahaan()
+    {
+        return $this->perusahaan ? $this->perusahaan->nama : 'Tidak ada';
+    }
+
+    public function getKeahlian(): array
+    {
+        return $this->bidangKeahlianLowongan->pluck('bidangKeahlian.nama')->toArray();
+    }
+
+    public function getKeahlianTeknis() :array
+    {
+        $levelMap = [
+            'pemula' => 1,
+            'senior' => 2,
+            'ahli' => 3,
+        ];
+        return $this->keahlianTeknisLowongan->mapWithKeys(function ($item) use ($levelMap) {
+            $level = $levelMap[strtolower($item->level)] ?? null;
+            return [$item->keahlianTeknis->nama => $level];
+        })->toArray();
+    }
+
+    public function getCorLokasi()
+    {
+        return [
+            'latitude' => $this->perusahaan?->lokasi?->latitude,
+            'longitude' => $this->perusahaan?->lokasi?->longitude,
+        ];
+    }
+
 }

@@ -18,4 +18,9 @@ class PerusahaanModel extends Model
         'email',
         'no_telepon'
     ];
+
+    public function lokasi()
+    {
+        return $this->hasOne(LokasiPerusahaanModel::class, 'perusahaan_id');
+    }
 }

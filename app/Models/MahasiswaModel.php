@@ -22,6 +22,10 @@ class MahasiswaModel extends Model
         'ipk'
     ];
 
+    protected $casts = [
+        'ipk' => 'float',
+    ];
+
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'user_id');
@@ -74,4 +78,26 @@ class MahasiswaModel extends Model
                 $query->where('default', 0);
             })->get();
     }
+
+    public function getAllMinat()
+    {
+        return $this->minat->pluck('bidangKeahlian.nama')->toArray();
+    }
+
+    public function getAllKeahlian()
+    {
+        return $this->keahlian->pluck('level', 'keahlianTeknis.nama')->toArray();
+    }
+
+    public function getAllCorPreferensiLokasi()
+    {
+        return $this->preferensiLokasi->map(function ($item) {
+            return [
+                'nama' => $item->nama_tampilan,
+                'latitude' => $item->latitude,
+                'longitude' => $item->longitude,
+            ];
+        })->toArray();
+    }
+
 }

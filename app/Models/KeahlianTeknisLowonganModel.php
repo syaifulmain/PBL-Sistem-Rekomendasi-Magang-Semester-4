@@ -14,4 +14,9 @@ class KeahlianTeknisLowonganModel extends Model
         'lowongan_magang_id',
         'keahlian_teknis_id',
     ];
+
+    public function keahlianTeknis()
+    {
+        return $this->belongsTo(KeahlianTeknisModel::class, 'keahlian_teknis_id');
+    }
 }
