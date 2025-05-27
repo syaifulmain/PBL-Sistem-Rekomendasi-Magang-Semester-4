@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LowonganMagangController;
 use App\Http\Controllers\mahasiswa\LowonganMagangMahasiswaController;
 use App\Http\Controllers\ManajemenPenggunaController;
+use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\PeriodeMagangController;
 use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ProfilController;
@@ -97,7 +98,16 @@ Route::middleware('auth')->group(function () {
         Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function () {
             Route::get('/', [LowonganMagangMahasiswaController::class, 'index'])->name('index');
             Route::get('/{id}/detail', [LowonganMagangMahasiswaController::class, 'show'])->name('detail');
+        });
 
+        Route::prefix('pengajuan-magang')->name('pengajuan-magang.')->group(function(){
+            Route::get('/', [PengajuanMagangController::class, 'index'])->name('index');
+            Route::get('/create', [PengajuanMagangController::class, 'create'])->name('create');
+            Route::post('/create', [PengajuanMagangController::class, 'store']);
+            Route::get('/{id}/detail', [PengajuanMagangController::class, 'show'])->name('show');
+            Route::delete('/{id}/delete', [PengajuanMagangController::class, 'destroy'])->name('delete');
+            Route::get('/data-lowongan', [PengajuanMagangController::class, 'getLowongan'])->name('data-lowongan');
+            Route::get('/data-lowongan-dokumen/{id}', [PengajuanMagangController::class, 'getLowonganDokumen'])->name('data-lowongan-dokumen');
         });
     });
 

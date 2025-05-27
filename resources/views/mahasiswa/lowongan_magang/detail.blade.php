@@ -48,6 +48,6 @@
         <p>-</p>
     @endif
 
-    <a href="#" class="btn btn-primary mt-3">Melamar</a>
+    <a href="{{ route('mahasiswa.pengajuan-magang.create') }}?lowongan_id={{ $data->id }}" class="btn btn-primary mt-3">Melamar</a>
     <a href="#" class="btn btn-outline-primary mt-3">Simpan</a>
 </div>
