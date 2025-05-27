@@ -16,7 +16,7 @@ class PengajuanMagangController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan']);
+            $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])->where('mahasiswa_id', auth()->user()->mahasiswa->id);
 
             return DataTables::of($data)
                 ->addColumn('judul_lowongan', fn($row) => $row->lowongan->judul)
