@@ -40,9 +40,15 @@
         @endif
         @if (has_role('DOSEN'))
             <li class="nav-item">
-                <a class="nav-link" href="pages/documentation/documentation.html">
+                <a class="nav-link" href="#">
                     <i class="icon-paper menu-icon"></i>
                     <span class="menu-title">DOSEN</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('dosen.bimbingan-magang.index')}}">
+                    <i class="mdi mdi-account-multiple menu-icon"></i>
+                    <span class="menu-title">Bimbingan Magang</span>
                 </a>
             </li>
         @endif
@@ -57,6 +63,12 @@
                  <a class="nav-link" href="{{ route('mahasiswa.pengajuan-magang.index') }}">
                     <i class="mdi mdi-clipboard-text menu-icon"></i>
                     <span class="menu-title">Pengajuan Magang</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{route('mahasiswa.evaluasi-magang.index')}}">
+                    <i class="mdi mdi mdi-briefcase-check  menu-icon"></i>
+                    <span class="menu-title">Magang</span>
                 </a>
             </li>
         @endif
