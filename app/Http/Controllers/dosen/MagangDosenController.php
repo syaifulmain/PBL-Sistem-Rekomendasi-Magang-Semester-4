@@ -41,7 +41,7 @@ class MagangDosenController extends Controller
                 ->editColumn('kendala', fn($row) => $row->kendala)
                 ->editColumn('keterangan', fn($row) => $row->keterangan)
                 ->addColumn('action', function ($row) use ($statusMagang) {
-                    $deleteUrl = route('mahasiswa.evaluasi-magang.monitoring.log.delete', $row->id);
+                    $deleteUrl = route('dosen.bimbingan-magang.monitoring.log.delete', $row->id);
 
                     $lihatBtn = '';
                     if ($row->dokumentasi) {
