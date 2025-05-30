@@ -39,7 +39,7 @@ class MagangModel extends Model
 
     public function getSisaWaktuMangangAttribute()
     {
-        $tanggalAkhir = Carbon::parse($this->tanggal_akhir);
+        $tanggalAkhir = Carbon::parse($this->tanggal_selesai);
         $selisih = $tanggalAkhir->diffInDays(now(), false);
         return $selisih > 0 ? $selisih : 0;
     }
