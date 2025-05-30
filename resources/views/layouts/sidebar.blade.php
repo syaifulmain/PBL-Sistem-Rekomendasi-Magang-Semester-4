@@ -40,7 +40,7 @@
         @endif
         @if (has_role('DOSEN'))
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" aria-disabled="true">
                     <i class="icon-paper menu-icon"></i>
                     <span class="menu-title">DOSEN</span>
                 </a>
