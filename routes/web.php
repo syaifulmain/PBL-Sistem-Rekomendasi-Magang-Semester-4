@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\dosen\MagangDosenController;
 use App\Http\Controllers\LowonganMagangController;
 use App\Http\Controllers\mahasiswa\LowonganMagangMahasiswaController;
+use App\Http\Controllers\mahasiswa\MagangMahasiswaController;
 use App\Http\Controllers\ManajemenPenggunaController;
 use App\Http\Controllers\PengajuanMagangController;
 use App\Http\Controllers\PeriodeMagangController;
@@ -89,7 +91,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:DOSEN')->prefix('dosen')->name('dosen.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-
+        Route::prefix('bimbingan-magang')->name('bimbingan-magang.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\dosen\MagangDosenController::class, 'index'])->name('index');
+            Route::get('/{id}/monitoring', [\App\Http\Controllers\dosen\MagangDosenController::class, 'monitoring'])->name('monitoring');
+            Route::post('/{id}/monitoring/store', [\App\Http\Controllers\dosen\MagangDosenController::class, 'storeEvaluasiBimbingan'])->name('monitoring.store');
+            Route::delete('/{id}/monitoring/delete', [\App\Http\Controllers\dosen\MagangDosenController::class, 'destroyEvaluasiBimbingan'])->name('monitoring.delete');
+            Route::get('/{id}/download-pdf', [MagangDosenController::class, 'downloadPdf'])->name('logbook.download.pdf');
+        });
     });
 
     Route::middleware('role:MAHASISWA')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
@@ -108,6 +116,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{id}/delete', [PengajuanMagangController::class, 'destroy'])->name('delete');
             Route::get('/data-lowongan', [PengajuanMagangController::class, 'getLowongan'])->name('data-lowongan');
             Route::get('/data-lowongan-dokumen/{id}', [PengajuanMagangController::class, 'getLowonganDokumen'])->name('data-lowongan-dokumen');
+        });
+
+        Route::prefix('evaluasi-magang')->name('evaluasi-magang.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\mahasiswa\MagangMahasiswaController::class, 'index'])->name('index');
+            Route::get('/{id}/monitoring', [\App\Http\Controllers\mahasiswa\MagangMahasiswaController::class, 'monitoring'])->name('monitoring');
+            Route::post('/{id}/monitoring/log/store', [\App\Http\Controllers\mahasiswa\MagangMahasiswaController::class, 'storeLogMagang'])->name('monitoring.log.store');
+            Route::delete('/{id}/monitoring/log/delete', [\App\Http\Controllers\mahasiswa\MagangMahasiswaController::class, 'destroyLogMagang'])->name('monitoring.log.delete');
+            Route::get('/{id}/download-pdf', [MagangMahasiswaController::class, 'downloadPdf'])->name('logbook.download.pdf');
+            Route::post('/{id}/evaluasi/store', [\App\Http\Controllers\mahasiswa\MagangMahasiswaController::class, 'storeEvaluasiMagang'])->name('evaluasi.store');
         });
     });
 

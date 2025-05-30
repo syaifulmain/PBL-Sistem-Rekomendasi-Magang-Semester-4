@@ -31,4 +31,9 @@ class PengajuanMagangModel extends Model
     {
         return $this->hasMany(DokumenPengajuanModel::class, 'pengajuan_magang_id');
     }
+
+    public function magang()
+    {
+        return $this->hasOne(MagangModel::class, 'pengajuan_magang_id');
+    }
 }

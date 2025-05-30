@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('aktivitas');
             $table->text('kendala')->nullable();
             $table->text('keterangan')->nullable();
+            $table->string('dokumentasi')->nullable();
             $table->timestamps();
         });
     }

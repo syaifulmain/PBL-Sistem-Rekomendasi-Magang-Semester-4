@@ -49,11 +49,17 @@ class MahasiswaSeeder extends Seeder
                 ],
             ]);
 
+            $dokumen = [
+                "dokumen_pdf.pdf",
+                "dokumen_word.docx",
+                "image.jpg",
+            ];
+
             foreach ($listJenisDokumenID as $jenisDokumenID) {
                 DB::table('t_dokumen_user')->insert([
                     'user_id' => $id,
                     'jenis_dokumen_id' => $jenisDokumenID,
-                    'nama' => $faker->uuid() . '.pdf',
+                    'nama' => $faker->randomElement($dokumen),
                     'path' => 'users/dokumen/'
                 ]);
             }
