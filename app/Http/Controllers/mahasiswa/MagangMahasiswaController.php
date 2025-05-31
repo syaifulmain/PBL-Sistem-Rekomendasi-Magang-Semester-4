@@ -12,18 +12,65 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MagangMahasiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $data = PengajuanMagangModel::where('mahasiswa_id', auth()->user()->mahasiswa->id)
             ->where('status', '=', 'disetujui')
+            ->orderBy('status', 'asc')
             ->get();
+
+        if ($request->ajax()) {
+            return DataTables::of($data)
+                ->addColumn('action', function ($row) {
+                    $judul = $row->lowongan->judul ?? '-';
+                    $perusahaan = $row->lowongan->perusahaan->nama ?? '-';
+                    $statusMagang = $row->magang->status ?? '-';
+                    $periodeMagang = $row->lowongan->periodeMagang->nama ?? '-';
+                    $badgeClass = $statusMagang === 'selesai' ? 'success' : 'warning';
+                    $icon = $statusMagang === 'selesai' ? 'check-circle' : 'clock';
+                    $sisaWaktu = $statusMagang === 'aktif' ? ($row->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') : '';
+                    $dosen = $row->magang->dosen->nama ?? '-';
+                    $route = route('mahasiswa.evaluasi-magang.monitoring', $row->id);
+
+                    return '
+                    <a href="' . $route . '" class="text-decoration-none text-dark">
+                        <div class="card mb-3 card-hover cursor-pointer">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h3 class="mb-2 font-weight-bold">' . $judul . '</h3>
+                                        <h5 class="mb-2 opacity-90">
+                                            <i class="mdi mdi-city mr-2"></i>' . $perusahaan . '
+                                        </h5>' .
+                        ($statusMagang === 'aktif' ? '
+                                        <p class="mb-2">
+                                            <i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '
+                                        </p>' : '') . '
+                                        <p class="mb-0">
+                                            <i class="mdi mdi-tie mr-2"></i> Pembimbing: ' . $dosen . '
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
+                                        <span class="badge badge-' . $badgeClass . ' badge-lg px-3 py-2 mb-2">
+                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . ucfirst($statusMagang) . '
+                                        </span>
+                                        <p class="mb-0">' . $periodeMagang . '</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
 
         $breadcrumb = (object)[
             'title' => 'Magang Mahasiswa',
             'list' => ['Magang']
         ];
         $page = (object)[
-            'title' => 'Managemen Magang Mahasiswa'
+            'title' => 'Manajemen Magang Mahasiswa'
         ];
 
         return view('mahasiswa.magang.index', compact('breadcrumb', 'page', 'data'));

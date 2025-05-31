@@ -12,9 +12,67 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MagangDosenController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = MagangModel::where('dosen_id', auth()->user()->dosen->id)->get();
+        $data = MagangModel::where('dosen_id', auth()->user()->dosen->id)
+            ->orderBy('status', 'asc')
+            ->get();
+
+        if ($request->ajax()) {
+            return DataTables::of($data)
+                ->addColumn('mahasiswa', function ($row) {
+                    return $row->pengajuanMagang->mahasiswa->nama . ' ' .$row->pengajuanMagang->mahasiswa->nim;
+                })
+                ->addColumn('lowongan', function ($row) {
+                    return $row->pengajuanMagang->lowongan->judul;
+                })
+                ->addColumn('perusahaan', function ($row) {
+                    return $row->pengajuanMagang->lowongan->perusahaan->nama;
+                })
+                ->addColumn('status', function ($row) {
+                    return $row->status . ' ' . $row->pengajuanMagang->lowongan->periodeMagang->nama;
+                })
+                ->addColumn('action', function ($row) {
+                    $url = route('dosen.bimbingan-magang.monitoring', $row->pengajuanMagang->id);
+                    $judul = $row->pengajuanMagang->lowongan->judul;
+                    $perusahaan = $row->pengajuanMagang->lowongan->perusahaan->nama;
+                    $mahasiswa = $row->pengajuanMagang->mahasiswa->nama;
+                    $nim = $row->pengajuanMagang->mahasiswa->nim;
+                    $status = $row->status;
+                    $periode = $row->pengajuanMagang->lowongan->periodeMagang->nama;
+                    $sisaWaktu = $status === 'aktif' ? $row->getSisaWaktuMangangAttribute() . ' hari tersisa' : '';
+                    $badgeClass = $status === 'selesai' ? 'success' : 'warning';
+                    $icon = $status === 'selesai' ? 'check-circle' : 'clock';
+
+                    return '
+                    <a href="' . $url . '" class="text-decoration-none text-dark">
+                        <div class="card card-hover cursor-pointer">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <h3 class="mb-2 font-weight-bold">' . $judul . '</h3>
+                                        <h5 class="mb-2 opacity-90">
+                                            <i class="mdi mdi-city mr-2"></i>' . $perusahaan . '
+                                        </h5>' .
+                        ($status === 'aktif' ? '<p class="mb-2"><i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '</p>' : '') . '
+                                        <p class="mb-0">
+                                            <i class="mdi mdi-account mr-2"></i> ' . $mahasiswa . ' (' . $nim . ')
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
+                                        <span class="badge badge-' . $badgeClass . ' badge-lg px-3 py-2 mb-2">
+                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . ucfirst($status) . '
+                                        </span>
+                                        <p class="mb-0">' . $periode . '</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
 
         $breadcrumb = (object)[
             'title' => 'Bimbingan Magang Mahasiswa',
@@ -41,7 +99,6 @@ class MagangDosenController extends Controller
                 ->editColumn('kendala', fn($row) => $row->kendala)
                 ->editColumn('keterangan', fn($row) => $row->keterangan)
                 ->addColumn('action', function ($row) use ($statusMagang) {
-                    $deleteUrl = route('dosen.bimbingan-magang.monitoring.log.delete', $row->id);
 
                     $lihatBtn = '';
                     if ($row->dokumentasi) {

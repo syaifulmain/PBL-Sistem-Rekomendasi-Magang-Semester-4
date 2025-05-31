@@ -7,41 +7,10 @@
             </div>
         </div>
     @else
-        @foreach($data as $item)
-            <a href="{{ route('dosen.bimbingan-magang.monitoring', $item->pengajuanMagang->id) }}"
-               class="text-decoration-none text-dark">
-                <div class="card mb-3 card-hover cursor-pointer">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-8">
-                                <h3 class="mb-2 font-weight-bold">{{ $item->pengajuanMagang->lowongan->judul }}</h3>
-                                <h5 class="mb-2 opacity-90">
-                                    <i class="mdi  mdi mdi-city  mr-2"></i>
-                                    {{ $item->pengajuanMagang->lowongan->perusahaan->nama }}
-                                </h5>
-                                @if($item->status === 'aktif')
-                                    <p class="mb-2">
-                                        <i class="mdi mdi-calendar-clock  mr-2"></i>
-                                        {{ $item->getSisaWaktuMangangAttribute() }} hari tersisa
-                                    </p>
-                                @endif
-                                <p class="mb-0">
-                                    <i class=" mdi mdi-account  mr-2"></i>
-                                    Mahasiswa: {{ $item->pengajuanMagang->mahasiswa->nama }}
-                                </p>
-                            </div>
-                            <div class="col-md-4 text-md-right">
-                                    <span
-                                        class="badge badge-{{ $item->status === 'selesai' ? 'success' : 'warning' }} badge-lg px-3 py-2">
-                                        <i class="mdi mdi-{{ $item->status === 'selesai' ? 'check-circle' : 'clock' }} mr-1"></i>
-                                        {{ ucfirst($item->status) }}
-                                    </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        @endforeach
+        <table class="table table-borderless" id="monitoring_table" style="width: 100%;">
+            <tbody>
+            </tbody>
+        </table>
     @endif
 @endsection
 @push('css')
@@ -57,5 +26,31 @@
     </style>
 @endpush
 @push('js')
+    <script>
+        $('#monitoring_table').DataTable({
+            processing: true,
+            serverSide: true,
+            lengthChange: false,
+            ajax: '',
+            columns: [
+                { data: 'mahasiswa', name: 'mahasiswa', visible: false, searchable: true},
+                { data: 'lowongan', name: 'lowongan', visible: false, searchable: true },
+                { data: 'perusahaan', name: 'perusahaan', visible: false, searchable: true },
+                { data: 'status', name: 'status', visible: false, searchable: true},
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                    width: '100%' // atau beri nilai besar seperti '400px'
+                }            ],
+            // paging: false,
+            info: false,
+            ordering: false,
+            language: {
+                processing: "Memuat data..."
+            }
+        });
+    </script>
 
 @endpush

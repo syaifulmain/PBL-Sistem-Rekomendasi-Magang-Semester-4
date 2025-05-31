@@ -20,17 +20,22 @@
                                             {{ $data->magang->getSisaWaktuMangangAttribute() }} hari tersisa
                                         </p>
                                     @endif
-                                    <p class="mb-0">
+                                    <p class="mb-2">
                                         <i class="mdi  mdi mdi-tie  mr-2"></i>
                                         Pembimbing: {{ $data->magang->dosen->nama }}
                                     </p>
+                                    <p class="mb-0">
+                                        <i class="mdi mdi-account mr-2"></i>
+                                        Mahasiswa: {{ $data->mahasiswa->nama }} ({{ $data->mahasiswa->nim }})
+                                    </p>
                                 </div>
-                                <div class="col-md-4 text-md-right">
-                                    <span
-                                        class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 'warning' }} badge-lg px-3 py-2">
+                                <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
+                                        <span
+                                            class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 'warning' }} badge-lg px-3 py-2 mb-3">
                                         <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' : 'clock' }} mr-1"></i>
                                         {{ ucfirst($data->magang->status) }}
                                     </span>
+                                    <p class="mb-0">{{$data->lowongan->periodeMagang->nama}}</p>
                                 </div>
                             </div>
                         </div>

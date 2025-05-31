@@ -25,12 +25,13 @@
                                         Pembimbing: {{ $data->magang->dosen->nama }}
                                     </p>
                                 </div>
-                                <div class="col-md-4 text-md-right">
-                                    <span
-                                        class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 'warning' }} badge-lg px-3 py-2">
+                                <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
+                                        <span
+                                            class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 'warning' }} badge-lg px-3 py-2 mb-3">
                                         <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' : 'clock' }} mr-1"></i>
                                         {{ ucfirst($data->magang->status) }}
                                     </span>
+                                    <p class="mb-0">{{$data->lowongan->periodeMagang->nama}}</p>
                                 </div>
                             </div>
                         </div>
