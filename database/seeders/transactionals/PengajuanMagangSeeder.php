@@ -40,21 +40,21 @@ class PengajuanMagangSeeder extends Seeder
                 $matchingSkills = $listKeahlianMahasiswaID->intersect($listKeahlianLowonganMagangID);
                 $pengajuanMagangID = 0;
                 if ($matchingSkills->count() > 0) {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganTutup->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'disetujui',
                         'tanggal_pengajuan' => $lowonganTutup->tanggal_mulai_daftar,
                     ]);
                 } elseif (rand(0, 1)) {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganTutup->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'ditolak',
                         'tanggal_pengajuan' => $lowonganTutup->tanggal_mulai_daftar,
                     ]);
                 } else {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganTutup->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'batal',
@@ -66,7 +66,7 @@ class PengajuanMagangSeeder extends Seeder
                     DB::table('t_dokumen_pengajuan')->insert([
                         'pengajuan_magang_id' => $pengajuanMagangID,
                         'jenis_dokumen_id' => $dokumenMahasiswa->jenis_dokumen_id,
-                        'path' => 'lowongan/dokumen/' . $dokumenMahasiswa->jenis_dokumen_id . '/' . $mahasiswa->id . '/' . $dokumenMahasiswa->nama,
+                        'path' => 'lowongan/dokumen/' . $dokumenMahasiswa->nama,
                     ]);
                 }
                 $i++;

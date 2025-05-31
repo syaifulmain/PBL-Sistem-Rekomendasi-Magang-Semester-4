@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('magang_id')->constrained('t_magang')->onDelete('cascade');
             $table->date('tanggal_evaluasi');
             $table->text('catatan')->nullable();
+            $table->foreignId('log_magang_mahasiswa_id')->nullable()->constrained('t_log_magang_mahasiswa')->nullOnDelete();
             $table->timestamps();
         });
     }

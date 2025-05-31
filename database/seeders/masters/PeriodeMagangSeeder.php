@@ -22,7 +22,6 @@ class PeriodeMagangSeeder extends Seeder
             $startWithOdd = true;
         } else {
             $startWithOdd = false;
-            $year--;
         }
 
         for ($i = 0; $i < SeederCounts::PERIODE_MAGANG; $i++) {
