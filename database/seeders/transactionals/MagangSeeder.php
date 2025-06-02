@@ -49,7 +49,15 @@ class MagangSeeder extends Seeder
                     'aktivitas' => $faker->paragraph(2),
                     'kendala' => $faker->paragraph(2),
                     'keterangan' => $faker->paragraph(2),
-                    'dokumentasi' => 'magang/log/image.jpg'
+                    'dokumentasi' => 'magang/log/' . $faker->randomElement([
+                            '1',
+                            '2',
+                            '3',
+                            '4',
+                            '5',
+                            '6',
+                            'image'
+                        ]) . '.jpg'
                 ]);
 
                 $startDate->addDays(7);
@@ -87,6 +95,7 @@ class MagangSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         foreach ($listPengajuanMagangDisetujui as $pengajuanMagang) {
+//            if ($faker->boolean(50)) {
             DB::table('t_pengajuan_magang')
                 ->where('id', $pengajuanMagang->id)
                 ->update(['status' => 'disetujui']);
@@ -116,7 +125,15 @@ class MagangSeeder extends Seeder
                     'aktivitas' => $faker->paragraph(2),
                     'kendala' => $faker->paragraph(2),
                     'keterangan' => $faker->paragraph(2),
-                    'dokumentasi' => 'magang/log/image.jpg'
+                    'dokumentasi' => 'magang/log/' . $faker->randomElement([
+                            '1',
+                            '2',
+                            '3',
+                            '4',
+                            '5',
+                            '6',
+                            'image'
+                        ]) . '.jpg'
                 ]);
 
                 $startDate->addDays(7);
@@ -141,6 +158,7 @@ class MagangSeeder extends Seeder
 
                 $startDate->addDays($faker->numberBetween(5, 25));
             }
+//            }
         }
     }
 }

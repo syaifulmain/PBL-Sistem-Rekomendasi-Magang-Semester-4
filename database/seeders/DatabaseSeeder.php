@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
             LowonganMagangSeeder::class,
             PengajuanMagangSeeder::class,
             MagangSeeder::class,
+            DataTestingSeeder::class,
         ]);
     }
 }

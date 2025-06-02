@@ -13,29 +13,29 @@
                                     <h5 class="mb-2 opacity-90">
                                         <i class="mdi mdi-city mr-2"></i>{{ $data->lowongan->perusahaan->nama }}
                                     </h5>
-                                    
+
                                     @php
                                         $waktuMulai = $data->magang->getWaktuMulaiMagangAttribute();
-                                        $sisaWaktu = $data->magang->status === 'aktif' 
-                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                                        $sisaWaktu = $data->magang->status === 'aktif'
+                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa')
                                             : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
                                     @endphp
-                                    
+
                                     @if($sisaWaktu)
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>{{ $sisaWaktu }}
                                         </p>
                                     @endif
-                                    
+
                                     <p class="mb-0">
                                         <i class="mdi mdi-tie mr-2"></i>Pembimbing: {{ $data->magang->dosen->nama }}
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
-                                    <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 
-                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }} 
+                                    <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' :
+                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }}
                                             badge-lg px-3 py-2 mb-3">
-                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' : 
+                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' :
                                             ($data->magang->status === 'aktif' ? 'clock' : 'calendar') }} mr-1"></i>
                                         {{ ucfirst(str_replace('_', ' ', $data->magang->status)) }}
                                     </span>
