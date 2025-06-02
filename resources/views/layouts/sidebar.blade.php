@@ -37,14 +37,14 @@
                     <span class="menu-title">Lowongan Magang</span>
                 </a>
             </li>
-        @endif
-        @if (has_role('DOSEN'))
             <li class="nav-item">
-                <a class="nav-link" aria-disabled="true">
-                    <i class="icon-paper menu-icon"></i>
-                    <span class="menu-title">DOSEN</span>
+                    <a class="nav-link" href="{{ route('admin.kegiatan-magang.index') }}">
+                    <i class="mdi mdi-cogs menu-icon"></i>
+                    <span class="menu-title">Kegiatan Magang</span>
                 </a>
             </li>
+        @endif
+        @if (has_role('DOSEN'))
             <li class="nav-item">
                 <a class="nav-link" href="{{route('dosen.bimbingan-magang.index')}}">
                     <i class="mdi mdi-account-multiple menu-icon"></i>

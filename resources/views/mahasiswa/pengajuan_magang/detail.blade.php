@@ -8,6 +8,9 @@
         <p><strong>Perusahaan:</strong> {{ $data->lowongan->perusahaan->nama ?? '-' }}</p>
         <p><strong>Tanggal Pengajuan:</strong> {{ $data->tanggal_pengajuan }}</p>
         <p><strong>Status:</strong> {{ ucfirst($data->status) }}</p>
+        @if ($data->status === 'ditolak')
+            <p><strong>Catatan:</strong> {{ $data->catatan }}</p>
+        @endif
         <p><strong>Lampiran:</strong></p>
         @if($data->dokumen)
             <ul>

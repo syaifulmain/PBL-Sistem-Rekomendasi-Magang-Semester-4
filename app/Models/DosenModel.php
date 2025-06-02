@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class DosenModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'm_dosen';
 
@@ -20,6 +21,11 @@ class DosenModel extends Model
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'user_id');
+    }
+
+    public function magang()
+    {
+        return $this->hasMany(MagangModel::class, 'dosen_id');
     }
 
     public function minat()

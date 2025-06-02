@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EvaluasiBimbinganModel;
 use App\Models\MagangModel;
 use App\Models\PengajuanMagangModel;
+use App\Helpers\StatusHelper;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -40,9 +41,15 @@ class MagangDosenController extends Controller
                     $nim = $row->pengajuanMagang->mahasiswa->nim;
                     $status = $row->status;
                     $periode = $row->pengajuanMagang->lowongan->periodeMagang->nama;
-                    $sisaWaktu = $status === 'aktif' ? $row->getSisaWaktuMangangAttribute() . ' hari tersisa' : '';
-                    $badgeClass = $status === 'selesai' ? 'success' : 'warning';
-                    $icon = $status === 'selesai' ? 'check-circle' : 'clock';
+                    $waktuMulai = $row->getWaktuMulaiMagangAttribute();
+                    $sisaWaktu = $status === 'aktif' 
+                        ? ($row->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                        : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
+                    
+                    $statusBadge = StatusHelper::getMagangStatusBadge($status);
+                    $badgeClass = $statusBadge['class'];
+                    $icon = $status === 'selesai' ? 'check-circle' : 
+                        ($status === 'aktif' ? 'clock' : 'calendar');
 
                     return '
                     <a href="' . $url . '" class="text-decoration-none text-dark">
@@ -61,7 +68,7 @@ class MagangDosenController extends Controller
                                     </div>
                                     <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
                                         <span class="badge badge-' . $badgeClass . ' badge-lg px-3 py-2 mb-2">
-                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . ucfirst($status) . '
+                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . $statusBadge['text'] . '
                                         </span>
                                         <p class="mb-0">' . $periode . '</p>
                                     </div>

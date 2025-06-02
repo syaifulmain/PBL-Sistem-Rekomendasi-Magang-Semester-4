@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\dosen\MagangDosenController;
+use App\Http\Controllers\KegiatanMagangController;
 use App\Http\Controllers\LowonganMagangController;
 use App\Http\Controllers\mahasiswa\LowonganMagangMahasiswaController;
 use App\Http\Controllers\mahasiswa\MagangMahasiswaController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +35,12 @@ Route::post('login', [AuthController::class, 'postLogin']);
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
+    Route::get('notifications/read-all', [NotificationController::class, 'readAll'])->name('notifications.read-all');
+    Route::post('notifications/mark-read/{notification}', [NotificationController::class, 'markRead'])->name('notifications.mark-read');
+    Route::get('notifications', function () {
+        return view('layouts._notifications');
+    })->name('notifications.index');
+
     Route::middleware('role:ADMIN,MAHASISWA')->prefix('admin')->name('admin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
@@ -85,6 +93,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/keahlian', [LowonganMagangController::class, 'getKeahlian'])->name('keahlian');
             Route::get('/dokumen', [LowonganMagangController::class, 'getDokumen'])->name('dokumen');
             Route::get('/teknis', [LowonganMagangController::class, 'getKeahlianTeknis'])->name('teknis');
+        });
+
+        Route::prefix('kegiatan-magang')->name('kegiatan-magang.')->group(function(){
+            Route::get('/', [KegiatanMagangController::class, 'index'])->name('index');
+            Route::get('/process/{id}', [KegiatanMagangController::class, 'process'])->name('process');
+            Route::post('/process/{id}', [KegiatanMagangController::class, 'store']);
         });
     });
 

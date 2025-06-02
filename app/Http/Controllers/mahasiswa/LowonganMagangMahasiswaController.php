@@ -61,7 +61,13 @@ class LowonganMagangMahasiswaController extends Controller
                 ->make(true);
         }
 
-        return view('mahasiswa.lowongan_magang.index');
+        $title = 'Lowongan Magang';
+        $breadcrumb = [
+            'title' => $title,
+            'list' => [$title]
+        ];
+
+        return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb'));
     }
 
     private function minatRendah($x)
