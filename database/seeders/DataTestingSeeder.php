@@ -42,17 +42,16 @@ class DataTestingSeeder extends Seeder
 
         $perusahaanData = [];
 
-        $judulLowongan = $faker->randomElement([
-            'Internship Marketing Digital',
-            'Magang Content Creator',
-            'Lowongan Magang Web Developer',
-            'Program Magang Desain Grafis',
-            'Kesempatan Magang Social Media Specialist',
-            'Internship Analis Data',
-            'Magang Admin Keuangan'
-        ]);
-
         foreach ($listPerusahaanID as $perusahaan_id) {
+            $judulLowongan = $faker->randomElement([
+                'Internship Marketing Digital',
+                'Magang Content Creator',
+                'Lowongan Magang Web Developer',
+                'Program Magang Desain Grafis',
+                'Kesempatan Magang Social Media Specialist',
+                'Internship Analis Data',
+                'Magang Admin Keuangan'
+            ]);
             $perusahaanData[$perusahaan_id] = [
                 'judul' => $judulLowongan,
                 'deskripsi' => 'Kami sedang mencari individu yang termotivasi dan bersemangat untuk bergabung dengan tim kami sebagai ' . $judulLowongan,
