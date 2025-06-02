@@ -35,7 +35,9 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </select>
-                        <input type="hidden" name="lowongan_id" value="{{ $lowonganId }}">
+                        @if ($lowonganId)
+                            <input type="hidden" name="lowongan_id" value="{{ $lowonganId }}">
+                        @endif
                     </div>
                     <div class="form-group">
                         <label>Nama</label>

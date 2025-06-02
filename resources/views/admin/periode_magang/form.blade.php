@@ -59,7 +59,7 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="tanggal_pendaftaran_mulai">Tanggal Pendaftaran Mulai</label>
                     <input type="text" name="tanggal_pendaftaran_mulai" id="tanggal_pendaftaran_mulai"
                         class="form-control datepicker @error('tanggal_pendaftaran_mulai') is-invalid @enderror"
@@ -77,7 +77,7 @@
                     @error('tanggal_pendaftaran_selesai')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
+                </div> --}}
                 
                 <div class="text-right">
                     <button type="submit" class="btn btn-primary">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\mahasiswa;
 
+use App\Helpers\StatusHelper;
 use App\Http\Controllers\Controller;
 use App\Models\LogMagangMahasiswaModel;
 use App\Models\MagangModel;
@@ -24,14 +25,29 @@ class MagangMahasiswaController extends Controller
                 ->addColumn('action', function ($row) {
                     $judul = $row->lowongan->judul ?? '-';
                     $perusahaan = $row->lowongan->perusahaan->nama ?? '-';
-                    $statusMagang = $row->magang->status ?? '-';
+                    $statusMagang = $row->magang->status;
                     $periodeMagang = $row->lowongan->periodeMagang->nama ?? '-';
-                    $badgeClass = $statusMagang === 'selesai' ? 'success' : 'warning';
-                    $icon = $statusMagang === 'selesai' ? 'check-circle' : 'clock';
-                    $sisaWaktu = $statusMagang === 'aktif' ? ($row->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') : '';
+                    
+                    // Tentukan badge class dan icon berdasarkan status
+                    $badgeClass = StatusHelper::getMagangStatusBadge($statusMagang);
+                    
+                    $icon = match($statusMagang) {
+                        'selesai' => 'check-circle',
+                        'aktif' => 'clock',
+                        'belum_dimulai' => 'calendar',
+                        default => 'info-circle'
+                    };
+                    
+                    // Hitung waktu tersisa atau waktu hingga dimulai
+                    $waktuMulai = $row->magang->getWaktuMulaiMagangAttribute();
+                    $sisaWaktu = $statusMagang === 'aktif' 
+                        ? ($row->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                        : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
+                    
                     $dosen = $row->magang->dosen->nama ?? '-';
                     $route = route('mahasiswa.evaluasi-magang.monitoring', $row->id);
-
+                    $statusText = ucfirst(str_replace('_', ' ', $statusMagang));
+    
                     return '
                     <a href="' . $route . '" class="text-decoration-none text-dark">
                         <div class="card mb-3 card-hover cursor-pointer">
@@ -42,7 +58,7 @@ class MagangMahasiswaController extends Controller
                                         <h5 class="mb-2 opacity-90">
                                             <i class="mdi mdi-city mr-2"></i>' . $perusahaan . '
                                         </h5>' .
-                        ($statusMagang === 'aktif' ? '
+                        ($sisaWaktu ? '
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '
                                         </p>' : '') . '
@@ -52,7 +68,7 @@ class MagangMahasiswaController extends Controller
                                     </div>
                                     <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
                                         <span class="badge badge-' . $badgeClass . ' badge-lg px-3 py-2 mb-2">
-                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . ucfirst($statusMagang) . '
+                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . $statusText . '
                                         </span>
                                         <p class="mb-0">' . $periodeMagang . '</p>
                                     </div>

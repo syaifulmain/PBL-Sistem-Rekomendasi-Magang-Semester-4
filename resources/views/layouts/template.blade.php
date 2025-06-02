@@ -39,8 +39,6 @@
 
     <div class="container-fluid page-body-wrapper">
 
-        @include('layouts.setting-panel')
-
         @include('layouts.sidebar')
 
         <div class="main-panel">
@@ -128,7 +126,7 @@
     })
 
     $('.datepicker').datepicker({
-        format: 'yyyy-mm-dd',
+        format: 'dd-mm-yyyy',
         autoclose: true,
         todayHighlight: true
     });

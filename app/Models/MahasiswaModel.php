@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MahasiswaModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'm_mahasiswa';
 
@@ -100,4 +101,8 @@ class MahasiswaModel extends Model
         })->toArray();
     }
 
+    public function magang()
+    {
+        return $this->hasManyThrough(MagangModel::class, PengajuanMagangModel::class, 'mahasiswa_id', 'pengajuan_magang_id', 'id', 'id');
+    }
 }

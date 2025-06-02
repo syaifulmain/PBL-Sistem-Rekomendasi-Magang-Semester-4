@@ -13,8 +13,8 @@
                     <th width="1" class="text-nowrap">Tanggal Selesai</th>
                     <th>Tahun Akademik</th>
                     <th>Semester</th>
-                    <th width="1" class="text-nowrap">Tanggal Pendaftaran Mulai</th>
-                    <th width="1" class="text-nowrap">Tanggal Pendaftaran Selesai</th>
+                    {{-- <th width="1" class="text-nowrap">Tanggal Pendaftaran Mulai</th>
+                    <th width="1" class="text-nowrap">Tanggal Pendaftaran Selesai</th> --}}
                     <th width="1">Aksi</th>
                 </tr>
             </thead>
@@ -36,8 +36,8 @@
                     { data: 'tanggal_selesai', name: 'tanggal_selesai' },
                     { data: 'tahun_akademik', name: 'tahun_akademik' },
                     { data: 'semester', name: 'semester' },
-                    { data: 'tanggal_pendaftaran_mulai', name: 'tanggal_pendaftaran_mulai' },
-                    { data: 'tanggal_pendaftaran_selesai', name: 'tanggal_pendaftaran_selesai' },
+                    // { data: 'tanggal_pendaftaran_mulai', name: 'tanggal_pendaftaran_mulai' },
+                    // { data: 'tanggal_pendaftaran_selesai', name: 'tanggal_pendaftaran_selesai' },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ]
             });

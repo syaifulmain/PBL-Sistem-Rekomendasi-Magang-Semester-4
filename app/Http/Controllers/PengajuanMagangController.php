@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DokumenPengajuanModel;
 use App\Models\LowonganMagangModel;
 use App\Models\PengajuanMagangModel;
+use App\Notifications\PengajuanMagangNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -71,9 +72,9 @@ class PengajuanMagangController extends Controller
         $lowongan = LowonganMagangModel::findOrFail($request->lowongan_id);
         $today = Carbon::today();
 
-        if ($today->lt(Carbon::parse($lowongan->tanggal_mulai_daftar)) || $today->gt(Carbon::parse($lowongan->tanggal_selesai_daftar))) {
-            return redirect()->back()->with(['error' => 'Pendaftaran lowongan ini dilaksanakan antara ' . Carbon::parse($lowongan->tanggal_mulai_daftar)->translatedFormat('d F Y') . ' sampai ' . Carbon::parse($lowongan->tanggal_selesai_daftar)->translatedFormat('d F Y')]);
-        }
+        // if ($today->lt(Carbon::parse($lowongan->tanggal_mulai_daftar)) || $today->gt(Carbon::parse($lowongan->tanggal_selesai_daftar))) {
+        //     return redirect()->back()->with(['error' => 'Pendaftaran lowongan ini dilaksanakan antara ' . Carbon::parse($lowongan->tanggal_mulai_daftar)->translatedFormat('d F Y') . ' sampai ' . Carbon::parse($lowongan->tanggal_selesai_daftar)->translatedFormat('d F Y')]);
+        // }
 
         DB::beginTransaction();
         try {

@@ -19,8 +19,8 @@ class PeriodeMagangController extends Controller
                 ->editColumn('semester', fn($row) => ucfirst($row->semester))
                 ->editColumn('tanggal_mulai', fn($row) => Carbon::parse($row->tanggal_mulai)->translatedFormat('d F Y'))
                 ->editColumn('tanggal_selesai', fn($row) => Carbon::parse($row->tanggal_selesai)->translatedFormat('d F Y'))
-                ->editColumn('tanggal_pendaftaran_mulai', fn($row) => Carbon::parse($row->tanggal_pendaftaran_mulai)->translatedFormat('d F Y'))
-                ->editColumn('tanggal_pendaftaran_selesai', fn($row) => Carbon::parse($row->tanggal_pendaftaran_selesai)->translatedFormat('d F Y'))
+                // ->editColumn('tanggal_pendaftaran_mulai', fn($row) => Carbon::parse($row->tanggal_pendaftaran_mulai)->translatedFormat('d F Y'))
+                // ->editColumn('tanggal_pendaftaran_selesai', fn($row) => Carbon::parse($row->tanggal_pendaftaran_selesai)->translatedFormat('d F Y'))
                 ->addColumn('action', function ($row) {
                     $editUrl = route('admin.periode-magang.edit', $row->id);
                     $deleteUrl = route('admin.periode-magang.delete', $row->id);
@@ -57,13 +57,16 @@ class PeriodeMagangController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|unique:m_periode_magang,nama',
-            'tanggal_mulai' => 'required|date_format:Y-m-d',
-            'tanggal_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_mulai',
+            'tanggal_mulai' => 'required|date_format:d-m-Y',
+            'tanggal_selesai' => 'required|date_format:d-m-Y|after_or_equal:tanggal_mulai',
             'tahun_akademik' => 'required',
-            'tanggal_pendaftaran_mulai' => 'required|date_format:Y-m-d',
-            'tanggal_pendaftaran_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_pendaftaran_mulai',
+            // 'tanggal_pendaftaran_mulai' => 'required|date_format:Y-m-d',
+            // 'tanggal_pendaftaran_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_pendaftaran_mulai',
             'semester' => ['required', Rule::in(['Ganjil', 'Genap'])],
         ]);
+
+        $validated['tanggal_mulai'] = Carbon::parse($validated['tanggal_mulai'])->format('Y-m-d');
+        $validated['tanggal_selesai'] = Carbon::parse($validated['tanggal_selesai'])->format('Y-m-d');
 
         PeriodeMagangModel::create($validated);
 
@@ -78,6 +81,8 @@ class PeriodeMagangController extends Controller
             'title' => 'Periode Magang',
             'list' => ['Periode Magang', 'Edit']
         ];
+        $data->tanggal_mulai = Carbon::parse($data->tanggal_mulai)->format('d-m-Y');
+        $data->tanggal_selesai = Carbon::parse($data->tanggal_selesai)->format('d-m-Y');
         return view('admin.periode_magang.form', compact('data', 'title', 'breadcrumb'));
     }
 
@@ -90,13 +95,16 @@ class PeriodeMagangController extends Controller
                 'required',
                 Rule::unique('m_periode_magang', 'nama')->ignore($id),
             ],
-            'tanggal_mulai' => 'required|date_format:Y-m-d',
-            'tanggal_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_mulai',
+            'tanggal_mulai' => 'required|date_format:d-m-Y',
+            'tanggal_selesai' => 'required|date_format:d-m-Y|after_or_equal:tanggal_mulai',
             'tahun_akademik' => 'required',
-            'tanggal_pendaftaran_mulai' => 'required|date_format:Y-m-d',
-            'tanggal_pendaftaran_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_pendaftaran_mulai',
+            // 'tanggal_pendaftaran_mulai' => 'required|date_format:Y-m-d',
+            // 'tanggal_pendaftaran_selesai' => 'required|date_format:Y-m-d|after_or_equal:tanggal_pendaftaran_mulai',
             'semester' => ['required', Rule::in(['Ganjil', 'Genap'])],
         ]);
+
+        $validated['tanggal_mulai'] = Carbon::parse($validated['tanggal_mulai'])->format('Y-m-d');
+        $validated['tanggal_selesai'] = Carbon::parse($validated['tanggal_selesai'])->format('Y-m-d');
 
         $periode->update($validated);
 
