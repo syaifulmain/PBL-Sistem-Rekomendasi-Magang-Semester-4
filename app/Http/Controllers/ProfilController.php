@@ -107,12 +107,12 @@ class ProfilController extends Controller
         if (has_role(UserRole::DOSEN)) {
             $user = $user->dosen;
             $validated = $request->validate([
-                'no_telepon' => 'string|max:15',
+                'no_telepon' => 'string|max:20',
             ]);
         } else if (has_role(UserRole::MAHASISWA)) {
             $user = $user->mahasiswa;
             $validated = $request->validate([
-                'no_telepon' => 'string|max:15',
+                'no_telepon' => 'string|max:20',
                 'ipk' => 'numeric|min:0|max:4'
             ]);
         }

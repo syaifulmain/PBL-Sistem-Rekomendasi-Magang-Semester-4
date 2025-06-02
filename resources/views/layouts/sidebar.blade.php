@@ -7,12 +7,26 @@
             </a>
         </li>
         @if (has_role('ADMIN'))
+{{--            <li class="nav-item">--}}
+{{--                <a class="nav-link" href="{{route('admin.manajemen-pengguna.index')}}">--}}
+{{--                    <i class="icon-head menu-icon"></i>--}}
+{{--                    <span class="menu-title">Manajemen Pengguna</span>--}}
+{{--                </a>--}}
+{{--            </li>--}}
             <li class="nav-item">
-                <a class="nav-link" href="{{route('admin.manajemen-pengguna.index')}}">
+                <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false"
+                   aria-controls="ui-basic">
                     <i class="icon-head menu-icon"></i>
                     <span class="menu-title">Manajemen Pengguna</span>
+                    <i class="menu-arrow"></i>
                 </a>
-            </li>
+                <div class="collapse" id="ui-basic">
+                    <ul class="nav flex-column sub-menu">
+                        <li class="nav-item"><a class="nav-link" href="{{route('admin.manajemen-pengguna.index', ['level' => 'admin'])}}">Admin</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{route('admin.manajemen-pengguna.index', ['level' => 'dosen'])}}">Dosen</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{route('admin.manajemen-pengguna.index', ['level' => 'mahasiswa'])}}">Mahasiswa</a></li>
+                    </ul>
+                </div>
             <li class="nav-item">
                 <a class="nav-link" href="{{route('admin.perusahaan.index')}}">
                     <i class="icon-briefcase menu-icon"></i>
