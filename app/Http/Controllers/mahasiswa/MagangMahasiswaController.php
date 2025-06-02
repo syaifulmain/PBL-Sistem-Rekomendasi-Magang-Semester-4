@@ -29,7 +29,8 @@ class MagangMahasiswaController extends Controller
                     $periodeMagang = $row->lowongan->periodeMagang->nama ?? '-';
                     
                     // Tentukan badge class dan icon berdasarkan status
-                    $badgeClass = StatusHelper::getMagangStatusBadge($statusMagang);
+                    $statusBadge = StatusHelper::getMagangStatusBadge($statusMagang);
+                    $badgeClass = $statusBadge['class'];
                     
                     $icon = match($statusMagang) {
                         'selesai' => 'check-circle',
