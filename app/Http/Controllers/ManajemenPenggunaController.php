@@ -76,6 +76,7 @@ class ManajemenPenggunaController extends Controller
 
     public function create(Request $request)
     {
+        $level = null;
         if ($request->has('level') && $request->level != '') {
             $level = $request->get('level');
         }
