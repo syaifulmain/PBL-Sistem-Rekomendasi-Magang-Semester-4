@@ -11,30 +11,25 @@
                     @method('PUT')
                 @endif
 
-
                 <div class="form-group">
                     <label for="level">Level</label>
                     <select name="level"
-                            class="form-control @error('level') is-invalid @enderror" {{ isset($data) ? 'disabled' : '' }}>
+                            class="form-control @error('level') is-invalid @enderror" {{ (isset($data) || isset($level)) ? 'disabled' : '' }}>
                         <option value="">-- Pilih Role --</option>
-                        <option
-                            value="ADMIN" {{ old('level', $data->level ?? '') == \App\Enums\UserRole::ADMIN ? 'selected' : '' }}>
+                        <option value="ADMIN"
+                            {{ old('level', $level ?? strtolower($data->level->value) ?? '') == 'admin' ? 'selected' : '' }}>
                             ADMIN
                         </option>
-                        <option
-                            value="DOSEN" {{ old('level', $data->level ?? '') == \App\Enums\UserRole::DOSEN ? 'selected' : '' }}>
+                        <option value="DOSEN"
+                            {{ old('level', $level ?? strtolower($data->level->value) ?? '') == 'dosen' ? 'selected' : '' }}>
                             DOSEN
                         </option>
-                        <option
-                            value="MAHASISWA" {{ old('level', $data->level ?? '') == \App\Enums\UserRole::MAHASISWA ? 'selected' : '' }}>
+                        <option value="MAHASISWA"
+                            {{ old('level', $level ?? strtolower($data->level->value) ?? '') == 'mahasiswa' ? 'selected' : '' }}>
                             MAHASISWA
                         </option>
                     </select>
-                    @error('level')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
                 </div>
-
 
 
                 @if(!isset($data) || $data->level == \App\Enums\UserRole::ADMIN)
@@ -134,11 +129,13 @@
                         </div>
                     </div>
                 @endif
-                
+
                 <div class="text-right">
-                    <a href="{{ route('password.reset', $data->id) }}" class="btn btn-warning">
-                        Reset Password
-                    </a>
+                    @isset($data)
+                        <a href="{{ route('password.reset', $data->id) }}" class="btn btn-warning">
+                            Reset Password
+                        </a>
+                    @endisset
                     <button type="submit" class="btn btn-primary">
                         {{ isset($data) ? 'Update' : 'Simpan' }}
                     </button>

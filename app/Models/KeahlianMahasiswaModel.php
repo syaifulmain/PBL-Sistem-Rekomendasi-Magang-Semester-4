@@ -34,9 +34,9 @@ class KeahlianMahasiswaModel extends Model
     private function getLevelName($level)
     {
         return match ($level) {
-            '1' => 'Dasar',
-            '2' => 'Menengah',
-            '3' => 'Lanjutan',
+            1 => 'Dasar',
+            2 => 'Menengah',
+            3 => 'Lanjutan',
             default => '',
         };
     }

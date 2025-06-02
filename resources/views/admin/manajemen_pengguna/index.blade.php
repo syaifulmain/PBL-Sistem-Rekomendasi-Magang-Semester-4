@@ -1,76 +1,62 @@
 @extends('layouts.template')
 
 @section('content')
-<div class="card">
-    <div class="card-body">
-        <h4 class="card-title">Data Periode Magang</h4>
-        <!-- Filter Pengguna -->
-        <div class="row mb-2">
-            <div class="col">
-                <div class="form-group">
-                    <label for="filter-level">Filter Level</label>
-                    <select id="filter-level" class="form-control">
-                        <option value="">Semua Level</option>
-                        <option value="ADMIN">Admin</option>
-                        <option value="DOSEN">Dosen</option>
-                        <option value="MAHASISWA">Mahasiswa</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <a class="btn btn-primary mb-4" href="{{ route('admin.manajemen-pengguna.create') }}"><i class="fa fa-plus"></i> Tambah</a>
-        <table class="table table-striped table-bordered" id="manajemen-pengguna">
-            <thead>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">{{$title}}</h4>
+            <a class="btn btn-primary mb-4" href="{{ route('admin.manajemen-pengguna.create', ['level' => $level]) }}">Tambah Pengguna</a>
+            <table class="table table-striped table-bordered" id="manajemen-pengguna">
+                <thead>
                 <tr>
                     <th>Username</th>
                     <th class="text-nowrap">Nama</th>
                     <th class="text-nowrap">Level</th>
                     <th width="1">Aksi</th>
                 </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-@push('js')
-    <script>
-        $(function () {
-            $('#manajemen-pengguna').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    data: function (d) {
-                        d.level = $('#filter-level').val();
-                        return d;
+    @push('js')
+        <script>
+            $(function () {
+                $('#manajemen-pengguna').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        data: function (d) {
+                            d.level = $('#filter-level').val();
+                            return d;
+                        },
                     },
-                },
-                columns: [
-                    { data: 'username', name: 'username' },
-                    { data: 'nama', name: 'nama' },
-                    { data: 'level', name: 'level' },
-                    { data: 'action', name: 'action', orderable: false, searchable: false }
-                ]
-            });
+                    columns: [
+                        { data: 'username', name: 'username' },
+                        { data: 'nama', name: 'nama' },
+                        { data: 'level', name: 'level' },
+                        { data: 'action', name: 'action', orderable: false, searchable: false }
+                    ]
+                });
 
-            // Delete handler
-            $(document).on('click', '.btn-delete', function (e) {
-                e.preventDefault();
-                swalAlertConfirm({
-                    title: 'Hapus data ini?',
-                    text: 'Data yang dihapus tidak bisa dikembalikan!',
-                    url: $(this).data('url'),
-                    onSuccess: function () {
-                        $('#manajemen-pengguna').DataTable().ajax.reload();
-                    }
+                // Delete handler
+                $(document).on('click', '.btn-delete', function (e) {
+                    e.preventDefault();
+                    swalAlertConfirm({
+                        title: 'Hapus data ini?',
+                        text: 'Data yang dihapus tidak bisa dikembalikan!',
+                        url: $(this).data('url'),
+                        onSuccess: function () {
+                            $('#manajemen-pengguna').DataTable().ajax.reload();
+                        }
+                    });
+                });
+
+                // Filter handler
+                $('#filter-level').on('change', function () {
+                    $('#manajemen-pengguna').DataTable().ajax.reload();
                 });
             });
-
-            // Filter handler
-            $('#filter-level').on('change', function () {
-                $('#manajemen-pengguna').DataTable().ajax.reload();
-            });
-        });
-    </script>
-@endpush
+        </script>
+    @endpush
 @endsection

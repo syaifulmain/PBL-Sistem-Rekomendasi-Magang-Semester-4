@@ -34,11 +34,8 @@
                 </div>
                 <div class="col-md-7 pl-3 pl-md-0">
                     <div class="card h-100">
-                        <div class="card-header bg-warning text-white">
-                            <h5 class="mb-0">Detail</h5>
-                        </div>
                         <div class="card-body p-0">
-                            <div class="scrollable p-3" id="detail-content">
+                            <div class="scrollable" id="detail-content">
                             </div>
                         </div>
                     </div>

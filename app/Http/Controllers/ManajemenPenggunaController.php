@@ -19,13 +19,18 @@ class ManajemenPenggunaController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->has('level') && in_array(strtoupper($request->level), ['ADMIN', 'DOSEN', 'MAHASISWA'])) {
+            $level = $request->get('level');
+        } else {
+            abort(404, 'Level pengguna tidak ditentukan.');
+        }
+
         if ($request->ajax()) {
 
             $query = UserModel::with(['admin', 'dosen', 'mahasiswa']);
 
-            if ($request->has('level') && $request->level != '') {
-                $query->where('level', $request->level);
-            }
+            $query->where('level', $level);
+
 
             $userData = $query->get()
                 ->map(function ($user) {
@@ -60,23 +65,27 @@ class ManajemenPenggunaController extends Controller
                 ->make(true);
         }
 
-        $title = 'Manajemen Pengguna';
+        $title = 'Manajemen Pengguna' . ($level ? ' - ' . $level : '');
         $breadcrumb = [
             'title' => 'Manajemen Pengguna',
-            'list' => ['Manajemen Pengguna']
+            'list' => ['Manajemen Pengguna', $level ? ucfirst($level) : '']
         ];
-        return view('admin.manajemen_pengguna.index', compact('title', 'breadcrumb'));
+
+        return view('admin.manajemen_pengguna.index', compact('title', 'breadcrumb', 'level'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
+        if ($request->has('level') && $request->level != '') {
+            $level = $request->get('level');
+        }
         $title = 'Pengguna';
         $programStudi = ProgramStudiModel::all();
         $breadcrumb = [
             'title' => 'Pengguna',
             'list' => ['Pengguna', 'Create']
         ];
-        return view('admin.manajemen_pengguna.form', compact('title', 'breadcrumb', 'programStudi'));
+        return view('admin.manajemen_pengguna.form', compact('title', 'breadcrumb', 'programStudi', 'level'));
     }
 
     public function store(Request $request)
@@ -153,7 +162,7 @@ class ManajemenPenggunaController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.manajemen-pengguna.index')
+                ->route('admin.manajemen-pengguna.index', ['level' => $validated['level']])
                 ->with('success', 'Pengguna berhasil ditambahkan.');
 
         } catch (ValidationException $e) {
@@ -233,7 +242,7 @@ class ManajemenPenggunaController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('admin.manajemen-pengguna.index')
+                ->route('admin.manajemen-pengguna.index', ['level' => $user->level->value])
                 ->with('success', 'Pengguna berhasil diperbarui.');
 
         } catch (ValidationException $e) {
