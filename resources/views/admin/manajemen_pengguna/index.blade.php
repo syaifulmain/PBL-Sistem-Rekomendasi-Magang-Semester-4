@@ -11,10 +11,9 @@
                         <i class="fa fa-plus"></i> Tambah</a>
                 </div>
                 <div>
-                    <a href="{{ route('admin.manajemen-pengguna.export', ['level' => $level]) }}"
-                       class="btn btn-success">
-                        <i class="fa fa-file-excel-o mr-1"></i> Export
-                    </a>
+                    <button onclick="modalAction('{{ route('admin.manajemen-pengguna.import.index',['level' => $level]) }}')" class="btn btn-success">
+                        <i class="fa fa-file-excel-o mr-1"></i> Import
+                    </button>
                 </div>
             </div>
 
@@ -38,8 +37,18 @@
             </div>
         </div>
     </div>
+    <!-- Modal Import -->
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" data-backdrop="static"
+         data-keyboard="false" data-width="75%"></div>
 @endsection
 @push('js')
+    <script>
+        function modalAction(url = '') {
+            $('#myModal').load(url, function () {
+                $('#myModal').modal('show');
+            });
+        }
+    </script>
     <script>
         $(function () {
             $('#manajemen-pengguna-table').DataTable({
@@ -50,10 +59,14 @@
                     // {data: 'DT_RowIndex', className: 'text-center'},
                     {data: 'username', name: 'username'},
                     {data: 'nama', name: 'nama', orderable: false},
-                    @if($level === 'mahasiswa')
-                        {data: 'status', name: 'status', orderable: false, searchable: false},
-                    @endif
-                    {data: 'action', name: 'action', orderable: false, searchable: false}
+                        @if($level === 'mahasiswa')
+                    {
+                        data: 'status', name: 'status', orderable: false, searchable: false
+                    },
+                        @endif
+                    {
+                        data: 'action', name: 'action', orderable: false, searchable: false
+                    }
                 ],
                 responsive: true,
                 language: {

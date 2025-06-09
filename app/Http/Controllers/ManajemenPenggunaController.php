@@ -280,5 +280,108 @@ class ManajemenPenggunaController extends Controller
         }
     }
 
+    public function importIndex(Request $request)
+    {
+        $level = $request->get('level');
+        $title = 'Impor Pengguna';
+        $breadcrumb = [
+            'title' => 'Impor Pengguna',
+            'list' => ['Impor Pengguna']
+        ];
+        return view('admin.manajemen_pengguna.import', compact('title', 'breadcrumb', 'level'));
+    }
 
+    public function import(Request $request)
+    {
+        $validated = $request->validate([
+            'level' => ['required', Rule::in(['ADMIN', 'DOSEN', 'MAHASISWA'])],
+            'file_import' => 'required|file|mimes:xlsx,csv,xls|max:2048',
+        ]);
+
+        try {
+            DB::beginTransaction();
+            $file = $request->file('file_import');
+            $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file->getRealPath());
+            $spreadsheet = $reader->load($file->getRealPath());
+            $sheetData = $spreadsheet->getActiveSheet()->toArray();
+
+            $insertData = [];
+            if (count($sheetData) > 1) {
+                foreach ($sheetData as $row) {
+                    if (count($row) < 2) continue; // skip empty rows
+                    $user = UserModel::firstOrCreate(
+                        ['username' => $row[0]],
+                        [
+                            'password' => bcrypt($row[0]),
+                            'level' => $validated['level'],
+                        ]
+                    );
+                    if (!$user) {
+                        continue;
+                    }
+                    switch ($validated['level']) {
+                        case 'ADMIN':
+                            $insertData[] = [
+                                'user_id' => $user->id,
+                                'nama' => $row[1],
+                            ];
+                            break;
+
+                        case 'DOSEN':
+                            $insertData[] = [
+                                'user_id' => $user->id,
+                                'nip' => $row[0],
+                                'nama' => $row[1],
+                            ];
+                            break;
+
+                        case 'MAHASISWA':
+                            $insertData[] = [
+                                'user_id' => $user->id,
+                                'nim' => $row[0],
+                                'nama' => $row[1],
+                                'program_studi_id' => $row[2],
+                                'angkatan' => $row[3],
+                                'status' => $row[4],
+                            ];
+                            break;
+
+                    }
+                }
+                if (count($insertData) > 0) {
+                    switch ($validated['level']) {
+                        case 'ADMIN':
+                            AdminModel::insertOrIgnore($insertData);
+                            break;
+
+                        case 'DOSEN':
+                            DosenModel::insertOrIgnore($insertData);
+                            break;
+
+                        case 'MAHASISWA':
+                            MahasiswaModel::insertOrIgnore($insertData);
+                            break;
+                    }
+                }
+                DB::commit();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diimpor.',
+                ]);
+            } else {
+                DB::rollBack();
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Tidak ada data yang ditemukan di file yang diunggah.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat mengimpor data.',
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 }

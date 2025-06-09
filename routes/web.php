@@ -70,7 +70,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [ManajemenPenggunaController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
             Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
-            Route::get('/export', [ManajemenPenggunaController::class, 'export'])->name('export');
+            Route::get('/import/index', [ManajemenPenggunaController::class, 'importIndex'])->name('import.index');
+            Route::post('/import', [ManajemenPenggunaController::class, 'import'])->name('import');
         });
 
         Route::prefix('program-studi')->name('program-studi.')->group(function () {

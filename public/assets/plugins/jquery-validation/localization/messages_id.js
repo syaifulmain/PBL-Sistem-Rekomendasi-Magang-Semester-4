@@ -21,6 +21,7 @@ $.extend( $.validator.messages, {
 	dateISO: "Silakan masukkan format tanggal(ISO) yang benar.",
 	number: "Silakan masukkan angka yang benar.",
 	digits: "Harap masukan angka saja.",
+    extension: "Harap pilih file dengan ekstensi yang benar.",
 	creditcard: "Harap masukkan format kartu kredit yang benar.",
 	equalTo: "Harap masukkan nilai yg sama dengan sebelumnya.",
 	maxlength: $.validator.format( "Input dibatasi hanya {0} karakter." ),
