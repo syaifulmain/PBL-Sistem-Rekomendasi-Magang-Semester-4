@@ -21,7 +21,7 @@
                                             : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
                                     @endphp
                                     
-                                    @if($sisaWaktu)
+                                    @if($sisaWaktu && $data->magang->status !== 'selesai')
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>{{ $sisaWaktu }}
                                         </p>
@@ -315,6 +315,11 @@
 
         .opacity-90 {
             opacity: 0.9;
+        }
+
+        .evaluation-card .card-footer {
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
         }
     </style>
 @endpush

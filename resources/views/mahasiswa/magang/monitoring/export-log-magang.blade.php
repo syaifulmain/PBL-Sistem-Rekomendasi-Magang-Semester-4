@@ -21,7 +21,7 @@
     <tr><td><strong>Lokasi MAGANG KERJA</strong></td><td>: {{$data->pengajuanMagang->lowongan->perusahaan->alamat}}</td></tr>
     <tr><td><strong>DPL</strong></td><td>: {{$data->dosen->nama}}</td></tr>
     <tr><td><strong>Nama Mahasiswa</strong></td><td>: {{$data->pengajuanMagang->mahasiswa->nama}}</td></tr>
-    <tr><td><strong>NPM</strong></td><td>: {{$data->pengajuanMagang->mahasiswa->nim}}</td></tr>
+    <tr><td><strong>NIM</strong></td><td>: {{$data->pengajuanMagang->mahasiswa->nim}}</td></tr>
 </table>
 
 <table>

@@ -31,9 +31,9 @@
             ajax: "",
             columns: [
                 { data: 'id', name: 'id', visible: false},
-                { data: 'mahasiswa', name: 'mahasiswa' },
-                { data: 'lowongan', name: 'lowongan' },
-                { data: 'perusahaan', name: 'perusahaan', defaultContent: '-' },
+                { data: 'mahasiswa', name: 'mahasiswa.nama' },
+                { data: 'lowongan', name: 'lowongan.judul' },
+                { data: 'perusahaan', name: 'perusahaan.nama', defaultContent: '-' },
                 { data: 'tanggal_pengajuan', name: 'tanggal_pengajuan' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ],

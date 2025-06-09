@@ -33,9 +33,9 @@
             lengthChange: false,
             ajax: '',
             columns: [
-                { data: 'mahasiswa', name: 'mahasiswa', visible: false, searchable: true},
-                { data: 'lowongan', name: 'lowongan', visible: false, searchable: true },
-                { data: 'perusahaan', name: 'perusahaan', visible: false, searchable: true },
+                { data: 'mahasiswa', name: 'mahasiswa.nama', visible: false, searchable: true},
+                { data: 'lowongan', name: 'lowongan.judul', visible: false, searchable: true },
+                { data: 'perusahaan', name: 'perusahaan.nama', visible: false, searchable: true },
                 { data: 'status', name: 'status', visible: false, searchable: true},
                 {
                     data: 'action',

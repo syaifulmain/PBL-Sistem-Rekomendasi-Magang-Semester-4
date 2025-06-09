@@ -57,6 +57,12 @@
                     <span class="menu-title">Kegiatan Magang</span>
                 </a>
             </li>
+            <li class="nav-item">
+                    <a class="nav-link" href="{{ route('admin.riwayat-pengajuan.index') }}">
+                    <i class="mdi mdi-history menu-icon"></i>
+                    <span class="menu-title">Riwayat Pengajuan</span>
+                </a>
+            </li>
         @endif
         @if (has_role('DOSEN'))
             <li class="nav-item">

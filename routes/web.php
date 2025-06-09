@@ -15,6 +15,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProgramStudiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RiwayatPengajuanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,6 +100,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [KegiatanMagangController::class, 'index'])->name('index');
             Route::get('/process/{id}', [KegiatanMagangController::class, 'process'])->name('process');
             Route::post('/process/{id}', [KegiatanMagangController::class, 'store']);
+        });
+
+        Route::prefix('riwayat-pengajuan')->name('riwayat-pengajuan.')->group(function(){
+            Route::get('/', [RiwayatPengajuanController::class, 'index'])->name('index');
+            Route::get('/{id}/detail', [RiwayatPengajuanController::class, 'show'])->name('show');
         });
     });
 
