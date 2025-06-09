@@ -279,128 +279,50 @@
 
     <script>
         $(document).ready(function () {
-            $("#form-mitra-perusahaan").validate({
-                rules: {
-                    nama: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 255
-                    },
-                    email: {
-                        required: false,
-                        email: true,
-                        maxlength: 255
-                    },
-                    website: {
-                        required: false,
-                        url: true,
-                        maxlength: 255
-                    },
-                    no_telepon: {
-                        required: false,
-                        minlength: 10,
-                        maxlength: 20,
-                    },
-                    provinsi_id: {
-                        required: true,
-                        digits: true
-                    },
-                    kabupaten_id: {
-                        required: true,
-                        digits: true
-                    },
-                    kecamatan_id: {
-                        required: true,
-                        digits: true
-                    },
-                    desa_id: {
-                        required: true,
-                        digits: true
-                    },
-                    alamat: {
-                        required: true,
-                        minlength: 5,
-                        maxlength: 255
-                    }
+            const rules = {
+                nama: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 255
                 },
-                submitHandler: function (form) {
-                    // Disable submit button untuk mencegah double submit
-                    $('button[type="submit"]').prop('disabled', true).text('Menyimpan...');
-
-                    $.ajax({
-                        url: form.action,
-                        type: form.method,
-                        data: $(form).serialize(),
-                        success: function (response) {
-                            if (response.success) {
-                                swal({
-                                    icon: 'success',
-                                    title: 'Berhasil',
-                                    text: response.message
-                                }).then(function () {
-                                    window.location.href = response.redirect;
-                                });
-                            } else {
-                                $('.error-text').text('');
-                                if (response.msgField) {
-                                    $.each(response.msgField, function (prefix, val) {
-                                        $('#error-' + prefix).text(val[0]);
-                                    });
-                                }
-                                swal({
-                                    icon: 'error',
-                                    title: 'Terjadi Kesalahan',
-                                    text: response.message || 'Terjadi kesalahan saat menyimpan data'
-                                });
-                            }
-                        },
-                        error: function (xhr) {
-                            if (xhr.status === 422) {
-                                let errors = xhr.responseJSON.errors;
-
-                                // Clear previous errors
-                                $('.form-control').removeClass('is-invalid');
-                                $('.invalid-feedback').remove();
-
-                                // Show new errors
-                                $.each(errors, function (field, messages) {
-                                    let input = $('[name="' + field + '"]');
-                                    input.addClass('is-invalid');
-                                    input.closest('.form-group').append('<div class="invalid-feedback">' + messages[0] + '</div>');
-                                });
-
-                                swal({
-                                    icon: 'error',
-                                    title: 'Validasi Gagal',
-                                    text: 'Silakan periksa input Anda.'
-                                });
-                            } else {
-                                swal({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Terjadi kesalahan server. Silakan coba lagi.'
-                                });
-                            }
-                        },
-                        complete: function () {
-                            // Re-enable submit button
-                            $('button[type="submit"]').prop('disabled', false).text('{{ isset($data) ? "Update" : "Simpan" }}');
-                        }
-                    });
-                    return false;
+                email: {
+                    required: false,
+                    email: true,
+                    maxlength: 255
                 },
-                errorElement: 'span',
-                errorPlacement: function (error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
+                website: {
+                    required: false,
+                    url: true,
+                    maxlength: 255
                 },
-                highlight: function (element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
+                no_telepon: {
+                    required: false,
+                    minlength: 10,
+                    maxlength: 20,
                 },
-                unhighlight: function (element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+                provinsi_id: {
+                    required: true,
+                    digits: true
                 },
-            });
+                kabupaten_id: {
+                    required: true,
+                    digits: true
+                },
+                kecamatan_id: {
+                    required: true,
+                    digits: true
+                },
+                desa_id: {
+                    required: true,
+                    digits: true
+                },
+                alamat: {
+                    required: true,
+                    minlength: 5,
+                    maxlength: 255
+                }
+            };
+            initFormValidation('#form-mitra-perusahaan', rules);
         });
     </script>
 @endpush

@@ -57,7 +57,7 @@ class PerusahaanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => 'required|max:255|regex:/^[a-zA-Z0-9\s_-]+$/|unique:m_perusahaan,nama:',
+            'nama' => 'required|max:255|regex:/^[a-zA-Z0-9\s_-]+$/|unique:m_perusahaan,nama',
             'provinsi_id' => 'required|exists:m_provinsi,id',
             'kabupaten_id' => 'required|exists:m_kabupaten,id',
             'kecamatan_id' => 'required|exists:m_kecamatan,id',
