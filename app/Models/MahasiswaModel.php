@@ -20,7 +20,8 @@ class MahasiswaModel extends Model
         'angkatan',
         'jenis_kelamin',
         'no_telepon',
-        'ipk'
+        'ipk',
+        'status',
     ];
 
     protected $casts = [

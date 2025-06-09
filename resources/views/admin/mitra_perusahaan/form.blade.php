@@ -322,7 +322,7 @@
                     maxlength: 255
                 }
             };
-            initFormValidation('#form-mitra-perusahaan', rules);
+            initFormValidation('#form-mitra-perusahaan', rules, '{{ isset($data) ? 'Update' : 'Simpan' }}');
         });
     </script>
 @endpush

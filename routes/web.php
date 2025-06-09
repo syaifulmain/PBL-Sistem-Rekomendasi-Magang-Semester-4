@@ -69,6 +69,8 @@ Route::middleware('auth')->group(function () {
             Route::post('/create', [ManajemenPenggunaController::class, 'store']);
             Route::get('/{id}/edit', [ManajemenPenggunaController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
+            Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
+            Route::get('/export', [ManajemenPenggunaController::class, 'export'])->name('export');
         });
 
         Route::prefix('program-studi')->name('program-studi.')->group(function () {
@@ -192,7 +194,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
-    Route::get('password/reset/{id}', [UserController::class, 'resetPassword'])->name('password.reset');
+    Route::post('password/reset/{id}', [UserController::class, 'resetPassword'])->name('password.reset');
 
     Route::prefix('dokumen')->name('dokumen.')->group(function () {
         Route::post('upload-dokumen-user', [\App\Http\Controllers\DokumenUserController::class, 'storeDokumenUser'])->name('upload-dokumen-user');

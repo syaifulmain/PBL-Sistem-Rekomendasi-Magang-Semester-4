@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants\RegexPatterns;
 use App\Models\DesaModel;
 use App\Models\KabupatenModel;
 use App\Models\KecamatanModel;
@@ -57,12 +58,12 @@ class PerusahaanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama' => 'required|max:255|regex:/^[a-zA-Z0-9\s_-]+$/|unique:m_perusahaan,nama',
+            'nama' => 'required|max:255|regex:' . RegexPatterns::SAFE_INPUT . '|unique:m_perusahaan,nama',
             'provinsi_id' => 'required|exists:m_provinsi,id',
             'kabupaten_id' => 'required|exists:m_kabupaten,id',
             'kecamatan_id' => 'required|exists:m_kecamatan,id',
             'desa_id' => 'required|exists:m_desa,id',
-            'alamat' => 'required|max:255',
+            'alamat' => 'required|regex:' . RegexPatterns::SAFE_INPUT . '|max:255',
             'website' => 'nullable|url|max:255',
             'email' => 'nullable|email|max:255',
             'no_telepon' => 'nullable|string|max:20',
@@ -126,14 +127,14 @@ class PerusahaanController extends Controller
             'nama' => [
                 'required',
                 'max:255',
-                'regex:/^[a-zA-Z0-9\s_-]+$/',
+                'regex:' . RegexPatterns::SAFE_INPUT,
                 Rule::unique('m_perusahaan', 'nama')->ignore($id),
             ],
             'provinsi_id' => 'required|exists:m_provinsi,id',
             'kabupaten_id' => 'required|exists:m_kabupaten,id',
             'kecamatan_id' => 'required|exists:m_kecamatan,id',
             'desa_id' => 'required|exists:m_desa,id',
-            'alamat' => 'required|max:255',
+            'alamat' => 'required|regex:' . RegexPatterns::SAFE_INPUT. '|max:255',
             'website' => 'nullable|url|max:255',
             'email' => 'nullable|email|max:255',
             'no_telepon' => 'nullable|string|max:20',

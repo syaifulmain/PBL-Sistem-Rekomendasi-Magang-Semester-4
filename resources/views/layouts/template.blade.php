@@ -188,7 +188,7 @@
     }
 </script>
 <script>
-    function initFormValidation(formSelector, rules) {
+    function initFormValidation(formSelector, rules, btnSubmitText = 'Simpan') {
         $(formSelector).validate({
             rules: rules,
             submitHandler: function (form) {
@@ -220,6 +220,7 @@
                                 title: 'Terjadi Kesalahan',
                                 text: response.message || 'Terjadi kesalahan saat menyimpan data'
                             });
+                            console.log(response.error)
                         }
                     },
                     error: function (xhr) {
@@ -252,7 +253,7 @@
                     },
                     complete: function () {
                         // Re-enable submit button
-                        $('button[type="submit"]').prop('disabled', false).text('Simpan');
+                        $('button[type="submit"]').prop('disabled', false).text(btnSubmitText);
                     }
                 });
                 return false;
