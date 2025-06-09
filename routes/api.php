@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\WilayahController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +19,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::middleware('auth')->group(function () {
-    Route::get('/provinsi', [App\Http\Controllers\Api\ProvinsiController::class, 'getAllProvinsi'])->name('provinsi');
-    Route::get('/kabupaten/{id}', [App\Http\Controllers\Api\KebupatenController::class, 'getListKabupatenByProvinsiId'])->name('kabupaten');
-    Route::get('/kecamatan/{id}', [App\Http\Controllers\Api\KecamatanController::class, 'getListKecamatanByKabupatenId'])->name('kecamatan');
-    Route::get('/desa/{id}', [App\Http\Controllers\Api\DesaController::class, 'getListDesaByKecamatanId'])->name('desa');
+Route::get('/provinsi', [WilayahController::class, 'getProvinsi']);
+Route::get('/kabupaten/{provinsi_id}', [WilayahController::class, 'getKabupaten']);
+Route::get('/kecamatan/{kabupaten_id}', [WilayahController::class, 'getKecamatan']);
+Route::get('/desa/{kecamatan_id}', [WilayahController::class, 'getDesa']);
 Route::get('/wilayah/search', [\App\Http\Controllers\Api\WilayahController::class, 'searchLocations'])->name('wilayah.search');
-//});

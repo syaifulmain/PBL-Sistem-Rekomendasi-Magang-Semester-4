@@ -95,4 +95,24 @@ class WilayahController extends Controller
             'count' => count($allResults)
         ]);
     }
+
+    public function getProvinsi()
+    {
+        return ProvinsiModel::select('id', 'nama')->get();
+    }
+
+    public function getKabupaten($provinsi_id)
+    {
+        return KabupatenModel::where('provinsi_id', $provinsi_id)->select('id', 'nama')->get();
+    }
+
+    public function getKecamatan($kabupaten_id)
+    {
+        return KecamatanModel::where('kabupaten_id', $kabupaten_id)->select('id', 'nama')->get();
+    }
+
+    public function getDesa($kecamatan_id)
+    {
+        return DesaModel::where('kecamatan_id', $kecamatan_id)->select('id', 'nama')->get();
+    }
 }

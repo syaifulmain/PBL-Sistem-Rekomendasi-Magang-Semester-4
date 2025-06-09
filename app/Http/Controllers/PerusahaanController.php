@@ -2,285 +2,255 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DesaModel;
+use App\Models\KabupatenModel;
 use App\Models\KecamatanModel;
 use App\Models\LokasiPerusahaanModel;
 use App\Models\PerusahaanModel;
+use App\Models\ProvinsiModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Yajra\DataTables\Facades\DataTables;
 
 class PerusahaanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $breadcrumb = (object)[
-            'title' => 'Mitra Perusahaan',
-            'list' => ['Perusahaan']
-        ];
-        $page = (object)[
-            'title' => 'Managemen Mitra Perusahaan'
-        ];
+        if ($request->ajax()) {
+            $data = PerusahaanModel::query();
 
-        return view('admin.perusahaan.index', compact('breadcrumb', 'page'));
-    }
+            return DataTables::of($data)
+                ->editColumn('nama', fn($row) => $row->nama)
+                ->editColumn('alamat', fn($row) => $row->alamat)
+                ->addColumn('action', function ($row) {
+                    $editUrl = route('admin.mitra-perusahaan.edit', $row->id);
+                    $deleteUrl = route('admin.mitra-perusahaan.delete', $row->id);
 
-    public function list(Request $request)
-    {
-        try {
-            $query = PerusahaanModel::select('id', 'nama', 'alamat');
-
-            $totalData = $query->count();
-
-            if ($request->has('search') && !empty($request->search)) {
-                $searchTerm = $request->search;
-                $query->where('nama', 'like', "%{$searchTerm}%")
-                    ->orWhere('alamat', 'like', "%{$searchTerm}%");
-            }
-
-            $totalDataFiltered = $query->count();
-
-            $start = $request->input('start', 0);
-            $length = $request->input('length', 10);
-            $data = $query->skip($start)->take($length)->get();
-
-            return response()->json([
-                'draw' => intval($request->input('draw')),
-                'recordsTotal' => $totalData,
-                'recordsFiltered' => $totalDataFiltered,
-                'data' => $data
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Failed to fetch data',
-                'message' => $e->getMessage()
-            ], 500);
+                    return '
+                        <a href="' . $editUrl . '" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm btn-delete" data-url="' . $deleteUrl . '">Delete</button>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
+
+        $title = 'Mitra Perusahaan';
+        $breadcrumb = [
+            'title' => 'Mitra Perusahaan',
+            'list' => ['Mitra Perusahaan']
+        ];
+        return view('admin.mitra_perusahaan.index', compact('title', 'breadcrumb'));
     }
 
     public function create()
     {
-        $action = 'tambah';
-
-        $breadcrumb = (object)[
+        $title = 'Mitra Perusahaan';
+        $breadcrumb = [
             'title' => 'Mitra Perusahaan',
-            'list' => ['Perusahaan', 'Tambah']
+            'list' => ['Mitra Perusahaan', 'Tambah']
         ];
-        $page = (object)[
-            'title' => 'Tambah Perusahaan'
-        ];
-
-        return view('admin.perusahaan.action', compact('breadcrumb', 'page', 'action'));
+        return view('admin.mitra_perusahaan.form', compact('title', 'breadcrumb'));
     }
 
     public function store(Request $request)
     {
+        $validated = $request->validate([
+            'nama' => 'required|max:255|regex:/^[a-zA-Z0-9\s_-]+$/|unique:m_perusahaan,nama:',
+            'provinsi_id' => 'required|exists:m_provinsi,id',
+            'kabupaten_id' => 'required|exists:m_kabupaten,id',
+            'kecamatan_id' => 'required|exists:m_kecamatan,id',
+            'desa_id' => 'required|exists:m_desa,id',
+            'alamat' => 'required|max:255',
+            'website' => 'nullable|url|max:255',
+            'email' => 'nullable|email|max:255',
+            'no_telepon' => 'nullable|string|max:20',
+        ]);
+
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            $validator = Validator::make($request->all(), [
-                'nama' => 'required|string|max:255',
-                'alamat' => 'required|string|max:255',
-                'website' => 'nullable|url|max:255',
-                'email' => 'nullable|email|max:255',
-                'no_telopon' => 'nullable|string|max:20',
-                'provinsi_id' => 'required|integer',
-                'provinsi_id-input' => 'required|string|max:255',
-                'kabupaten_id' => 'required|integer',
-                'kabupaten_id-input' => 'required|string|max:255',
-                'kecamatan_id' => 'required|integer',
-                'kecamatan_id-input' => 'required|string|max:255',
-                'desa_id' => 'required|integer',
-                'desa_id-input' => 'required|string|max:255',
-            ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'error' => $validator->errors(),
-                    'message' => 'Validasi gagal'
-                ]);
-            }
-
-            $fullAddress = $request->input('alamat') . ', ' .
-                $request->input('desa_id-input') . ', ' .
-                $request->input('kecamatan_id-input') . ', ' .
-                $request->input('kabupaten_id-input') . ', ' .
-                $request->input('provinsi_id-input') . ', ' .
-                'INDONESIA';
-
-            $perushaan = PerusahaanModel::create([
-                'nama' => $request->input('nama'),
-                'alamat' => $fullAddress,
-                'website' => $request->input('website'),
-                'email' => $request->input('email'),
-                'no_telepon' => $request->input('no_telopon')
+            $perusahaan = PerusahaanModel::create([
+                'nama' => $validated['nama'],
+                'alamat' => ProvinsiModel::find($validated['provinsi_id'])->nama . ', ' .
+                    KabupatenModel::find($validated['kabupaten_id'])->nama . ', ' .
+                    KecamatanModel::find($validated['kecamatan_id'])->nama . ', ' .
+                    DesaModel::find($validated['desa_id'])->nama . ', ' .
+                    $validated['alamat'],
+                'website' => $validated['website'] ?? null,
+                'email' => $validated['email'] ?? null,
+                'no_telepon' => $validated['no_telepon'] ?? null,
             ]);
 
             LokasiPerusahaanModel::create([
-                'perusahaan_id' => $perushaan->id,
-                'negara_id' => 1,
-                'provinsi_id' => $request->input('provinsi_id'),
-                'kabupaten_id' => $request->input('kabupaten_id'),
-                'kecamatan_id' => $request->input('kecamatan_id'),
-                'desa_id' => $request->input('desa_id'),
-                'alamat' => $request->input('alamat'),
-                'longitude' => KecamatanModel::find($request->input('kecamatan_id'))->longitude ?? null,
-                'latitude' => KecamatanModel::find($request->input('kecamatan_id'))->latitude ?? null
+                'perusahaan_id' => $perusahaan->id,
+                'negara_id' => 1, // Assuming 1 is the ID for Indonesia
+                'provinsi_id' => $validated['provinsi_id'],
+                'kabupaten_id' => $validated['kabupaten_id'],
+                'kecamatan_id' => $validated['kecamatan_id'],
+                'desa_id' => $validated['desa_id'],
+                'alamat' => $validated['alamat'],
             ]);
-            DB::commit();
 
+            DB::commit();
             return response()->json([
-                'status' => true,
-                'message' => 'Data disimpan'
+                'success' => true,
+                'message' => 'Perusahaan berhasil ditambahkan.',
+                'redirect' => route('admin.mitra-perusahaan.index')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
-                'status' => false,
-                'error' => $e->getMessage(),
-                'message' => 'Gagal menyimpan data'
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan perusahaan.',
+                'error' => $e->getMessage()
             ]);
         }
     }
 
-    public function edit($perusahaan_id)
+    public function edit(string $id)
     {
-        $action = 'edit';
-
-        return $this->action($perusahaan_id, $action);
-    }
-
-    public function detail($perusahaan_id)
-    {
-        $action = 'detail';
-
-        return $this->action($perusahaan_id, $action);
-    }
-
-    public function action($perusahaan_id, $action)
-    {
-        $perusahaan = PerusahaanModel::find($perusahaan_id);
-        $lokasiPerusahaan = LokasiPerusahaanModel::find($perusahaan_id);
-
-        if (!$perusahaan) {
-            return redirect()->route('admin.perusahaan.index')->with('error', 'Perusahaan tidak ditemukan');
-        }
-
-        $perusahaan->lokasi = $lokasiPerusahaan;
-
-        $breadcrumb = (object)[
+        $data = PerusahaanModel::findOrFail($id);
+        $title = 'Mitra Perusahaan';
+        $breadcrumb = [
             'title' => 'Mitra Perusahaan',
-            'list' => ['Perusahaan', ucfirst($action)]
+            'list' => ['Mitra Perusahaan', 'Edit']
         ];
-        $page = (object)[
-            'title' => ucfirst($action) . ' Perusahaan'
-        ];
+        return view('admin.mitra_perusahaan.form', compact('title', 'breadcrumb', 'data'));
+    }
 
-        return view('admin.perusahaan.action', compact('breadcrumb', 'page', 'perusahaan', 'action'));
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'nama' => [
+                'required',
+                'max:255',
+                'regex:/^[a-zA-Z0-9\s_-]+$/',
+                Rule::unique('m_perusahaan', 'nama')->ignore($id),
+            ],
+            'provinsi_id' => 'required|exists:m_provinsi,id',
+            'kabupaten_id' => 'required|exists:m_kabupaten,id',
+            'kecamatan_id' => 'required|exists:m_kecamatan,id',
+            'desa_id' => 'required|exists:m_desa,id',
+            'alamat' => 'required|max:255',
+            'website' => 'nullable|url|max:255',
+            'email' => 'nullable|email|max:255',
+            'no_telepon' => 'nullable|string|max:20',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $perusahaan = PerusahaanModel::findOrFail($id);
+
+            $perusahaan->update([
+                'nama' => $validated['nama'],
+                'alamat' => ProvinsiModel::find($validated['provinsi_id'])->nama . ', ' .
+                    KabupatenModel::find($validated['kabupaten_id'])->nama . ', ' .
+                    KecamatanModel::find($validated['kecamatan_id'])->nama . ', ' .
+                    DesaModel::find($validated['desa_id'])->nama . ', ' .
+                    $validated['alamat'],
+                'website' => $validated['website'] ?? null,
+                'email' => $validated['email'] ?? null,
+                'no_telepon' => $validated['no_telepon'] ?? null,
+            ]);
+
+            LokasiPerusahaanModel::updateOrCreate(
+                ['perusahaan_id' => $perusahaan->id],
+                [
+                    'negara_id' => 1, // Assuming 1 is the ID for Indonesia
+                    'provinsi_id' => $validated['provinsi_id'],
+                    'kabupaten_id' => $validated['kabupaten_id'],
+                    'kecamatan_id' => $validated['kecamatan_id'],
+                    'desa_id' => $validated['desa_id'],
+                    'alamat' => $validated['alamat'],
+                ]
+            );
+
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Perusahaan berhasil diperbarui.',
+                'redirect' => route('admin.mitra-perusahaan.index')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui perusahaan.',
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function destroy($id)
     {
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-            $perusahaan = PerusahaanModel::find($id);
-            if (!$perusahaan) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Perusahaan tidak ditemukan'
-                ]);
-            }
-
+            $perusahaan = PerusahaanModel::findOrFail($id);
             $perusahaan->delete();
-            DB::commit();
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil dihapus'
-            ]);
+            DB::commit();
+            return response()->json(['success' => 'Data berhasil dihapus.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'error' => $e->getMessage(),
-                'message' => 'Gagal menghapus data'
-            ]);
+            return response()->json(['error' => 'Terjadi kesalahan saat menghapus data.'], 500);
         }
     }
 
-    public function update(Request $request, $perusahaan_id)
+    public function getProvinsi(Request $request, $id = 1)
     {
-        try {
-            DB::beginTransaction();
-            $validator = Validator::make($request->all(), [
-                'nama' => 'required|string|max:255',
-                'alamat' => 'required|string|max:255',
-                'website' => 'nullable|url|max:255',
-                'email' => 'nullable|email|max:255',
-                'no_telopon' => 'nullable|string|max:20',
-                'provinsi_id' => 'required|integer',
-                'provinsi_id-input' => 'required|string|max:255',
-                'kabupaten_id' => 'required|integer',
-                'kabupaten_id-input' => 'required|string|max:255',
-                'kecamatan_id' => 'required|integer',
-                'kecamatan_id-input' => 'required|string|max:255',
-                'desa_id' => 'required|integer',
-                'desa_id-input' => 'required|string|max:255',
-            ]);
+        $search = $request->input('q');
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'status' => false,
-                    'error' => $validator->errors(),
-                    'message' => 'Validasi gagal'
-                ]);
-            }
+        $data = ProvinsiModel::when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })->where('negara_id', $id)
+            ->select('id', 'nama as text')
+            ->limit(20)
+            ->get();
 
-            $fullAddress = $request->input('alamat') . ', ' .
-                $request->input('desa_id-input') . ', ' .
-                $request->input('kecamatan_id-input') . ', ' .
-                $request->input('kabupaten_id-input') . ', ' .
-                $request->input('provinsi_id-input') . ', ' .
-                'INDONESIA';
+        return response()->json($data);
+    }
 
-            $perusahaan = PerusahaanModel::find($perusahaan_id);
-            if (!$perusahaan) {
-                return response()->json([
-                    'status' => false,
-                    'message' => "Perusahaan tidak ditemukan"
-                ]);
-            }
+    public function getKabupaten(Request $request, $id)
+    {
+        $search = $request->input('q');
 
-            $perusahaan->update([
-                'nama' => $request->input('nama'),
-                'alamat' => $fullAddress,
-                'website' => $request->input('website'),
-                'email' => $request->input('email'),
-                'no_telepon' => $request->input('no_telopon')
-            ]);
+        $data = KabupatenModel::when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })->where('provinsi_id', $id)
+            ->select('id', 'nama as text')
+            ->limit(20)
+            ->get();
 
-            LokasiPerusahaanModel::where('perusahaan_id', $perusahaan_id)->update([
-                'negara_id' => 1,
-                'provinsi_id' => $request->input('provinsi_id'),
-                'kabupaten_id' => $request->input('kabupaten_id'),
-                'kecamatan_id' => $request->input('kecamatan_id'),
-                'desa_id' => $request->input('desa_id'),
-                'alamat' => $request->input('alamat')
-            ]);
+        return response()->json($data);
+    }
 
-            DB::commit();
+    public function getKecamatan(Request $request, $id)
+    {
+        $search = $request->input('q');
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Data berhasil diperbarui'
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'status' => false,
-                'error' => $e->getMessage(),
-                'message' => 'Gagal memperbarui data'
-            ]);
-        }
+        $data = KecamatanModel::when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })->where('kabupaten_id', $id)
+            ->select('id', 'nama as text')
+            ->limit(20)
+            ->get();
+
+        return response()->json($data);
+    }
+
+    public function getDesa(Request $request, $id)
+    {
+        $search = $request->input('q');
+
+        $data = DesaModel::when($search, function ($query, $search) {
+            return $query->where('nama', 'like', "%{$search}%");
+        })->where('kecamatan_id', $id)
+            ->select('id', 'nama as text')
+            ->limit(20)
+            ->get();
+
+        return response()->json($data);
     }
 }
