@@ -43,7 +43,8 @@ class LowonganMagangMahasiswaController extends Controller
                 ];
             })->toArray();
 
-            $data = $this->getRekomendasiMahasiswa($mahasiswa, $perusahaan);
+            // Gunakan kedua metode sekaligus
+            $data = $this->getRekomendasiGabungan($mahasiswa, $perusahaan);
 
             return DataTables::of(collect($data))
                 ->addColumn('action', function ($row) {
@@ -53,6 +54,21 @@ class LowonganMagangMahasiswaController extends Controller
                         <span class="mb-2">' . $row['nama_perusahaan'] . '</span>
                         <p class="card-text mb-1">
                             <small class="text-muted">' . ($row['nama_lokasi'] ?? '-') . '</small>
+                        </p>
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="card-text mb-1">
+                                    <small class="text-info">Fuzzy: ' . $row['skor_fuzzy'] . '</small>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <p class="card-text mb-1">
+                                    <small class="text-warning">WSM: ' . $row['skor_wsm'] . '</small>
+                                </p>
+                            </div>
+                        </div>
+                        <p class="card-text mb-1">
+                            <small class="text-success"><strong>Skor Gabungan: ' . $row['skor_gabungan'] . '</strong></small>
                         </p>
                     </div>
                 ';
@@ -69,6 +85,351 @@ class LowonganMagangMahasiswaController extends Controller
 
         return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb'));
     }
+
+    // ========== METODE GABUNGAN (FUZZY + WSM) ==========
+
+    /**
+     * Konfigurasi bobot untuk metode gabungan
+     */
+    private function getBobotGabungan()
+    {
+        return [
+            'fuzzy' => 0.4,     // 60% bobot untuk Fuzzy Tsukamoto
+            'wsm' => 0.5        // 40% bobot untuk WSM
+        ];
+    }
+
+    /**
+     * Metode untuk menggabungkan hasil Fuzzy Tsukamoto dan WSM
+     */
+    public function getRekomendasiGabungan($mahasiswa, $daftar_perusahaan)
+    {
+        // Hitung hasil dengan kedua metode
+        $hasil_fuzzy = $this->getRekomendasiMahasiswa($mahasiswa, $daftar_perusahaan);
+        $hasil_wsm = $this->getRekomendasiMahasiswaWSM($mahasiswa, $daftar_perusahaan);
+
+        // Ambil bobot gabungan
+        $bobot = $this->getBobotGabungan();
+
+        $hasil_gabungan = [];
+
+        // Gabungkan hasil berdasarkan ID perusahaan
+        foreach ($hasil_fuzzy as $fuzzy) {
+            // Cari hasil WSM yang sesuai
+            $wsm_match = array_filter($hasil_wsm, function($wsm) use ($fuzzy) {
+                return $wsm['id'] == $fuzzy['id'];
+            });
+
+            if (!empty($wsm_match)) {
+                $wsm = array_values($wsm_match)[0];
+
+                // Hitung skor gabungan dengan weighted average
+                $skor_gabungan = ($fuzzy['skor'] * $bobot['fuzzy']) + ($wsm['skor'] * $bobot['wsm']);
+
+                $hasil_gabungan[] = [
+                    'id' => $fuzzy['id'],
+                    'nama_perusahaan' => $fuzzy['nama_perusahaan'],
+                    'judul' => $fuzzy['judul'],
+                    'nama_lokasi' => $fuzzy['nama_lokasi'],
+                    'skor_fuzzy' => $fuzzy['skor'],
+                    'skor_wsm' => $wsm['skor'],
+                    'skor_gabungan' => round($skor_gabungan, 2),
+                    'detail_fuzzy' => $fuzzy['detail'],
+                    'detail_wsm' => $wsm['detail'],
+                    'metode' => 'Gabungan (Fuzzy + WSM)',
+                    'bobot_fuzzy' => $bobot['fuzzy'],
+                    'bobot_wsm' => $bobot['wsm']
+                ];
+            }
+        }
+
+        // Urutkan berdasarkan skor gabungan tertinggi
+        usort($hasil_gabungan, function ($a, $b) {
+            return $b['skor_gabungan'] <=> $a['skor_gabungan'];
+        });
+
+        return $hasil_gabungan;
+    }
+
+    /**
+     * Metode alternatif: Rata-rata ranking (Borda Count)
+     */
+    public function getRekomendasiGabunganBorda($mahasiswa, $daftar_perusahaan)
+    {
+        // Hitung hasil dengan kedua metode
+        $hasil_fuzzy = $this->getRekomendasiMahasiswa($mahasiswa, $daftar_perusahaan);
+        $hasil_wsm = $this->getRekomendasiMahasiswaWSM($mahasiswa, $daftar_perusahaan);
+
+        $hasil_gabungan = [];
+        $total_alternatif = count($hasil_fuzzy);
+
+        // Gabungkan hasil berdasarkan ID perusahaan
+        foreach ($hasil_fuzzy as $rank_fuzzy => $fuzzy) {
+            // Cari ranking WSM yang sesuai
+            $rank_wsm = 0;
+            foreach ($hasil_wsm as $index => $wsm) {
+                if ($wsm['id'] == $fuzzy['id']) {
+                    $rank_wsm = $index;
+                    break;
+                }
+            }
+
+            // Hitung skor Borda (total_alternatif - ranking)
+            $skor_borda_fuzzy = $total_alternatif - $rank_fuzzy;
+            $skor_borda_wsm = $total_alternatif - $rank_wsm;
+            $skor_borda_gabungan = $skor_borda_fuzzy + $skor_borda_wsm;
+
+            $hasil_gabungan[] = [
+                'id' => $fuzzy['id'],
+                'nama_perusahaan' => $fuzzy['nama_perusahaan'],
+                'judul' => $fuzzy['judul'],
+                'nama_lokasi' => $fuzzy['nama_lokasi'],
+                'skor_fuzzy' => $fuzzy['skor'],
+                'skor_wsm' => $hasil_wsm[$rank_wsm]['skor'],
+                'rank_fuzzy' => $rank_fuzzy + 1,
+                'rank_wsm' => $rank_wsm + 1,
+                'skor_borda' => $skor_borda_gabungan,
+                'skor_gabungan' => round(($skor_borda_gabungan / ($total_alternatif * 2)) * 100, 2),
+                'metode' => 'Gabungan (Borda Count)'
+            ];
+        }
+
+        // Urutkan berdasarkan skor Borda tertinggi
+        usort($hasil_gabungan, function ($a, $b) {
+            return $b['skor_borda'] <=> $a['skor_borda'];
+        });
+
+        return $hasil_gabungan;
+    }
+
+    /**
+     * Metode alternatif: Normalisasi dan rata-rata
+     */
+    public function getRekomendasiGabunganNormalisasi($mahasiswa, $daftar_perusahaan)
+    {
+        // Hitung hasil dengan kedua metode
+        $hasil_fuzzy = $this->getRekomendasiMahasiswa($mahasiswa, $daftar_perusahaan);
+        $hasil_wsm = $this->getRekomendasiMahasiswaWSM($mahasiswa, $daftar_perusahaan);
+
+        // Normalisasi skor ke rentang 0-1
+        $skor_fuzzy = array_column($hasil_fuzzy, 'skor');
+        $skor_wsm = array_column($hasil_wsm, 'skor');
+
+        $min_fuzzy = min($skor_fuzzy);
+        $max_fuzzy = max($skor_fuzzy);
+        $min_wsm = min($skor_wsm);
+        $max_wsm = max($skor_wsm);
+
+        $hasil_gabungan = [];
+
+        foreach ($hasil_fuzzy as $fuzzy) {
+            // Cari hasil WSM yang sesuai
+            $wsm_match = array_filter($hasil_wsm, function($wsm) use ($fuzzy) {
+                return $wsm['id'] == $fuzzy['id'];
+            });
+
+            if (!empty($wsm_match)) {
+                $wsm = array_values($wsm_match)[0];
+
+                // Normalisasi skor
+                $fuzzy_norm = ($max_fuzzy == $min_fuzzy) ? 1 : ($fuzzy['skor'] - $min_fuzzy) / ($max_fuzzy - $min_fuzzy);
+                $wsm_norm = ($max_wsm == $min_wsm) ? 1 : ($wsm['skor'] - $min_wsm) / ($max_wsm - $min_wsm);
+
+                // Rata-rata skor ternormalisasi
+                $skor_gabungan = (($fuzzy_norm + $wsm_norm) / 2) * 100;
+
+                $hasil_gabungan[] = [
+                    'id' => $fuzzy['id'],
+                    'nama_perusahaan' => $fuzzy['nama_perusahaan'],
+                    'judul' => $fuzzy['judul'],
+                    'nama_lokasi' => $fuzzy['nama_lokasi'],
+                    'skor_fuzzy' => $fuzzy['skor'],
+                    'skor_wsm' => $wsm['skor'],
+                    'skor_fuzzy_norm' => round($fuzzy_norm, 4),
+                    'skor_wsm_norm' => round($wsm_norm, 4),
+                    'skor_gabungan' => round($skor_gabungan, 2),
+                    'metode' => 'Gabungan (Normalisasi)'
+                ];
+            }
+        }
+
+        // Urutkan berdasarkan skor gabungan tertinggi
+        usort($hasil_gabungan, function ($a, $b) {
+            return $b['skor_gabungan'] <=> $a['skor_gabungan'];
+        });
+
+        return $hasil_gabungan;
+    }
+
+    /**
+     * Konfigurasi bobot untuk WSM
+     * Total bobot harus = 1
+     */
+    private function getBobotWSM()
+    {
+        return [
+            'minat' => 0.30,        // 30% - Kesesuaian minat
+            'keahlian' => 0.35,     // 35% - Kesesuaian keahlian
+            'jarak' => 0.20,        // 20% - Kedekatan lokasi
+            'selisih_ipk' => 0.15   // 15% - Selisih IPK
+        ];
+    }
+
+    /**
+     * Normalisasi nilai untuk WSM
+     * Menggunakan normalisasi min-max ke rentang 0-1
+     */
+    private function normalisiNilaiWSM($nilai_raw, $min_val, $max_val, $is_benefit = true)
+    {
+        if ($max_val == $min_val) {
+            return 1; // Jika semua nilai sama, beri nilai maksimal
+        }
+
+        if ($is_benefit) {
+            // Untuk kriteria benefit (semakin besar semakin baik)
+            return ($nilai_raw - $min_val) / ($max_val - $min_val);
+        } else {
+            // Untuk kriteria cost (semakin kecil semakin baik)
+            return ($max_val - $nilai_raw) / ($max_val - $min_val);
+        }
+    }
+
+    /**
+     * Proses WSM untuk satu perusahaan
+     */
+    public function prosesWSM($mahasiswa, $perusahaan, $nilai_min_max)
+    {
+        // Hitung nilai crisp
+        $nilai_crisp = $this->hitungNilaiCrisp($mahasiswa, $perusahaan);
+
+        // Normalisasi setiap kriteria
+        $minat_norm = $this->normalisiNilaiWSM(
+            $nilai_crisp['minat'],
+            $nilai_min_max['minat']['min'],
+            $nilai_min_max['minat']['max'],
+            true  // benefit
+        );
+
+        $keahlian_norm = $this->normalisiNilaiWSM(
+            $nilai_crisp['keahlian'],
+            $nilai_min_max['keahlian']['min'],
+            $nilai_min_max['keahlian']['max'],
+            true  // benefit
+        );
+
+        $jarak_norm = $this->normalisiNilaiWSM(
+            $nilai_crisp['jarak'],
+            $nilai_min_max['jarak']['min'],
+            $nilai_min_max['jarak']['max'],
+            false // cost (semakin dekat semakin baik)
+        );
+
+        $ipk_norm = $this->normalisiNilaiWSM(
+            $nilai_crisp['selisih_ipk'],
+            $nilai_min_max['selisih_ipk']['min'],
+            $nilai_min_max['selisih_ipk']['max'],
+            true  // benefit (selisih IPK tinggi = bagus)
+        );
+
+        // Ambil bobot
+        $bobot = $this->getBobotWSM();
+
+        // Hitung skor WSM (weighted sum)
+        $skor_wsm = ($minat_norm * $bobot['minat']) +
+            ($keahlian_norm * $bobot['keahlian']) +
+            ($jarak_norm * $bobot['jarak']) +
+            ($ipk_norm * $bobot['selisih_ipk']);
+
+        // Konversi ke skala 0-100 untuk kemudahan interpretasi
+        $skor_final = $skor_wsm * 100;
+
+        return [
+            'skor_akhir' => round($skor_final, 2),
+            'nilai_crisp' => $nilai_crisp,
+            'nilai_normalisasi' => [
+                'minat' => round($minat_norm, 4),
+                'keahlian' => round($keahlian_norm, 4),
+                'jarak' => round($jarak_norm, 4),
+                'selisih_ipk' => round($ipk_norm, 4)
+            ],
+            'bobot' => $bobot,
+            'skor_wsm' => round($skor_wsm, 4)
+        ];
+    }
+
+    /**
+     * Mendapatkan nilai min dan max untuk normalisasi
+     */
+    private function hitungMinMaxNilai($mahasiswa, $daftar_perusahaan)
+    {
+        $nilai_semua = [];
+
+        foreach ($daftar_perusahaan as $perusahaan) {
+            $nilai_crisp = $this->hitungNilaiCrisp($mahasiswa, $perusahaan);
+            $nilai_semua[] = $nilai_crisp;
+        }
+
+        if (empty($nilai_semua)) {
+            return [
+                'minat' => ['min' => 0, 'max' => 1],
+                'keahlian' => ['min' => 0, 'max' => 1],
+                'jarak' => ['min' => 0, 'max' => 1],
+                'selisih_ipk' => ['min' => 0, 'max' => 1]
+            ];
+        }
+
+        return [
+            'minat' => [
+                'min' => min(array_column($nilai_semua, 'minat')),
+                'max' => max(array_column($nilai_semua, 'minat'))
+            ],
+            'keahlian' => [
+                'min' => min(array_column($nilai_semua, 'keahlian')),
+                'max' => max(array_column($nilai_semua, 'keahlian'))
+            ],
+            'jarak' => [
+                'min' => min(array_column($nilai_semua, 'jarak')),
+                'max' => max(array_column($nilai_semua, 'jarak'))
+            ],
+            'selisih_ipk' => [
+                'min' => min(array_column($nilai_semua, 'selisih_ipk')),
+                'max' => max(array_column($nilai_semua, 'selisih_ipk'))
+            ]
+        ];
+    }
+
+    /**
+     * Mendapatkan rekomendasi menggunakan metode WSM
+     */
+    public function getRekomendasiMahasiswaWSM($mahasiswa, $daftar_perusahaan)
+    {
+        // Hitung nilai min-max untuk normalisasi
+        $nilai_min_max = $this->hitungMinMaxNilai($mahasiswa, $daftar_perusahaan);
+
+        $hasil = [];
+
+        foreach ($daftar_perusahaan as $perusahaan) {
+            $wsm_result = $this->prosesWSM($mahasiswa, $perusahaan, $nilai_min_max);
+            $hasil[] = [
+                'id' => $perusahaan['id'],
+                'nama_perusahaan' => $perusahaan['nama'],
+                'judul' => $perusahaan['judul'],
+                'nama_lokasi' => $perusahaan['alamat'],
+                'skor' => $wsm_result['skor_akhir'],
+                'detail' => $wsm_result,
+                'metode' => 'WSM'
+            ];
+        }
+
+        // Urutkan berdasarkan skor tertinggi
+        usort($hasil, function ($a, $b) {
+            return $b['skor'] <=> $a['skor'];
+        });
+
+        return $hasil;
+    }
+
+    // ========== METODE FUZZY TSUKAMOTO (EXISTING) ==========
 
     private function minatRendah($x)
     {
@@ -278,13 +639,6 @@ class LowonganMagangMahasiswaController extends Controller
                 $z = $this->defuzzifikasiRekomendasi($rule['alpha'], $rule['output']);
                 $z_total += $rule['alpha'] * $z;
                 $alpha_total += $rule['alpha'];
-
-//                $detail_rules[] = [
-//                    'rule' => $i + 1,
-//                    'alpha' => round($rule['alpha'], 4),
-//                    'output' => $rule['output'],
-//                    'z' => round($z, 2)
-//                ];
             }
         }
 
@@ -294,15 +648,6 @@ class LowonganMagangMahasiswaController extends Controller
         return [
             'skor_akhir' => round($skor_akhir, 2),
             'nilai_crisp' => $nilai_crisp,
-//            'derajat_keanggotaan' => [
-//                'minat' => ['rendah' => round($mu_minat_rendah, 4), 'tinggi' => round($mu_minat_tinggi, 4)],
-//                'keahlian' => ['rendah' => round($mu_keahlian_rendah, 4), 'tinggi' => round($mu_keahlian_tinggi, 4)],
-//                'jarak' => ['dekat' => round($mu_jarak_dekat, 4), 'jauh' => round($mu_jarak_jauh, 4)],
-//                'selisih_ipk' => ['kecil' => round($mu_ipk_kecil, 4), 'besar' => round($mu_ipk_besar, 4)]
-//            ],
-//            'rules_fired' => $detail_rules,
-//            'alpha_total' => round($alpha_total, 4),
-//            'z_total' => round($z_total, 2)
         ];
     }
 
@@ -351,6 +696,7 @@ class LowonganMagangMahasiswaController extends Controller
                 'nama_lokasi' => $perusahaan['alamat'],
                 'skor' => $fuzzy_result['skor_akhir'],
                 'detail' => $fuzzy_result['nilai_crisp'],
+                'metode' => 'Fuzzy Tsukamoto'
             ];
         }
 
@@ -360,6 +706,128 @@ class LowonganMagangMahasiswaController extends Controller
         });
 
         return $hasil;
+    }
+
+    // ========== METODE PERBANDINGAN ==========
+
+    /**
+     * Endpoint untuk mendapatkan detail perbandingan metode gabungan
+     */
+    public function detailGabungan(Request $request)
+    {
+        $user = auth()->user();
+
+        $mahasiswa = [
+            'id' => $user->mahasiswa->id,
+            'nama' => $user->mahasiswa->nama,
+            'nim' => $user->mahasiswa->nim,
+            'ipk' => $user->mahasiswa->ipk,
+            'minat' => $user->mahasiswa->getAllMinat(),
+            'keahlian' => $user->mahasiswa->getAllKeahlian(),
+            'lokasi_preferensi' => $user->mahasiswa->getAllCorPreferensiLokasi(),
+        ];
+
+        $listPerusahaan = LowonganMagangModel::where('status', 'buka')
+            ->where('minimal_ipk', '<=', $mahasiswa['ipk'])
+            ->get();
+
+        $perusahaan = $listPerusahaan->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->getNamaPerusahaan(),
+                'judul' => $item->judul,
+                'alamat' => $item->perusahaan->alamat,
+                'bidang_yang_dibutuhkan' => $item->getKeahlian(),
+                'keahlian_yang_dibutuhkan' => $item->getKeahlianTeknis(),
+                'min_ipk' => $item->minimal_ipk,
+                'lokasi' => $item->getCorLokasi(),
+            ];
+        })->toArray();
+
+        // Hitung dengan semua metode gabungan
+        $hasil_weighted = $this->getRekomendasiGabungan($mahasiswa, $perusahaan);
+        $hasil_borda = $this->getRekomendasiGabunganBorda($mahasiswa, $perusahaan);
+        $hasil_normalisasi = $this->getRekomendasiGabunganNormalisasi($mahasiswa, $perusahaan);
+
+        return response()->json([
+            'weighted_average' => $hasil_weighted,
+            'borda_count' => $hasil_borda,
+            'normalisasi' => $hasil_normalisasi,
+            'summary' => [
+                'total_lowongan' => count($hasil_weighted),
+                'metode_digunakan' => ['Fuzzy Tsukamoto', 'WSM'],
+                'metode_gabungan' => ['Weighted Average', 'Borda Count', 'Normalisasi'],
+                'bobot_default' => $this->getBobotGabungan()
+            ]
+        ]);
+    }
+    public function perbandinganMetode(Request $request)
+    {
+        $user = auth()->user();
+
+        $mahasiswa = [
+            'id' => $user->mahasiswa->id,
+            'nama' => $user->mahasiswa->nama,
+            'nim' => $user->mahasiswa->nim,
+            'ipk' => $user->mahasiswa->ipk,
+            'minat' => $user->mahasiswa->getAllMinat(),
+            'keahlian' => $user->mahasiswa->getAllKeahlian(),
+            'lokasi_preferensi' => $user->mahasiswa->getAllCorPreferensiLokasi(),
+        ];
+
+        $listPerusahaan = LowonganMagangModel::where('status', 'buka')
+            ->where('minimal_ipk', '<=', $mahasiswa['ipk'])
+            ->get();
+
+        $perusahaan = $listPerusahaan->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama' => $item->getNamaPerusahaan(),
+                'judul' => $item->judul,
+                'alamat' => $item->perusahaan->alamat,
+                'bidang_yang_dibutuhkan' => $item->getKeahlian(),
+                'keahlian_yang_dibutuhkan' => $item->getKeahlianTeknis(),
+                'min_ipk' => $item->minimal_ipk,
+                'lokasi' => $item->getCorLokasi(),
+            ];
+        })->toArray();
+
+        // Hitung dengan kedua metode
+        $hasil_fuzzy = $this->getRekomendasiMahasiswa($mahasiswa, $perusahaan);
+        $hasil_wsm = $this->getRekomendasiMahasiswaWSM($mahasiswa, $perusahaan);
+
+        return response()->json([
+            'fuzzy_tsukamoto' => $hasil_fuzzy,
+            'wsm' => $hasil_wsm,
+            'perbandingan' => $this->bandingkanHasil($hasil_fuzzy, $hasil_wsm)
+        ]);
+    }
+
+    /**
+     * Membandingkan hasil kedua metode
+     */
+    private function bandingkanHasil($hasil_fuzzy, $hasil_wsm)
+    {
+        $perbandingan = [];
+
+        foreach ($hasil_fuzzy as $index => $fuzzy) {
+            $wsm = $hasil_wsm[$index] ?? null;
+
+            if ($wsm && $fuzzy['id'] == $wsm['id']) {
+                $perbandingan[] = [
+                    'id' => $fuzzy['id'],
+                    'nama_perusahaan' => $fuzzy['nama_perusahaan'],
+                    'judul' => $fuzzy['judul'],
+                    'skor_fuzzy' => $fuzzy['skor'],
+                    'skor_wsm' => $wsm['skor'],
+                    'selisih_skor' => abs($fuzzy['skor'] - $wsm['skor']),
+                    'rank_fuzzy' => $index + 1,
+                    'rank_wsm' => array_search($wsm, $hasil_wsm) + 1
+                ];
+            }
+        }
+
+        return $perbandingan;
     }
 
     public function show($id)
