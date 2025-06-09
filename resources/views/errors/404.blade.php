@@ -9,20 +9,11 @@
                         <h1 class="display-1 mb-0">404</h1>
                     </div>
                     <div class="col-lg-6 error-page-divider text-lg-left pl-lg-4">
-                        <h2>SORRY!</h2>
-                        <h3 class="font-weight-light">The page you’re looking for was not found.</h3>
-                    </div>
-                </div>
-                <div class="row mt-5">
-                    <div class="col-12 text-center mt-xl-2">
-                        <a class="text-white font-weight-medium"
-                           href="{{asset('skydash-v.01/index.html">Back to home')}}"></a>
-                    </div>
-                </div>
-                <div class="row mt-5">
-                    <div class="col-12 mt-xl-2">
-                        <p class="text-white font-weight-medium text-center">Copyright &copy; 2021 All rights
-                            reserved.</p>
+                        <h2 class="mb-3">MAAF!!</h2>
+                        <h3 class="font-weight-light mb-3">Halaman yang Anda cari tidak ditemukan.</h3>
+                        <a href="{{ url()->previous() }}" class="btn btn-light   mr-2">
+                            <i class="ti-arrow-left mr-1"></i> Kembali
+                        </a>
                     </div>
                 </div>
             </div>
