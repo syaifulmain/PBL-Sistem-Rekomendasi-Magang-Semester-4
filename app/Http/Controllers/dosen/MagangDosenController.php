@@ -42,13 +42,13 @@ class MagangDosenController extends Controller
                     $status = $row->status;
                     $periode = $row->pengajuanMagang->lowongan->periodeMagang->nama;
                     $waktuMulai = $row->getWaktuMulaiMagangAttribute();
-                    $sisaWaktu = $status === 'aktif' 
-                        ? ($row->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                    $sisaWaktu = $status === 'aktif'
+                        ? ($row->getSisaWaktuMangangAttribute() . ' hari tersisa')
                         : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
-                    
+
                     $statusBadge = StatusHelper::getMagangStatusBadge($status);
                     $badgeClass = $statusBadge['class'];
-                    $icon = $status === 'selesai' ? 'check-circle' : 
+                    $icon = $status === 'selesai' ? 'check-circle' :
                         ($status === 'aktif' ? 'clock' : 'calendar');
 
                     return '
@@ -151,7 +151,7 @@ class MagangDosenController extends Controller
     {
         $validated = $request->validate([
             'magang_id' => 'required|exists:t_magang,id',
-            'tanggal_evaluasi' => 'required|date_format:Y-m-d',
+            'tanggal_evaluasi' => 'required|date_format:d-m-Y',
             'catatan' => 'required|string|max:1000',
             'log_magang_mahasiswa_id' => 'nullable|exists:t_log_magang_mahasiswa,id',
         ]);

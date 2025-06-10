@@ -47,21 +47,21 @@
                         <!-- Navigation Tabs -->
                         <ul class="nav nav-pills nav-fill mb-4 border-0" id="internshipTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="log-tab" data-toggle="pill" href="#log-content"
-                                   role="tab">
+                                <a class="nav-link" id="log-tab" data-toggle="pill" href="#log-content"
+                                   role="tab" data-tab-id="0">
                                     <i class="mdi mdi-clipboard-list mr-2"></i>Log Magang
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="evaluasi-bimbingan-tab" data-toggle="pill"
-                                   href="#evaluasi-bimbingan-content" role="tab">
+                                   href="#evaluasi-bimbingan-content" role="tab" data-tab-id="1">
                                     <i class="mdi mdi-comments mr-2"></i>Evaluasi Bimbingan
                                 </a>
                             </li>
                             @if($data->magang->status === 'selesai')
                                 <li class="nav-item" role="presentation">
                                     <a class="nav-link" id="evaluasi-mahasiswa-tab" data-toggle="pill"
-                                       href="#evaluasi-mahasiswa-content" role="tab">
+                                       href="#evaluasi-mahasiswa-content" role="tab" data-tab-id="2">
                                         <i class="mdi mdi-user-graduate mr-2"></i>Evaluasi Mahasiswa
                                     </a>
                                 </li>
@@ -71,7 +71,7 @@
                         <!-- Tab Content -->
                         <div class="tab-content pt-0 border-0" id="internshipTabContent">
                             <!-- Log Magang Tab -->
-                            <div class="tab-pane fade show active" id="log-content" role="tabpanel">
+                            <div class="tab-pane fade" id="log-content" role="tabpanel">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h4 class="card-title mb-0">
                                         <i class="mdi mdi-clipboard-list text-primary mr-2"></i>Log Kegiatan Magang
@@ -164,8 +164,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-footer text-muted">
-                                                    <small><i class="mdi mdi-eye mr-1"></i>Klik untuk melihat
-                                                        detail</small>
+                                                    <small>
+                                                        <i class="mdi mdi-eye mr-1"></i>Lihat lebih lengkap
+                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -444,6 +445,48 @@
 @push('js')
     <script>
         $(document).ready(function () {
+            // Function to set the active tab based on URL parameter
+            function setActiveTabFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page');
+                let tabToActivate = $('#internshipTabs .nav-link[data-tab-id="0"]'); // Default to first tab
+
+                if (page !== null) {
+                    const targetTab = $('#internshipTabs .nav-link[data-tab-id="' + page + '"]');
+                    if (targetTab.length) {
+                        tabToActivate = targetTab;
+                    }
+                }
+
+                // Deactivate all tabs first
+                $('#internshipTabs .nav-link').removeClass('active');
+                $('.tab-content .tab-pane').removeClass('show active');
+
+                // Activate the target tab
+                tabToActivate.addClass('active');
+                $(tabToActivate.attr('href')).addClass('show active');
+            }
+
+            // Set active tab on initial load
+            setActiveTabFromUrl();
+
+            // Handle tab clicks to update URL
+            $('#internshipTabs a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+                const tabId = $(e.target).data('tab-id');
+                const newUrl = window.location.pathname + '?page=' + tabId;
+                window.history.pushState({path: newUrl}, '', newUrl);
+
+                // Optional: Smooth scroll to tabs if you still want this behavior
+                // $('html, body').animate({
+                //     scrollTop: $("#internshipTabs").offset().top - 20
+                // }, 500);
+            });
+
+            // Listen for browser back/forward navigation
+            $(window).on('popstate', function () {
+                setActiveTabFromUrl();
+            });
+
             $('.evaluation-card').on('show.bs.collapse', function (e) {
                 var target = $(e.target);
                 target.closest('.card-body').find('.short-content').hide();
@@ -525,7 +568,7 @@
             $('#logTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '',
+                ajax: '', // Make sure this is correctly set if you are loading data via AJAX
                 columns: [
                     {data: 'DT_RowIndex', className: 'text-center'},
                     {data: 'tanggal'},
@@ -634,7 +677,7 @@
                             }).then(() => {
                                 $('#evaluasiMahasiswaForm')[0].reset();
                                 $('.filepond').filepond('removeFiles');
-                                location.reload();
+                                location.reload(); // This will now preserve the tab
                             });
                         } else {
                             swal({
@@ -680,12 +723,12 @@
             });
         }
 
-        // Smooth scrolling for tabs
-        $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
-            $('html, body').animate({
-                scrollTop: $("#internshipTabs").offset().top - 20
-            }, 500);
-        });
+        // Smooth scrolling for tabs - REMOVED as it's handled by the new tab logic if desired
+        // $('a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+        //     $('html, body').animate({
+        //         scrollTop: $("#internshipTabs").offset().top - 20
+        //     }, 500);
+        // });
 
         // Initialize tooltips
         $('[data-toggle="tooltip"]').tooltip();

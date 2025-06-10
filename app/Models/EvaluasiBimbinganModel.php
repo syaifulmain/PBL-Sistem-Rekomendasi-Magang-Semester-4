@@ -18,6 +18,10 @@ class EvaluasiBimbinganModel extends Model
         'catatan',
     ];
 
+    protected $casts = [
+        'tanggal_evaluasi' => 'datetime',
+    ];
+
     public function logMagangMahasiswa()
     {
         return $this->belongsTo(LogMagangMahasiswaModel::class, 'log_magang_mahasiswa_id');
