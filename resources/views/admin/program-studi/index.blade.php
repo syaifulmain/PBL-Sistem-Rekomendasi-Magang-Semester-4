@@ -4,8 +4,7 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Data Program Studi</h4>
-            <button class="btn mb-4 text-white rounded-md" id="btnTambah"
-                    style="background-color: #19376D; border-color: #19376D;">
+            <button onclick="modalAction('{{ route('admin.program-studi.create') }}')" class="btn btn-primary mb-3">
                 <i class="fa fa-plus"></i> Tambah
             </button>
 
@@ -25,20 +24,18 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="modalProdi" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content" id="modalContent">
-                {{-- Konten form akan dimuat via AJAX --}}
-            </div>
-        </div>
-    </div>
+    <!-- Modal Import -->
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" data-backdrop="static"
+         data-keyboard="false" data-width="75%"></div>
 @endsection
-
 @push('js')
-    <!-- Tambahkan SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <script>
+        function modalAction(url = '') {
+            $('#myModal').load(url, function () {
+                $('#myModal').modal('show');
+            });
+        }
+    </script>
     <script>
         $(function () {
             let table = $('#tabelProdi').DataTable({
@@ -57,69 +54,26 @@
                 }
             });
 
-            // Tambah data
-            $('#btnTambah').click(function () {
-                $.get("{{ route('admin.program-studi.create') }}", function (res) {
-                    $('#modalContent').html(res);
-                    $('#modalProdi').modal('show');
-                });
-            });
+            {{--// Edit data--}}
+            {{--$('#tabelProdi').on('click', '.edit', function () {--}}
+            {{--    let id = $(this).data('id');--}}
+            {{--    $.get(`{{ url('admin/program-studi/edit') }}/${id}`, function (res) {--}}
+            {{--        $('#modalContent').html(res);--}}
+            {{--        $('#modalProdi').modal('show');--}}
+            {{--    });--}}
+            {{--});--}}
 
-            // Edit data
-            $('#tabelProdi').on('click', '.edit', function () {
-                let id = $(this).data('id');
-                $.get(`{{ url('admin/program-studi/edit') }}/${id}`, function (res) {
-                    $('#modalContent').html(res);
-                    $('#modalProdi').modal('show');
-                });
-            });
-
-            // Hapus data
-            $('#tabelProdi').on('click', '.delete', function () {
-                let id = $(this).data('id');
-
-                Swal.fire({
-                    title: 'Apakah kamu yakin?',
-                    text: "Data ini akan dihapus secara permanen!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Ya, hapus!',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: `{{ url('admin/program-studi/delete') }}/${id}`,
-                            method: 'DELETE',
-                            data: {_token: '{{ csrf_token() }}'},
-                            success: function (res) {
-                                $('#tabelProdi').DataTable().ajax.reload();
-
-                                Swal.fire({
-                                    title: 'Berhasil!',
-                                    text: res.success,
-                                    icon: 'success',
-                                    timer: 1500,
-                                    showConfirmButton: false
-                                });
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    title: 'Gagal!',
-                                    text: 'Terjadi kesalahan saat menghapus data.',
-                                    icon: 'error',
-                                    confirmButtonText: 'Tutup'
-                                });
-                            }
-                        });
+            // Delete handler
+            $(document).on('click', '.btn-delete', function (e) {
+                e.preventDefault();
+                swalAlertConfirm({
+                    title: 'Hapus data ini?',
+                    text: 'Data yang dihapus tidak bisa dikembalikan!',
+                    url: $(this).data('url'),
+                    onSuccess: function () {
+                        $('#tabelProdi').DataTable().ajax.reload();
                     }
                 });
-            });
-
-            // Fokus ke input pertama setelah modal terbuka
-            $('#modalProdi').on('shown.bs.modal', function () {
-                $('#formProdi input:first').focus();
             });
         });
     </script>

@@ -4,6 +4,12 @@
     </a>
 @endif
 
+@if(isset($editUrlModal))
+    <button onclick="modalAction('{{ $editUrlModal }}')" class="btn btn-warning btn-sm">
+        <i class="fa fa-edit"></i> Edit
+    </button>
+@endif
+
 @if (isset($editUrl))
     <a href="{{ $editUrl }}" class="btn btn-warning btn-sm">
         <i class="fa fa-edit"></i> Edit
