@@ -16,11 +16,11 @@
                                     </h5>
                                     @php
                                         $waktuMulai = $data->magang->getWaktuMulaiMagangAttribute();
-                                        $sisaWaktu = $data->magang->status === 'aktif' 
-                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                                        $sisaWaktu = $data->magang->status === 'aktif'
+                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa')
                                             : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
                                     @endphp
-                                    
+
                                     @if($sisaWaktu && $data->magang->status !== 'selesai')
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>{{ $sisaWaktu }}
@@ -36,10 +36,10 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
-                                        <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 
-                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }} 
+                                        <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' :
+                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }}
                                             badge-lg px-3 py-2 mb-3">
-                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' : 
+                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' :
                                             ($data->magang->status === 'aktif' ? 'clock' : 'calendar') }} mr-1"></i>
                                         {{ ucfirst(str_replace('_', ' ', $data->magang->status)) }}
                                     </span>
@@ -84,13 +84,13 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table id="logTable"
-                                                   class="display table-hover expandable-table table-striped table-bordered"
+                                                   class="display table table-hover expandable-table table-striped table-borderless"
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th class="text-center" width="5%">No</th>
                                                     <th width="15%">Tanggal</th>
-                                                    <th width="20%">Aktivitas</th>
+                                                    <th width="10%">Aktivitas</th>
                                                     <th width="25%">Kendala</th>
                                                     <th width="45%">Keterangan</th>
                                                     <th class="text-center" width="20%">Aksi</th>
@@ -433,7 +433,7 @@
                 autoWidth: false,
                 pageLength: 10,
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json'
+                    url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
             });
 

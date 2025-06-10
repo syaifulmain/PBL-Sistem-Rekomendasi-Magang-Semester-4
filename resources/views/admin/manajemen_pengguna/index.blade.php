@@ -19,7 +19,7 @@
 
             <div class="table-responsive">
                 <table id="manajemen-pengguna-table"
-                       class="display table-hover expandable-table table-striped"
+                       class="display table table-hover expandable-table table-striped table-borderless"
                        style="width:100%">
                     <thead>
                     <tr>

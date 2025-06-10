@@ -13,15 +13,15 @@
                         <div class="card-header bg-primary text-white">
                             <h5 class="mb-0">Daftar Perusahaan</h5>
                         </div>
-                        <div class="alert alert-info text-center mb-0">
-                            Apakah Anda puas dengan rekomendasi kami?
-                            <button class="btn btn-success btn-sm ml-2" title="Puas">
-                                <i class="fa fa-thumbs-up m-0"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm ml-1" title="Tidak Puas">
-                                <i class="fa fa-thumbs-down m-0"></i>
-                            </button>
-                        </div>
+{{--                        <div class="alert alert-info text-center mb-0">--}}
+{{--                            Apakah Anda puas dengan rekomendasi kami?--}}
+{{--                            <button class="btn btn-success btn-sm ml-2" title="Puas">--}}
+{{--                                <i class="fa fa-thumbs-up m-0"></i>--}}
+{{--                            </button>--}}
+{{--                            <button class="btn btn-danger btn-sm ml-1" title="Tidak Puas">--}}
+{{--                                <i class="fa fa-thumbs-down m-0"></i>--}}
+{{--                            </button>--}}
+{{--                        </div>--}}
                         <div class="card-body p-0">
                             <div class="scrollable" id="companies-list">
                                 <table class="table table-hover table-bordered" id="lowongan-table">
@@ -95,8 +95,9 @@
                 searching: false,
                 info: false,
                 ordering: false,
+                responsive: true,
                 language: {
-                    processing: "Memuat data..."
+                    url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
             });
         })

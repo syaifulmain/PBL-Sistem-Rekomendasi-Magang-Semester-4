@@ -20,7 +20,7 @@
                                             ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa')
                                             : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
                                     @endphp
-                                    
+
                                     @if($sisaWaktu && $data->magang->status !== 'selesai')
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>{{ $sisaWaktu }}
@@ -94,7 +94,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table id="logTable"
-                                                   class="display table-hover expandable-table table-striped table-bordered"
+                                                   class="display table table-hover expandable-table table-striped table-borderless"
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
@@ -538,7 +538,7 @@
                 autoWidth: false,
                 pageLength: 10,
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json'
+                    url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
             });
 

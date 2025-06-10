@@ -4,7 +4,9 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title">Data Kegiatan Magang</h4>
-        <table class="table table-striped table-bordered" id="kegiatan-table">
+        <table id="kegiatan-table"
+               class="display table table-hover expandable-table table-striped table-borderless"
+                style="width:100%">
             <thead>
                 <tr>
                     <th>Id</th>
@@ -37,7 +39,10 @@
                 { data: 'tanggal_pengajuan', name: 'tanggal_pengajuan' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ],
-            order: [0, 'DESC']
+            order: [0, 'DESC'],
+            language: {
+                url: '{{ asset("assets/js/datatables/language/id.json") }}'
+            }
         });
     });
 </script>

@@ -25,10 +25,8 @@ class PeriodeMagangController extends Controller
                     $editUrl = route('admin.periode-magang.edit', $row->id);
                     $deleteUrl = route('admin.periode-magang.delete', $row->id);
 
-                    return '
-                        <a href="'.$editUrl.'" class="btn btn-warning btn-sm">Edit</a>
-                        <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'">Delete</button>
-                    ';
+                    return view('components.action-buttons', compact('editUrl', 'deleteUrl'))->render();
+
                 })
                 ->rawColumns(['action'])
                 ->make(true);
