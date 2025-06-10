@@ -38,8 +38,8 @@
             columns: [
                 { data: 'id', name: 'id', visible: false},
                 { data: 'judul', name: 'judul' },
-                { data: 'perusahaan', name: 'perusahaan', defaultContent: '-' },
-                { data: 'periode_magang', name: 'periode_magang', defaultContent: '-' },
+                { data: 'perusahaan', name: 'perusahaan.nama', defaultContent: '-' },
+                { data: 'periode_magang', name: 'periodeMagang.nama', defaultContent: '-' },
                 { data: 'tanggal_mulai_daftar', name: 'tanggal_mulai_daftar' },
                 { data: 'tanggal_selesai_daftar', name: 'tanggal_selesai_daftar' },
                 { data: 'tanggal_mulai_magang', name: 'tanggal_mulai_magang' },

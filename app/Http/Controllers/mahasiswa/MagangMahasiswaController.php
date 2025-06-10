@@ -30,7 +30,6 @@ class MagangMahasiswaController extends Controller
                     
                     // Tentukan badge class dan icon berdasarkan status
                     $statusBadge = StatusHelper::getMagangStatusBadge($statusMagang);
-                    $badgeClass = $statusBadge['class'];
                     
                     $icon = match($statusMagang) {
                         'selesai' => 'check-circle',
@@ -47,7 +46,6 @@ class MagangMahasiswaController extends Controller
                     
                     $dosen = $row->magang->dosen->nama ?? '-';
                     $route = route('mahasiswa.evaluasi-magang.monitoring', $row->id);
-                    $statusText = ucfirst(str_replace('_', ' ', $statusMagang));
     
                     return '
                     <a href="' . $route . '" class="text-decoration-none text-dark">
@@ -59,7 +57,7 @@ class MagangMahasiswaController extends Controller
                                         <h5 class="mb-2 opacity-90">
                                             <i class="mdi mdi-city mr-2"></i>' . $perusahaan . '
                                         </h5>' .
-                        ($sisaWaktu ? '
+                        ($sisaWaktu && $statusMagang !== 'selesai' ? '
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '
                                         </p>' : '') . '
@@ -68,8 +66,8 @@ class MagangMahasiswaController extends Controller
                                         </p>
                                     </div>
                                     <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
-                                        <span class="badge badge-' . $badgeClass . ' badge-lg px-3 py-2 mb-2">
-                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . $statusText . '
+                                        <span class="badge badge-' . $statusBadge['class'] . ' badge-lg px-3 py-2 mb-2">
+                                            <i class="mdi mdi-' . $icon . ' mr-1"></i>' . $statusBadge['text'] . '
                                         </span>
                                         <p class="mb-0">' . $periodeMagang . '</p>
                                     </div>

@@ -98,21 +98,21 @@ class PengajuanMagangSeeder extends Seeder
                 $matchingSkills = $listKeahlianMahasiswaID->intersect($listKeahlianLowonganMagangID);
                 $pengajuanMagangID = 0;
                 if ($matchingSkills->count() > 0) {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganBuka->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'diajukan',
                         'tanggal_pengajuan' => $lowonganBuka->tanggal_mulai_daftar,
                     ]);
                 } elseif (rand(0, 1)) {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganBuka->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'ditolak',
                         'tanggal_pengajuan' => $lowonganBuka->tanggal_mulai_daftar,
                     ]);
                 } else {
-                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insert([
+                    $pengajuanMagangID = DB::table('t_pengajuan_magang')->insertGetId([
                         'lowongan_magang_id' => $lowonganBuka->id,
                         'mahasiswa_id' => $mahasiswa->id,
                         'status' => 'batal',

@@ -18,7 +18,7 @@ class PeriodeMagangSeeder extends Seeder
         $data = [];
         $year = $currentYear;
 
-        if ($currentMonth >= 6) {
+        if ($currentMonth > 6) {
             $startWithOdd = true;
         } else {
             $startWithOdd = false;
@@ -28,7 +28,7 @@ class PeriodeMagangSeeder extends Seeder
             if ($startWithOdd) {
                 $data[] = [
                     'nama' => "Semester Ganjil $year",
-                    'tanggal_mulai' => "$year-08-01",
+                    'tanggal_mulai' => "$year-07-01",
                     'tanggal_selesai' => "$year-12-31",
                     'tahun_akademik' => "$year/" . ($year + 1),
                     'semester' => 'Ganjil',
@@ -38,7 +38,7 @@ class PeriodeMagangSeeder extends Seeder
                 $data[] = [
                     'nama' => "Semester Genap $year",
                     'tanggal_mulai' => "$year-01-01",
-                    'tanggal_selesai' => "$year-05-31",
+                    'tanggal_selesai' => "$year-06-30",
                     'tahun_akademik' => ($year - 1) . "/$year",
                     'semester' => 'Genap',
                 ];

@@ -38,7 +38,7 @@
     </div>
 
     <!-- Recent Activity -->
-    <div class="card mt-4">
+    {{-- <div class="card mt-4">
         <div class="card-body">
             <h5 class="card-title mb-4">Aktivitas Terbaru</h5>
             <div class="table-responsive">
@@ -75,6 +75,6 @@
                 </table>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection

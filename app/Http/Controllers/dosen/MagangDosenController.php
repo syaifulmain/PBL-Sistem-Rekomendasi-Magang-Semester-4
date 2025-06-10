@@ -61,7 +61,7 @@ class MagangDosenController extends Controller
                                         <h5 class="mb-2 opacity-90">
                                             <i class="mdi mdi-city mr-2"></i>' . $perusahaan . '
                                         </h5>' .
-                        ($status === 'aktif' ? '<p class="mb-2"><i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '</p>' : '') . '
+                        ($sisaWaktu && $status !== 'selesai' ? '<p class="mb-2"><i class="mdi mdi-calendar-clock mr-2"></i>' . $sisaWaktu . '</p>' : '') . '
                                         <p class="mb-0">
                                             <i class="mdi mdi-account mr-2"></i> ' . $mahasiswa . ' (' . $nim . ')
                                         </p>

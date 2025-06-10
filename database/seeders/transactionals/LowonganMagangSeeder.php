@@ -23,7 +23,7 @@ class LowonganMagangSeeder extends Seeder
         $listDokumenWajibID = DB::table('m_jenis_dokumen')->where('default', 1)->pluck('id');
 
         $listBidangKeahlianID = DB::table('m_bidang_keahlian')->pluck('id');
-        
+
         $listKeahlianTeknisID = DB::table('m_keahlian_teknis')->pluck('id');
 
         $faker = Faker::create('id_ID');
@@ -52,7 +52,7 @@ class LowonganMagangSeeder extends Seeder
             foreach ($listPerusahaanID as $perusahaan_id) {
                 $data = $perusahaanData[$perusahaan_id];
 
-                $status = $isLastPeriode ? 'BUKA' : $faker->randomElement(['TUTUP', 'DIBATALKAN']);
+                $status = $isLastPeriode ? 'TUTUP' : $faker->randomElement(['TUTUP', 'DIBATALKAN']);
 
                 $lowongan_magang_id = DB::table('t_lowongan_magang')->insertGetId([
                     'perusahaan_id' => $perusahaan_id,
@@ -83,7 +83,7 @@ class LowonganMagangSeeder extends Seeder
                         'bidang_keahlian_id' => $listBidangKeahlianID->random(),
                     ]);
                 }
-                
+
                 for ($i = 0; $i < SeederCounts::KEAHLIAN_TEKNIS_MAGANG; $i++) {
                     DB::table('t_keahlian_teknis_lowongan')->insert([
                         'lowongan_magang_id' => $lowongan_magang_id,
