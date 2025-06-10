@@ -19,9 +19,11 @@
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/datatables.net-bs4/dataTables.responsive.min.css')}}"/>
     <link rel="stylesheet" href="{{asset('skydash-v.01/vendors/ti-icons/css/themify-icons.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/js/select.dataTables.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
+    <link rel="stylesheet" type="text/css"
+          href="{{asset('skydash-v.01/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/select2/select2.min.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('skydash-v.01/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css"
+          href="{{asset('skydash-v.01/vendors/select2-bootstrap-theme/select2-bootstrap.min.css')}}">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="{{asset('skydash-v.01/css/vertical-layout-light/style.css')}}">
@@ -65,7 +67,7 @@
                     </div>
                 @endif
 
-               <!-- Spinner -->
+                <!-- Spinner -->
                 <div id="loading-spinner" style="position: relative; top: 40%; left: 0; right: 0; text-align: center;">
                     <div class="spinner-border text-primary" role="status">
                         <span class="sr-only">Loading...</span>
@@ -141,8 +143,10 @@
             url,
             method = 'DELETE',
             data = {},
-            onSuccess = function () {},
-            onError = function () {}
+            onSuccess = function () {
+            },
+            onError = function () {
+            }
         } = options;
 
         swal({
@@ -183,6 +187,92 @@
         });
     }
 </script>
+<script>
+    function initFormValidation(formSelector, rules, btnSubmitText = 'Simpan') {
+        $(formSelector).validate({
+            rules: rules,
+            submitHandler: function (form) {
+                // Disable submit button untuk mencegah double submit
+                $('button[type="submit"]').prop('disabled', true).text('Menyimpan...');
+
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            swal({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: response.message
+                            }).then(function () {
+                                window.location.href = response.redirect;
+                            });
+                        } else {
+                            $('.error-text').text('');
+                            if (response.msgField) {
+                                $.each(response.msgField, function (prefix, val) {
+                                    $('#error-' + prefix).text(val[0]);
+                                });
+                            }
+                            swal({
+                                icon: 'error',
+                                title: 'Terjadi Kesalahan',
+                                text: response.message || 'Terjadi kesalahan saat menyimpan data'
+                            });
+                            console.log(response.error)
+                        }
+                    },
+                    error: function (xhr) {
+                        if (xhr.status === 422) {
+                            let errors = xhr.responseJSON.errors;
+
+                            // Clear previous errors
+                            $('.form-control').removeClass('is-invalid');
+                            $('.invalid-feedback').remove();
+
+                            // Show new errors
+                            $.each(errors, function (field, messages) {
+                                let input = $('[name="' + field + '"]');
+                                input.addClass('is-invalid');
+                                input.closest('.form-group').append('<div class="invalid-feedback">' + messages[0] + '</div>');
+                            });
+
+                            swal({
+                                icon: 'error',
+                                title: 'Validasi Gagal',
+                                text: 'Silakan periksa input Anda.'
+                            });
+                        } else {
+                            swal({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Terjadi kesalahan server. Silakan coba lagi.'
+                            });
+                        }
+                    },
+                    complete: function () {
+                        // Re-enable submit button
+                        $('button[type="submit"]').prop('disabled', false).text(btnSubmitText);
+                    }
+                });
+                return false;
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            },
+        });
+    }
+</script>
+
 
 @stack('js')
 

@@ -2,10 +2,18 @@
 @section('content')
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title">{{ isset($data) ? 'Edit' : 'Tambah' }} Pengguna</h4>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="card-title">{{ isset($data) ? 'Edit' : 'Tambah' }} {{$title}}</h4>
+                <div>
+                    <a href="{{ url()->previous() }}" class="btn btn-secondary mr-2">
+                        <i class="ti-arrow-left mr-1"></i> Kembali
+                    </a>
+                </div>
+            </div>
             <form
                 action="{{ isset($data) ? route('admin.manajemen-pengguna.edit', $data->id) : route('admin.manajemen-pengguna.create') }}"
-                method="POST">
+                method="POST"
+                id="form-manajemen-pengguna">
                 @csrf
                 @if(isset($data))
                     @method('PUT')
@@ -29,6 +37,9 @@
                             MAHASISWA
                         </option>
                     </select>
+                    @if(isset($level))
+                        <input type="hidden" name="level" value="{{ strtoupper($level) }}">
+                    @endif
                 </div>
 
 
@@ -103,6 +114,25 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="form-group">
+                            <label for="status">Status Mahasiswa</label>
+                            <select name="status"
+                                    class="form-control @error('status') is-invalid @enderror">
+                                <option value="">-- Pilih Status Mahasiswa --</option>
+                                <option value="aktif"
+                                    {{ old('status', $data->mahasiswa->status ?? '') == 'aktif' ? 'selected' : '' }}>
+                                    aktif
+                                </option>
+                                <option value="nonaktif"
+                                    {{ old('status', $data->mahasiswa->status ?? '') == 'nonaktif' ? 'selected' : '' }}>
+                                    nonaktif
+                                </option>
+                            </select>
+                            @error('status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 @endif
 
@@ -132,9 +162,10 @@
 
                 <div class="text-right">
                     @isset($data)
-                        <a href="{{ route('password.reset', $data->id) }}" class="btn btn-warning">
+                        <button data-url="{{ route('password.reset', $data->id) }}"
+                                class="btn btn-warning btn-reset-password">
                             Reset Password
-                        </a>
+                        </button>
                     @endisset
                     <button type="submit" class="btn btn-primary">
                         {{ isset($data) ? 'Update' : 'Simpan' }}
@@ -178,6 +209,80 @@
                     alert('Silakan pilih Level terlebih dahulu');
                     return false;
                 }
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            let rules
+            if ($('select[name="level"]').val() === 'MAHASISWA') {
+                rules = {
+                    nim: {
+                        required: true,
+                        minlength: 8,
+                        maxlength: 15,
+                        digits: true
+                    },
+                    nama: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    program_studi: {
+                        required: true
+                    },
+                    angkatan: {
+                        required: true,
+                        digits: true,
+                        minlength: 4,
+                        maxlength: 4
+                    },
+                    status: {
+                        required: true,
+                    }
+                };
+            } else if ($('select[name="level"]').val() === 'DOSEN') {
+                rules = {
+                    nip: {
+                        required: true,
+                        digits: true,
+                        minlength: 15,
+                        maxlength: 25,
+                    },
+                    nama: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    }
+                };
+            } else if ($('select[name="level"]').val() === 'ADMIN') {
+                rules = {
+                    username: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 50,
+                    },
+                    nama: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    }
+                };
+            }
+            initFormValidation("#form-manajemen-pengguna", rules, '{{ isset($data) ? 'Update' : 'Simpan' }}');
+
+            $(document).on('click', '.btn-reset-password', function (e) {
+                e.preventDefault();
+                swalAlertConfirm({
+                    title: 'Reset Password?',
+                    text: 'Apakah Anda yakin ingin mereset password pengguna ini?',
+                    url: $(this).data('url'),
+                    method: 'POST',
+                    confirmButtonText: 'Ya, Reset',
+                    onSuccess: function () {
+                        $('#manajemen-pengguna-table').DataTable().ajax.reload();
+                    }
+                });
             });
         });
     </script>

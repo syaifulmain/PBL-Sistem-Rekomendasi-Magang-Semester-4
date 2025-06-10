@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -29,14 +30,21 @@ class UserController extends Controller
 
     public function resetPassword($id)
     {
-        $user = UserModel::find($id);
-        if (!$user) {
-            return redirect()->back()->withErrors(['error' => 'User tidak ditemukan']);
+        DB::beginTransaction();
+        try {
+            $user = UserModel::findOrFail($id);
+            if (!$user) {
+                return response()->json(['error' => 'User tidak ditemukan.'], 404);
+            }
+
+            $user->password = bcrypt($user->username); // Reset password to the username
+            $user->save();
+
+            DB::commit();
+            return response()->json(['success' => 'Password berhasil direset.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Terjadi kesalahan saat mereset password.'], 500);
         }
-
-        $user->password = bcrypt(12345678);
-        $user->save();
-
-        return redirect()->back()->with('success', 'Password berhasil direset');
     }
 }

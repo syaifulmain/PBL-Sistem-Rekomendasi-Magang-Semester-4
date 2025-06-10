@@ -44,15 +44,17 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:ADMIN,MAHASISWA')->prefix('admin')->name('admin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        Route::prefix('perusahaan')->name('perusahaan.')->group(function () {
+        Route::prefix('mitra-perusahaan')->name('mitra-perusahaan.')->group(function () {
             Route::get('/', [PerusahaanController::class, 'index'])->name('index');
-            Route::get('/list', [PerusahaanController::class, 'list'])->name('list');
             Route::get('/create', [PerusahaanController::class, 'create'])->name('create');
-            Route::post('/store', [PerusahaanController::class, 'store'])->name('store');
-            Route::get('/edit/{id}', [PerusahaanController::class, 'edit'])->name('edit');
-            Route::put('/update/{id}', [PerusahaanController::class, 'update'])->name('update');
-            Route::delete('/delete/{id}', [PerusahaanController::class, 'destroy'])->name('delete');
-            Route::get('/detail/{id}', [PerusahaanController::class, 'detail'])->name('detail');
+            Route::post('/create', [PerusahaanController::class, 'store']);
+            Route::get('/{id}/edit', [PerusahaanController::class, 'edit'])->name('edit');
+            Route::put('/{id}/edit', [PerusahaanController::class, 'update']);
+            Route::delete('/{id}/delete', [PerusahaanController::class, 'destroy'])->name('delete');
+            Route::get('/provinsi', [PerusahaanController::class, 'getProvinsi'])->name('provinsi');
+            Route::get('/kabupaten/{id}', [PerusahaanController::class, 'getKabupaten'])->name('kabupaten');
+            Route::get('/kecamatan/{id}', [PerusahaanController::class, 'getKecamatan'])->name('kecamatan');
+            Route::get('/desa/{id}', [PerusahaanController::class, 'getDesa'])->name('desa');
         });
         Route::prefix('periode-magang')->name('periode-magang.')->group(function () {
             Route::get('/', [PeriodeMagangController::class, 'index'])->name('index');
@@ -69,6 +71,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{id}/edit', [ManajemenPenggunaController::class, 'edit'])->name('edit');
             Route::put('/{id}/edit', [ManajemenPenggunaController::class, 'update']);
             Route::delete('/{id}/delete', [ManajemenPenggunaController::class, 'destroy'])->name('delete');
+            Route::get('/import/index', [ManajemenPenggunaController::class, 'importIndex'])->name('import.index');
+            Route::post('/import', [ManajemenPenggunaController::class, 'import'])->name('import');
         });
 
         Route::prefix('program-studi')->name('program-studi.')->group(function () {
@@ -197,7 +201,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::put('password/update', [UserController::class, 'updatePassword'])->name('password.update');
-    Route::get('password/reset/{id}', [UserController::class, 'resetPassword'])->name('password.reset');
+    Route::post('password/reset/{id}', [UserController::class, 'resetPassword'])->name('password.reset');
 
     Route::prefix('dokumen')->name('dokumen.')->group(function () {
         Route::post('upload-dokumen-user', [\App\Http\Controllers\DokumenUserController::class, 'storeDokumenUser'])->name('upload-dokumen-user');
