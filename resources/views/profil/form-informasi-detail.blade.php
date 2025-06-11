@@ -32,11 +32,15 @@
                     </div>
                     <div class="form-group">
                         <label>Jenis Kelamin</label>
-                        <input class="form-control" value="{{$data->getGenderNameAttribute()}}" disabled>
+                        <select name="jenis_kelamin" id="jenis_kelamin" class="form-control" required>
+                            <option value="">-- Pilih Jenis Kelamin --</option>
+                            <option value="L" {{ $data->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="P" {{ $data->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>No Telepon</label>
-                        <input type="text" name="no_telepon" id="no_telepon" class="form-control" required
+                        <input type="text" name="no_telepon" id="no_telepon" class="form-control"
                                value="{{$data->no_telepon}}">
                         @error('no_telepon')
                         <div class="invalid-feedback">{{ $message }}</div>

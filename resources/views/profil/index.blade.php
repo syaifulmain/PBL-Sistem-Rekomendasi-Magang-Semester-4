@@ -326,5 +326,16 @@
                 }
             });
         });
+
+        $(document).ready(function() {
+            $(document).on('click', '[data-dismiss="modal"]', function() {
+                var modal = $(this).closest('.modal');
+                if (modal.length && modal.hasClass('show')) {
+                    location.reload();
+                } else if ($(this).hasClass('close') && $(this).closest('.modal').length) {
+                    location.reload();
+                }
+            });
+        });
     </script>
 @endpush

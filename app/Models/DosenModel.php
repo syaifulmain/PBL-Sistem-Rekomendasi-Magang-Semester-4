@@ -41,7 +41,7 @@ class DosenModel extends Model
 
     public function getGenderNameAttribute()
     {
-        return $this->jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan';
+        return $this->jenis_kelamin === 'L' ? 'Laki-laki' : ($this->jenis_kelamin === 'P' ? 'Perempuan' : null);
     }
 
     public function getDokumenTambahanAttribute()

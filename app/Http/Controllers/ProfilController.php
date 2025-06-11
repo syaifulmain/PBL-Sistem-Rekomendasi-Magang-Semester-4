@@ -19,6 +19,7 @@ use App\Models\PreferensiLokasiMahasiswa;
 use App\Models\ProvinsiModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfilController extends Controller
 {
@@ -107,12 +108,14 @@ class ProfilController extends Controller
         if (has_role(UserRole::DOSEN)) {
             $user = $user->dosen;
             $validated = $request->validate([
-                'no_telepon' => 'string|max:20',
+                'jenis_kelamin' => 'required|in:L,P',
+                'no_telepon' => 'nullable|string|max:20',
             ]);
         } else if (has_role(UserRole::MAHASISWA)) {
             $user = $user->mahasiswa;
             $validated = $request->validate([
-                'no_telepon' => 'string|max:20',
+                'jenis_kelamin' => 'required|in:L,P',
+                'no_telepon' => 'nullable|string|max:20',
                 'ipk' => 'numeric|min:0|max:4'
             ]);
         }
@@ -163,24 +166,68 @@ class ProfilController extends Controller
 
     public function storeMinat(Request $request)
     {
-        $validated = $request->validate([
-            'minat_id' => 'required|exists:m_bidang_keahlian,id',
-        ]);
+        DB::beginTransaction();
+        try {
+            $validated = $request->validate([
+                'minat_id' => 'required|exists:m_bidang_keahlian,id',
+                'minat_id_input' => 'required|string|max:255',
+            ]);
 
-        $user = Auth::user();
+            $namaMinat = BidangKeahlianModel::find($validated['minat_id'])->nama;
+            if ($namaMinat !== $validated['minat_id_input']) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama minat tidak sesuai dengan yang dipilih.'
+                ]);
+            }
 
-        match ($user->level) {
-            UserRole::DOSEN => MinatDosenModel::create([
-                'dosen_id' => $user->dosen->id,
-                'bidang_keahlian_id' => $validated['minat_id']
-            ]),
-            UserRole::MAHASISWA => MinatMahasiswaModel::create([
-                'mahasiswa_id' => $user->mahasiswa->id,
-                'bidang_keahlian_id' => $validated['minat_id']
-            ])
-        };
+            $user = Auth::user();
 
-        return $this->partialMinatReload($user);
+            $exists = match ($user->level) {
+                UserRole::DOSEN => MinatDosenModel::where([
+                    'dosen_id' => $user->dosen->id,
+                    'bidang_keahlian_id' => $validated['minat_id']
+                ])->exists(),
+                UserRole::MAHASISWA => MinatMahasiswaModel::where([
+                    'mahasiswa_id' => $user->mahasiswa->id,
+                    'bidang_keahlian_id' => $validated['minat_id']
+                ])->exists(),
+            };
+
+            if ($exists) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Minat sudah ada.'
+                ]);
+            }
+
+            match ($user->level) {
+                UserRole::DOSEN => MinatDosenModel::firstOrCreate(
+                    [
+                        'dosen_id' => $user->dosen->id,
+                        'bidang_keahlian_id' => $validated['minat_id']
+                    ]
+                ),
+                UserRole::MAHASISWA => MinatMahasiswaModel::firstOrCreate(
+                    [
+                        'mahasiswa_id' => $user->mahasiswa->id,
+                        'bidang_keahlian_id' => $validated['minat_id']
+                    ]
+                )
+            };
+            DB::commit();
+
+            return $this->partialMinatReload($user);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan minat.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroyMinat($id)
@@ -255,63 +302,111 @@ class ProfilController extends Controller
 
     public function storePreferensiLokasi(Request $request)
     {
-        $user = Auth::user();
+        try {
+            DB::beginTransaction();
+            $user = Auth::user();
 
-        $validated = $request->validate([
-            'preferensi_lokasi_id_type' => 'required|in:provinsi,kabupaten,kecamatan,desa',
-            'preferensi_lokasi_id' => 'required',
-            'preferensi_lokasi_id_input' => 'required|string|max:255',
-        ]);
+            $validated = $request->validate([
+                'preferensi_lokasi_id_type' => 'required|in:provinsi,kabupaten,kecamatan,desa',
+                'preferensi_lokasi_id' => 'required',
+                'preferensi_lokasi_id_input' => 'required|string|max:255',
+            ]);
 
-        if ($user->level == UserRole::DOSEN) {
-            $preferensiLokasi = new PreferensiLokasiDosenModel();
-            $preferensiLokasi->dosen_id = $user->dosen->id;
-        } elseif ($user->level == UserRole::MAHASISWA) {
-            $preferensiLokasi = new PreferensiLokasiMahasiswa();
-            $preferensiLokasi->mahasiswa_id = $user->mahasiswa->id;
+            // Cek duplikasi preferensi lokasi
+            $model = null;
+            $where = [];
+            if ($user->level == UserRole::DOSEN) {
+                $model = PreferensiLokasiDosenModel::class;
+                $where['dosen_id'] = $user->dosen->id;
+            } elseif ($user->level == UserRole::MAHASISWA) {
+                $model = PreferensiLokasiMahasiswa::class;
+                $where['mahasiswa_id'] = $user->mahasiswa->id;
+            }
+
+            // Set kolom id lokasi sesuai tipe
+            $idType = $validated['preferensi_lokasi_id_type'];
+            $idField = $idType . '_id';
+            $where[$idField] = $validated['preferensi_lokasi_id'];
+
+            if ($user->level == UserRole::DOSEN) {
+                $preferensiLokasi = new PreferensiLokasiDosenModel();
+                $preferensiLokasi->dosen_id = $user->dosen->id;
+            } elseif ($user->level == UserRole::MAHASISWA) {
+                $preferensiLokasi = new PreferensiLokasiMahasiswa();
+                $preferensiLokasi->mahasiswa_id = $user->mahasiswa->id;
+            }
+
+            $preferensiLokasi->nama_tampilan = $validated['preferensi_lokasi_id_input'];
+            $preferensiLokasi->negara_id = 1;
+
+            $fullName = '';
+            if ($idType == 'provinsi') {
+                $preferensiLokasi->provinsi_id = $validated['preferensi_lokasi_id'];
+                $provinsi = ProvinsiModel::find($preferensiLokasi->provinsi_id);
+                $preferensiLokasi->longitude = $provinsi->longitude;
+                $preferensiLokasi->latitude = $provinsi->latitude;
+                $fullName = $provinsi->nama;
+            } elseif ($idType == 'kabupaten') {
+                $kabupaten = KabupatenModel::find($validated['preferensi_lokasi_id']);
+                $preferensiLokasi->longitude = $kabupaten->longitude;
+                $preferensiLokasi->latitude = $kabupaten->latitude;
+                $preferensiLokasi->kabupaten_id = $validated['preferensi_lokasi_id'];
+                $provinsi_id = $kabupaten->provinsi_id;
+                $preferensiLokasi->provinsi_id = $provinsi_id;
+                $fullName = $kabupaten->nama . ', ' . ProvinsiModel::find($provinsi_id)->nama;
+            } elseif ($idType == 'kecamatan') {
+                $kecamatan = KecamatanModel::find($validated['preferensi_lokasi_id']);
+                $preferensiLokasi->longitude = $kecamatan->longitude;
+                $preferensiLokasi->latitude = $kecamatan->latitude;
+                $preferensiLokasi->kecamatan_id = $validated['preferensi_lokasi_id'];
+                $kabupaten_id = $kecamatan->kabupaten_id;
+                $preferensiLokasi->kabupaten_id = $kabupaten_id;
+                $provinsi_id = KabupatenModel::where('id', $kabupaten_id)->first()->provinsi_id;
+                $preferensiLokasi->provinsi_id = $provinsi_id;
+                $fullName = $kecamatan->nama . ', ' . KabupatenModel::find($kabupaten_id)->nama . ', ' . ProvinsiModel::find($provinsi_id)->nama;
+            } elseif ($idType == 'desa') {
+                $preferensiLokasi->desa_id = $validated['preferensi_lokasi_id'];
+                $kecamatan_id = DesaModel::where('id', $validated['preferensi_lokasi_id'])->first()->kecamatan_id;
+                $kecamatan = KecamatanModel::find($kecamatan_id);
+                $preferensiLokasi->longitude = $kecamatan->longitude;
+                $preferensiLokasi->latitude = $kecamatan->latitude;
+                $preferensiLokasi->kecamatan_id = $kecamatan_id;
+                $kabupaten_id = $kecamatan->kabupaten_id;
+                $preferensiLokasi->kabupaten_id = $kabupaten_id;
+                $provinsi_id = KabupatenModel::where('id', $kabupaten_id)->first()->provinsi_id;
+                $preferensiLokasi->provinsi_id = $provinsi_id;
+                $fullName = DesaModel::find($validated['preferensi_lokasi_id'])->nama . ', ' . KecamatanModel::find($kecamatan_id)->nama . ', ' . KabupatenModel::find($kabupaten_id)->nama . ', ' . ProvinsiModel::find($provinsi_id)->nama;
+            }
+
+            if ($fullName !== $validated['preferensi_lokasi_id_input']) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama tampilan lokasi tidak sesuai dengan lokasi yang dipilih.'
+                ]);
+            }
+
+            // Jika sudah ada, tolak
+            if ($model && $model::where($where)->exists()) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Preferensi lokasi sudah ada.'
+                ]);
+            }
+
+            $preferensiLokasi->save();
+
+            DB::commit();
+            return $this->partialPrefrensiLokasiReload($user);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan preferensi lokasi.',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $preferensiLokasi->nama_tampilan = $validated['preferensi_lokasi_id_input'];
-        $preferensiLokasi->negara_id = 1;
-
-        if ($validated['preferensi_lokasi_id_type'] == 'provinsi') {
-            $preferensiLokasi->provinsi_id = $validated['preferensi_lokasi_id'];
-            $provinsi = ProvinsiModel::find($preferensiLokasi->provinsi_id);
-            $preferensiLokasi->longitude = $provinsi->longitude;
-            $preferensiLokasi->latitude = $provinsi->latitude;
-        } elseif ($validated['preferensi_lokasi_id_type'] == 'kabupaten') {
-            $kabupaten = KabupatenModel::find($validated['preferensi_lokasi_id']);
-            $preferensiLokasi->longitude = $kabupaten->longitude;
-            $preferensiLokasi->latitude = $kabupaten->latitude;
-            $preferensiLokasi->kabupaten_id = $validated['preferensi_lokasi_id'];
-            $provinsi_id = KabupatenModel::where('id', $validated['preferensi_lokasi_id'])->first()->provinsi_id;
-            $preferensiLokasi->provinsi_id = $provinsi_id;
-        } elseif ($validated['preferensi_lokasi_id_type'] == 'kecamatan') {
-            $kecamatan = KecamatanModel::find($validated['preferensi_lokasi_id']);
-            $preferensiLokasi->longitude = $kecamatan->longitude;
-            $preferensiLokasi->latitude = $kecamatan->latitude;
-            $preferensiLokasi->kecamatan_id = $validated['preferensi_lokasi_id'];
-            $kabupaten_id = KecamatanModel::where('id', $validated['preferensi_lokasi_id'])->first()->kabupaten_id;
-            $preferensiLokasi->kabupaten_id = $kabupaten_id;
-            $provinsi_id = KabupatenModel::where('id', $kabupaten_id)->first()->provinsi_id;
-            $preferensiLokasi->provinsi_id = $provinsi_id;
-        } elseif ($validated['preferensi_lokasi_id_type'] == 'desa') {
-
-            $preferensiLokasi->desa_id = $validated['preferensi_lokasi_id'];
-            $kecamatan_id = DesaModel::where('id', $validated['preferensi_lokasi_id'])->first()->kecamatan_id;
-            $kecamatan = KecamatanModel::find($kecamatan_id);
-            $preferensiLokasi->longitude = $kecamatan->longitude;
-            $preferensiLokasi->latitude = $kecamatan->latitude;
-            $preferensiLokasi->kecamatan_id = $kecamatan_id;
-            $kabupaten_id = KecamatanModel::where('id', $kecamatan_id)->first()->kabupaten_id;
-            $preferensiLokasi->kabupaten_id = $kabupaten_id;
-            $provinsi_id = KabupatenModel::where('id', $kabupaten_id)->first()->provinsi_id;
-            $preferensiLokasi->provinsi_id = $provinsi_id;
-        }
-
-        $preferensiLokasi->save();
-
-        return $this->partialPrefrensiLokasiReload($user);
     }
 
     public function destroyPreferensiLokasi($id)
@@ -387,22 +482,48 @@ class ProfilController extends Controller
 
     public function storeKeahlian(Request $request)
     {
-        $validated = $request->validate([
-            'keahlian_id' => 'required|exists:m_keahlian_teknis,id',
-            'level_id' => 'required|in:1,2,3',
-        ]);
+        try {
+            DB::beginTransaction();
 
-        $user = Auth::user();
+            $validated = $request->validate([
+                'keahlian_id' => 'required|exists:m_keahlian_teknis,id',
+                'level_id' => 'required|in:1,2,3',
+                'keahlian_id_input' => 'required|string|max:255',
+            ]);
 
-        match ($user->level) {
-            UserRole::MAHASISWA => KeahlianMahasiswaModel::create([
-                'mahasiswa_id' => $user->mahasiswa->id,
-                'keahlian_teknis_id' => $validated['keahlian_id'],
-                'level' => $validated['level_id']
-            ])
-        };
+            $namaKeahlian = KeahlianTeknisModel::find($validated['keahlian_id'])->nama;
+            if ($namaKeahlian !== $validated['keahlian_id_input']) {
+                DB::rollBack();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Nama keahlian tidak sesuai dengan yang dipilih.'
+                ]);
+            }
 
-        return $this->partialKeahlianReload($user);
+            $user = Auth::user();
+
+            match ($user->level) {
+                UserRole::MAHASISWA => KeahlianMahasiswaModel::updateOrCreate(
+                    [
+                        'mahasiswa_id' => $user->mahasiswa->id,
+                        'keahlian_teknis_id' => $validated['keahlian_id'],
+                    ],
+                    [
+                        'level' => $validated['level_id']
+                    ]
+                )
+            };
+
+            DB::commit();
+            return $this->partialKeahlianReload($user);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan keahlian.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function destroyKeahlian($id)
@@ -466,5 +587,6 @@ class ProfilController extends Controller
             'path' => 'users/dokumen/'
         ]);
 
-        return redirect()->route('profil.index')->with('success', 'Dokumen berhasil diunggah');    }
+        return redirect()->route('profil.index')->with('success', 'Dokumen berhasil diunggah');
+    }
 }

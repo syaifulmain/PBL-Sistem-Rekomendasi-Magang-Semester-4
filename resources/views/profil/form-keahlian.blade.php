@@ -18,12 +18,13 @@
                         :items="$listKeahlain"
                         class="flex-grow-1"
                     />
+                    <small id="error-keahlian-input" class="text-danger d-none"></small>
                 </div>
 
                 <div class="form-group">
                     <label for="level_id">Level</label>
                     <div class="input-group">
-                        <select id="level_id" name="level_id" class="form-control">
+                        <select id="level_id" name="level_id" class="form-control" required>
                             <option value="1">Pemula</option>
                             <option value="2">Menengah</option>
                             <option value="3">Mahir</option>
@@ -60,10 +61,13 @@
                         $('#tag-cross-delete').html(response.html);``
                         $('#keahlian_id-hidden').val('').trigger('change');
                         $('#keahlian_id-input').val('');
+                    }else {
+                        $('#error-keahlian-input').removeClass('d-none').text(response.message);
                     }
                 },
-                error: function(xhr) {
-                    console.error(xhr.responseText);``
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    $('#error-keahlian-input').removeClass('d-none').text('Periksa kembali input Anda.');
                 }
             });
         });
