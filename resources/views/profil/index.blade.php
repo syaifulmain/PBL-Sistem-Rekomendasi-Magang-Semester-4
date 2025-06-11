@@ -219,39 +219,39 @@
             </div>
         @endif
 
-        <div class="mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="card-title mb-0">DOKUMEN TAMBAHAN</p>
-                        <button onclick="modalAction('{{route('profil.dokumen.index')}}')"
-                                class="btn btn-outline-secondary btn-sm">
-                            <i class="ti-pencil-alt"></i>
-                        </button>
-                    </div>
-                    <hr>
-                    <div class="template-demo col-md-6">
-                        @foreach($data->getDokumenTambahan() as $dokumen)
-                            <div
-                                class="alert alert-fill-primary mb-2 mr-2 d-flex justify-content-between align-items-center">
-                                <span>{{ $dokumen->getLabelNamaAttribute() }}</span>
-                                <button type="button"
-                                        class="btn btn-close btn-close-white btn-sm text-white btn-delete ms-auto"
-                                        data-url="{{ route('dokumen.delete-dokumen-user', $dokumen->id) }}">
-                                    X
-                                </button>
-                            </div>
-                            <a href="{{route('dokumen.download-dokumen-user', $dokumen->id)}}">
-                                <img src="{{$dokumen->getDokumenPath()}}"
-                                     alt="Dokumen"
-                                     width="150" height="150">
-                            </a>
-                            <hr>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
+{{--        <div class="mb-3">--}}
+{{--            <div class="card">--}}
+{{--                <div class="card-body">--}}
+{{--                    <div class="d-flex justify-content-between align-items-center">--}}
+{{--                        <p class="card-title mb-0">DOKUMEN TAMBAHAN</p>--}}
+{{--                        <button onclick="modalAction('{{route('profil.dokumen.index')}}')"--}}
+{{--                                class="btn btn-outline-secondary btn-sm">--}}
+{{--                            <i class="ti-pencil-alt"></i>--}}
+{{--                        </button>--}}
+{{--                    </div>--}}
+{{--                    <hr>--}}
+{{--                    <div class="template-demo col-md-6">--}}
+{{--                        @foreach($data->getDokumenTambahan() as $dokumen)--}}
+{{--                            <div--}}
+{{--                                class="alert alert-fill-primary mb-2 mr-2 d-flex justify-content-between align-items-center">--}}
+{{--                                <span>{{ $dokumen->getLabelNamaAttribute() }}</span>--}}
+{{--                                <button type="button"--}}
+{{--                                        class="btn btn-close btn-close-white btn-sm text-white btn-delete ms-auto"--}}
+{{--                                        data-url="{{ route('dokumen.delete-dokumen-user', $dokumen->id) }}">--}}
+{{--                                    X--}}
+{{--                                </button>--}}
+{{--                            </div>--}}
+{{--                            <a href="{{route('dokumen.download-dokumen-user', $dokumen->id)}}">--}}
+{{--                                <img src="{{$dokumen->getDokumenPath()}}"--}}
+{{--                                     alt="Dokumen"--}}
+{{--                                     width="150" height="150">--}}
+{{--                            </a>--}}
+{{--                            <hr>--}}
+{{--                        @endforeach--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
     @endif
 
     <div class="mb-3">

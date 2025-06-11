@@ -37,11 +37,8 @@ class LowonganMagangController extends Controller
                     $detailUrl = route('admin.lowongan-magang.show', $row->id);
                     $editUrl = route('admin.lowongan-magang.edit', $row->id);
                     $deleteUrl = route('admin.lowongan-magang.delete', $row->id);
-                    return '
-                        <a href="'.$detailUrl.'" class="btn btn-info btn-sm">Detail</a>
-                        <a href="'.$editUrl.'" class="btn btn-warning btn-sm">Edit</a>
-                        <button class="btn btn-danger btn-sm btn-delete" data-url="'.$deleteUrl.'">Delete</button>
-                    ';
+                    return view('components.action-buttons', compact('detailUrl', 'editUrl', 'deleteUrl'))->render();
+
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -82,19 +79,19 @@ class LowonganMagangController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'perusahaan_id'          => 'required|exists:m_perusahaan,id',
-            'periode_magang_id'      => 'required|exists:m_periode_magang,id',
-            'judul'                  => 'required|string|max:100',
-            'deskripsi'              => 'required|string',
-            'persyaratan'            => 'nullable|string',
-            'kuota'                  => 'required|integer|min:1',
+            'perusahaan_id' => 'required|exists:m_perusahaan,id',
+            'periode_magang_id' => 'required|exists:m_periode_magang,id',
+            'judul' => 'required|string|max:100',
+            'deskripsi' => 'required|string',
+            'persyaratan' => 'nullable|string',
+            'kuota' => 'required|integer|min:1',
             'minimal_ipk' => 'required|numeric|min:0|max:4',
             'insentif' => 'nullable|string|max:255',
-            'tanggal_mulai_daftar'   => 'required|date',
+            'tanggal_mulai_daftar' => 'required|date',
             'tanggal_selesai_daftar' => 'required|date|after_or_equal:tanggal_mulai_daftar',
-            'tanggal_mulai_magang'   => 'required|date|after_or_equal:tanggal_selesai_daftar',
+            'tanggal_mulai_magang' => 'required|date|after_or_equal:tanggal_selesai_daftar',
             'tanggal_selesai_magang' => 'required|date|after_or_equal:tanggal_mulai_magang',
-            'status'                 => ['required', Rule::in(['buka', 'tutup', 'dibatalkan'])],
+            'status' => ['required', Rule::in(['buka', 'tutup', 'dibatalkan'])],
             'keahlian_ids' => 'required|array',
             'keahlian_ids.*' => 'exists:m_bidang_keahlian,id',
             'dokumen_ids' => 'required|array',
@@ -104,10 +101,10 @@ class LowonganMagangController extends Controller
             'keahlian_teknis_levels.*' => [Rule::in(LevelTeknis::cases())],
         ]);
 
-        DB::transaction(function() use ($validated) {
+        DB::transaction(function () use ($validated) {
             $lowongan = LowonganMagangModel::create($validated);
 
-           if (!empty($validated['keahlian_ids'])) {
+            if (!empty($validated['keahlian_ids'])) {
                 foreach ($validated['keahlian_ids'] as $bidangKeahlianId) {
                     $keahlians[] = [
                         'lowongan_magang_id' => $lowongan->id,
@@ -164,19 +161,19 @@ class LowonganMagangController extends Controller
         $lowongan = LowonganMagangModel::findOrFail($id);
 
         $validated = $request->validate([
-            'perusahaan_id'          => 'required|exists:m_perusahaan,id',
-            'periode_magang_id'      => 'required|exists:m_periode_magang,id',
-            'judul'                  => 'required|string|max:100',
-            'deskripsi'              => 'required|string',
-            'persyaratan'            => 'nullable|string',
-            'kuota'                  => 'required|integer|min:1',
+            'perusahaan_id' => 'required|exists:m_perusahaan,id',
+            'periode_magang_id' => 'required|exists:m_periode_magang,id',
+            'judul' => 'required|string|max:100',
+            'deskripsi' => 'required|string',
+            'persyaratan' => 'nullable|string',
+            'kuota' => 'required|integer|min:1',
             'minimal_ipk' => 'required|numeric|min:0|max:4',
             'insentif' => 'nullable|string|max:255',
-            'tanggal_mulai_daftar'   => 'required|date',
+            'tanggal_mulai_daftar' => 'required|date',
             'tanggal_selesai_daftar' => 'required|date|after_or_equal:tanggal_mulai_daftar',
-            'tanggal_mulai_magang'   => 'required|date|after_or_equal:tanggal_selesai_daftar',
+            'tanggal_mulai_magang' => 'required|date|after_or_equal:tanggal_selesai_daftar',
             'tanggal_selesai_magang' => 'required|date|after_or_equal:tanggal_mulai_magang',
-            'status'                 => ['required', Rule::in(['buka', 'tutup', 'dibatalkan'])],
+            'status' => ['required', Rule::in(['buka', 'tutup', 'dibatalkan'])],
             'keahlian_ids' => 'required|array',
             'keahlian_ids.*' => 'exists:m_bidang_keahlian,id',
             'dokumen_ids' => 'required|array',
@@ -186,7 +183,7 @@ class LowonganMagangController extends Controller
             'keahlian_teknis_levels.*' => [Rule::in(LevelTeknis::cases())],
         ]);
 
-        DB::transaction(function() use ($validated, $lowongan) {
+        DB::transaction(function () use ($validated, $lowongan) {
             $lowongan->update($validated);
 
             $lowongan->keahlian()->detach();
@@ -212,7 +209,7 @@ class LowonganMagangController extends Controller
                 }
                 DokumenLowonganModel::insert($dokumens);
             }
-            
+
             if (!empty($validated['keahlian_teknis_ids'])) {
                 foreach ($validated['keahlian_teknis_ids'] as $index => $id) {
                     $level = $validated['keahlian_teknis_levels'][$index];
@@ -234,7 +231,7 @@ class LowonganMagangController extends Controller
     {
         $lowongan = LowonganMagangModel::findOrFail($id);
 
-        DB::transaction(function() use ($lowongan) {
+        DB::transaction(function () use ($lowongan) {
             $lowongan->delete();
         });
 
@@ -284,7 +281,7 @@ class LowonganMagangController extends Controller
 
         return response()->json($data);
     }
-    
+
     public function getKeahlianTeknis(Request $request)
     {
         $search = $request->input('q');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProgramStudiModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,14 +18,9 @@ class ProgramStudiController extends Controller
             return DataTables::of($data)
                 ->editColumn('jenjang', fn($row) => ucfirst($row->jenjang))
                 ->addColumn('action', function ($row) {
-                    return '
-                        <button class="btn btn-sm btn-warning edit" data-id="'.$row->id.'">
-                            <i class="fa fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger delete" data-id="'.$row->id.'">
-                            <i class="fa fa-trash"></i> Hapus
-                        </button>
-                    ';
+                    $deleteUrl = route('admin.program-studi.delete', $row->id);
+                    $editUrlModal = route('admin.program-studi.edit', $row->id);
+                    return view('components.action-buttons', compact('deleteUrl', 'editUrlModal'))->render();
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -58,9 +54,23 @@ class ProgramStudiController extends Controller
             'jenjang' => 'required|in:D3,D4',
         ]);
 
-        ProgramStudiModel::create($validated);
+        DB::beginTransaction();
+        try {
+            ProgramStudiModel::create($validated);
 
-        return redirect()->route('admin.program-studi.index')->with('success', 'Program Studi berhasil ditambahkan.');
+            DB::commit();
+            return response()->json([
+                'success' => true,
+                'message' => 'Program Studi berhasil ditambahkan.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menambahkan Program Studi.',
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function edit($id)
@@ -88,20 +98,44 @@ class ProgramStudiController extends Controller
             'jenjang' => 'required|in:D3,D4',
         ]);
 
-        $prodi = ProgramStudiModel::findOrFail($id);
-        $prodi->kode = $request->kode;
-        $prodi->nama = $request->nama;
-        $prodi->jenjang = $request->jenjang;
-        $prodi->save();
+        DB::beginTransaction();
+        try {
+            $prodi = ProgramStudiModel::findOrFail($id);
+            $prodi->kode = $request->kode;
+            $prodi->nama = $request->nama;
+            $prodi->jenjang = $request->jenjang;
+            $prodi->save();
 
-        return redirect()->route('admin.program-studi.index')->with('success', 'Program Studi berhasil diperbarui.');
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Program Studi berhasil diperbarui.',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat memperbarui Program Studi.',
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
     public function destroy($id)
     {
-        $programStudi = ProgramStudiModel::findOrFail($id);
-        $programStudi->delete();
+        DB::beginTransaction();
+        try {
+            $programStudi = ProgramStudiModel::findOrFail($id);
+            $programStudi->delete();
+            DB::commit();
 
-        return response()->json(['success' => 'Data berhasil dihapus.']);
+            return response()->json(['success' => 'Data berhasil dihapus.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage()
+            ]);
+        }
     }
 }

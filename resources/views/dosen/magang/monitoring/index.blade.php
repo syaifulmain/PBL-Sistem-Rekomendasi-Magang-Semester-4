@@ -16,11 +16,11 @@
                                     </h5>
                                     @php
                                         $waktuMulai = $data->magang->getWaktuMulaiMagangAttribute();
-                                        $sisaWaktu = $data->magang->status === 'aktif' 
-                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa') 
+                                        $sisaWaktu = $data->magang->status === 'aktif'
+                                            ? ($data->magang->getSisaWaktuMangangAttribute() . ' hari tersisa')
                                             : ($waktuMulai > 0 ? ($waktuMulai . ' hari lagi akan dimulai') : '');
                                     @endphp
-                                    
+
                                     @if($sisaWaktu && $data->magang->status !== 'selesai')
                                         <p class="mb-2">
                                             <i class="mdi mdi-calendar-clock mr-2"></i>{{ $sisaWaktu }}
@@ -36,10 +36,10 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-md-right d-flex flex-column align-items-md-end">
-                                        <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' : 
-                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }} 
+                                        <span class="badge badge-{{ $data->magang->status === 'selesai' ? 'success' :
+                                            ($data->magang->status === 'aktif' ? 'warning' : 'primary') }}
                                             badge-lg px-3 py-2 mb-3">
-                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' : 
+                                        <i class="mdi mdi-{{ $data->magang->status === 'selesai' ? 'check-circle' :
                                             ($data->magang->status === 'aktif' ? 'clock' : 'calendar') }} mr-1"></i>
                                         {{ ucfirst(str_replace('_', ' ', $data->magang->status)) }}
                                     </span>
@@ -51,14 +51,14 @@
                         <!-- Navigation Tabs -->
                         <ul class="nav nav-pills nav-fill mb-4 border-0" id="internshipTabs" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="log-tab" data-toggle="pill" href="#log-content"
-                                   role="tab">
+                                <a class="nav-link" id="log-tab" data-toggle="pill" href="#log-content"
+                                   role="tab" data-page="0">
                                     <i class="mdi mdi-clipboard-list mr-2"></i>Log Magang
                                 </a>
                             </li>
                             <li class="nav-item" role="presentation">
                                 <a class="nav-link" id="evaluasi-bimbingan-tab" data-toggle="pill"
-                                   href="#evaluasi-bimbingan-content" role="tab">
+                                   href="#evaluasi-bimbingan-content" role="tab" data-page="1">
                                     <i class="mdi mdi-comments mr-2"></i>Evaluasi Bimbingan
                                 </a>
                             </li>
@@ -67,7 +67,7 @@
                         <!-- Tab Content -->
                         <div class="tab-content pt-0 border-0" id="internshipTabContent">
                             <!-- Log Magang Tab -->
-                            <div class="tab-pane fade show active" id="log-content" role="tabpanel">
+                            <div class="tab-pane fade" id="log-content" role="tabpanel">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h4 class="card-title mb-0">
                                         <i class="mdi mdi-clipboard-list text-primary mr-2"></i>Log Kegiatan Magang
@@ -84,13 +84,13 @@
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table id="logTable"
-                                                   class="display table-hover expandable-table table-striped table-bordered"
+                                                   class="display table table-hover expandable-table table-striped table-borderless"
                                                    style="width:100%">
                                                 <thead>
                                                 <tr>
                                                     <th class="text-center" width="5%">No</th>
                                                     <th width="15%">Tanggal</th>
-                                                    <th width="20%">Aktivitas</th>
+                                                    <th width="10%">Aktivitas</th>
                                                     <th width="25%">Kendala</th>
                                                     <th width="45%">Keterangan</th>
                                                     <th class="text-center" width="20%">Aksi</th>
@@ -169,8 +169,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="card-footer text-muted">
-                                                    <small><i class="mdi mdi-eye mr-1"></i>Klik untuk melihat
-                                                        detail</small>
+                                                    <small>
+                                                        <i class="mdi mdi-eye mr-1"></i>Lihat lebih lengkap
+                                                    </small>
                                                 </div>
                                             </div>
                                         </div>
@@ -225,9 +226,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="tanggal_evaluasi">Tanggal Evaluasi</label>
-                                    <input type="date" class="form-control" id="tanggal_evaluasi"
+                                    <input type="text" id="tanggal_evaluasi"
+                                           class="form-control"
                                            name="tanggal_evaluasi"
-                                           value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
+                                           value="{{ \Carbon\Carbon::now()->translatedFormat('d-m-Y') }}"
+                                           required readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="catatan">Catatan Evaluasi</label>
@@ -326,7 +329,75 @@
 
 @push('js')
     <script>
+        // Tab Management Functions
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function updateUrlParameter(url, param, paramVal) {
+            var newAdditionalURL = "";
+            var tempArray = url.split("?");
+            var baseURL = tempArray[0];
+            var additionalURL = tempArray[1];
+            var temp = "";
+            if (additionalURL) {
+                tempArray = additionalURL.split("&");
+                for (var i = 0; i < tempArray.length; i++) {
+                    if (tempArray[i].split('=')[0] != param) {
+                        newAdditionalURL += temp + tempArray[i];
+                        temp = "&";
+                    }
+                }
+            }
+            var rows_txt = temp + "" + param + "=" + paramVal;
+            return baseURL + "?" + newAdditionalURL + rows_txt;
+        }
+
+        function setActiveTab() {
+            var page = getUrlParameter('page');
+            var activeTab = 'log-tab';
+            var activeContent = 'log-content';
+
+            // Determine which tab should be active based on URL parameter
+            if (page === '1') {
+                activeTab = 'evaluasi-bimbingan-tab';
+                activeContent = 'evaluasi-bimbingan-content';
+            }
+
+            // Remove all active classes
+            $('.nav-link').removeClass('active');
+            $('.tab-pane').removeClass('show active');
+
+            // Set active tab and content
+            $('#' + activeTab).addClass('active');
+            $('#' + activeContent).addClass('show active');
+        }
+
         $(document).ready(function () {
+            // Set active tab on page load
+            setActiveTab();
+
+            // Handle tab clicks and update URL
+            $('.nav-link[data-toggle="pill"]').on('click', function (e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                var newUrl = updateUrlParameter(window.location.href, 'page', page);
+
+                // Update URL without page reload
+                window.history.pushState({path: newUrl}, '', newUrl);
+
+                // Show the selected tab
+                $(this).tab('show');
+            });
+
+            // Handle browser back/forward buttons
+            window.addEventListener('popstate', function (e) {
+                setActiveTab();
+            });
+
             $('.evaluation-card').on('show.bs.collapse', function (e) {
                 var target = $(e.target);
                 target.closest('.card-body').find('.short-content').hide();
@@ -337,6 +408,7 @@
                 target.closest('.card-body').find('.short-content').show();
             });
         });
+
         $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
@@ -433,7 +505,7 @@
                 autoWidth: false,
                 pageLength: 10,
                 language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json'
+                    url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
             });
 

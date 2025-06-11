@@ -49,7 +49,7 @@
             ordering: false,
             searching: false,
             language: {
-                processing: "Memuat data..."
+                url: '{{ asset("assets/js/datatables/language/id.json") }}'
             }
         });
     </script>

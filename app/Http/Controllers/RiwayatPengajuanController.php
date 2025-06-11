@@ -18,7 +18,8 @@ class RiwayatPengajuanController extends PengajuanMagangController
                 ->addColumn('judul_lowongan', fn($row) => $row->lowongan->judul)
                 ->addColumn('perusahaan', fn($row) => $row->lowongan->perusahaan->nama ?? '-')
                 ->addColumn('action', function ($row) {
-                    return view('admin.riwayat_pengajuan._action', compact('row'))->render();
+                    $detailUrl = route('admin.riwayat-pengajuan.show', $row->id);
+                    return view('components.action-buttons', compact('detailUrl'))->render();
                 })
                 ->editColumn('tanggal_pengajuan', function ($row) {
                     return Carbon::parse($row->tanggal_pengajuan)->translatedFormat('d F Y');

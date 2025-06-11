@@ -8,7 +8,7 @@
                     class="fa fa-plus"></i> Tambah</a>
             <div class="table-responsive">
                 <table id="mitra-perusahaan-table"
-                       class="display table-hover expandable-table table-striped"
+                       class="display table table-hover expandable-table table-striped table-borderless"
                        style="width:100%">
                     <thead>
                     <tr>

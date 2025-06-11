@@ -15,7 +15,8 @@ class DosenModel extends Model
     protected $fillable = [
         'user_id',
         'nama',
-        'nip'
+        'nip',
+        'no_telepon'
     ];
 
     public function user()

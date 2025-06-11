@@ -25,20 +25,19 @@ class KegiatanMagangController extends Controller
                 ->addColumn('perusahaan', fn($row) => $row->lowongan->perusahaan->nama ?? '-')
                 ->editColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->tanggal_pengajuan)->translatedFormat('d F Y'))
                 ->addColumn('action', function ($row) {
-                    return '
-                        <a href="'.route('admin.kegiatan-magang.process', $row->id).'" class="btn btn-primary btn-sm"><i class="fa fa-cog"></i> Proses</a>
-                    ';
+                    $prosesUrl = route('admin.kegiatan-magang.process', $row->id);
+                    return view('components.action-buttons', compact('prosesUrl'))->render();
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        $title = 'Kegiatan Magang'; 
+        $title = 'Kegiatan Magang';
         $breadcrumb = [
             'title' => $title,
             'list' => [$title]
         ];
-        
+
         return view('admin.kegiatan_magang.index', compact('title', 'breadcrumb'));
     }
 
@@ -47,7 +46,7 @@ class KegiatanMagangController extends Controller
         $pengajuan = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan', 'dokumen.jenisDokumen'])->findOrFail($id);
         $dosen = DosenModel::whereNull('deleted_at')->get();
 
-        $title = 'Proses Kegiatan Magang'; 
+        $title = 'Proses Kegiatan Magang';
         $breadcrumb = [
             'title' => $title,
             'list' => [$title]
@@ -62,11 +61,11 @@ class KegiatanMagangController extends Controller
             'dosen_id' => 'required_if:status,disetujui',
             'catatan' => 'required_if:status,ditolak'
         ]);
-    
+
         $pengajuan = PengajuanMagangModel::findOrFail($id);
         $mahasiswa = $pengajuan->mahasiswa;
         $user = UserModel::findOrFail($mahasiswa->user_id);
-    
+
         DB::beginTransaction();
             try {
             $pengajuan->update([
@@ -92,7 +91,7 @@ class KegiatanMagangController extends Controller
                     route('dosen.bimbingan-magang.monitoring', $magang->id)
                 );
             }
-        
+
             // Notifikasi untuk mahasiswa
             NotificationController::createNotification(
                 $user->id,
@@ -103,7 +102,7 @@ class KegiatanMagangController extends Controller
                 'Pengajuan Magang',
                 route('mahasiswa.pengajuan-magang.show', $pengajuan->id)
             );
-            
+
             DB::commit();
             return redirect()->route('admin.kegiatan-magang.index')->with('success', 'Pengajuan berhasil diperbarui');
         } catch (\Throwable $th) {
