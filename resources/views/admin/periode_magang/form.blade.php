@@ -40,7 +40,7 @@
 
                 <div class="form-group">
                     <label for="tahun_akademik">Tahun Akademik</label>
-                    <input type="text" name="tahun_akademik" class="form-control @error('tahun_akademik') is-invalid @enderror"
+                    <input placeholder="yyyy/yyyy" type="text" id="tahun_akademik" name="tahun_akademik" class="form-control @error('tahun_akademik') is-invalid @enderror"
                         value="{{ old('tahun_akademik', $data->tahun_akademik ?? '') }}">
                     @error('tahun_akademik')
                         <div class="invalid-feedback">{{ $message }}</div>
@@ -88,3 +88,12 @@
         </div>
     </div>
 @endsection
+
+@push('js')
+    <script src="{{ asset('skydash-v.01/vendors/inputmask/jquery.inputmask.bundle.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#tahun_akademik').inputmask('9999/9999');
+        });
+    </script>
+@endpush

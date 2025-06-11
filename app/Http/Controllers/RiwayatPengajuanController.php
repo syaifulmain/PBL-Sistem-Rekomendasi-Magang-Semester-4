@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Yajra\DataTables\Facades\DataTables;
 
-class RiwayatPengajuanController extends PengajuanMagangController
+class RiwayatPengajuanController extends Controller
 {
     public function index(Request $request)
     {
@@ -15,6 +15,8 @@ class RiwayatPengajuanController extends PengajuanMagangController
             $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan']);
 
             return DataTables::of($data)
+                ->addColumn('mahasiswa', fn($row) => $row->mahasiswa->nama ?? '-')
+                ->addColumn('nim', fn($row) => $row->mahasiswa->nim ?? '-')
                 ->addColumn('judul_lowongan', fn($row) => $row->lowongan->judul)
                 ->addColumn('perusahaan', fn($row) => $row->lowongan->perusahaan->nama ?? '-')
                 ->addColumn('action', function ($row) {
@@ -36,4 +38,18 @@ class RiwayatPengajuanController extends PengajuanMagangController
 
         return view('admin.riwayat_pengajuan.index', compact('title', 'breadcrumb'));
     }
+
+    public function show($id)
+    {
+        $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan', 'dokumen.jenisDokumen'])->findOrFail($id);
+
+        $title = 'Detail Riwayat Pengajuan Magang';
+        $breadcrumb = [
+            'title' => $title,
+            'list' => [$title]
+        ];
+        
+        return view('admin.riwayat_pengajuan.detail', compact('data', 'title', 'breadcrumb'));
+    }
+
 }

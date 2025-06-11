@@ -76,7 +76,7 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{route('mahasiswa.lowongan-magang.index')}}">
                     <i class="mdi mdi-bag-checked menu-icon"></i>
-                    <span class="menu-title">Lowongan Magang</span>
+                    <span class="menu-title">Rekomendasi Magang</span>
                 </a>
             </li>
             <li class="nav-item">

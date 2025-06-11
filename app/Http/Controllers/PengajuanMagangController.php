@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\RedirectException;
 use App\Models\DokumenPengajuanModel;
 use App\Models\LowonganMagangModel;
 use App\Models\PengajuanMagangModel;
@@ -43,6 +44,9 @@ class PengajuanMagangController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'lowongan_id' => 'exists:t_lowongan_magang,id',
+        ]);
 
         $title = 'Buat Pengajuan Magang';
         $breadcrumb = [
@@ -52,11 +56,12 @@ class PengajuanMagangController extends Controller
 
         $lowonganId = null;
 
-        if ($request->has('lowongan_id')) {
-            $request->validate([
-                'lowongan_id' => 'exists:t_lowongan_magang,id',
-            ]);
+        try {
             $lowonganId = $request->get('lowongan_id');
+            $this->verifiyApplication($lowonganId);
+            $this->verifiyDateStatus($lowonganId);
+        } catch (\Illuminate\Http\RedirectResponse $redirect) {
+            return $redirect;
         }
 
         return view('mahasiswa.pengajuan_magang.form', compact('title', 'breadcrumb', 'lowonganId'));
@@ -69,12 +74,12 @@ class PengajuanMagangController extends Controller
             'dokumen.*' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
-        $lowongan = LowonganMagangModel::findOrFail($request->lowongan_id);
-        $today = Carbon::today();
-
-        // if ($today->lt(Carbon::parse($lowongan->tanggal_mulai_daftar)) || $today->gt(Carbon::parse($lowongan->tanggal_selesai_daftar))) {
-        //     return redirect()->back()->with(['error' => 'Pendaftaran lowongan ini dilaksanakan antara ' . Carbon::parse($lowongan->tanggal_mulai_daftar)->translatedFormat('d F Y') . ' sampai ' . Carbon::parse($lowongan->tanggal_selesai_daftar)->translatedFormat('d F Y')]);
-        // }
+        try {
+            $this->verifiyApplication($request->lowongan_id);
+            $this->verifiyDateStatus($request->lowongan_id);
+        } catch (\Illuminate\Http\RedirectResponse $redirect) {
+            return $redirect;
+        }
 
         DB::beginTransaction();
         try {
@@ -113,7 +118,13 @@ class PengajuanMagangController extends Controller
     {
         $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan', 'dokumen.jenisDokumen'])->findOrFail($id);
 
-        return view('mahasiswa.pengajuan_magang.detail', compact('data'));
+        $title = 'Detail Pengajuan Magang';
+        $breadcrumb = [
+            'title' => $title,
+            'list' => [$title]
+        ];
+        
+        return view('mahasiswa.pengajuan_magang.detail', compact('data', 'title', 'breadcrumb'));
     }
 
     public function destroy($id)
@@ -163,5 +174,39 @@ class PengajuanMagangController extends Controller
     {
         $lowongan = LowonganMagangModel::with('dokumen')->findOrFail($id);
         return response()->json($lowongan->dokumen);
+    }
+
+    private function verifiyApplication($lowonganId)
+    {
+        $pengajuan = PengajuanMagangModel::where('lowongan_magang_id', $lowonganId)
+            ->where('mahasiswa_id', auth()->user()->mahasiswa->id)
+            ->whereNot('status', 'batal')
+            ->first();
+
+        if ($pengajuan) {
+            throw new RedirectException(
+                redirect()->back()->with('error', 'Anda sudah mengajukan pengajuan magang ini')
+            );
+        }
+    }
+
+    private function verifiyDateStatus($lowonganId)
+    {
+        $lowongan = LowonganMagangModel::findOrFail($lowonganId);
+        $today = now()->startOfDay();
+
+        if ($today->lt($lowongan->tanggal_mulai_daftar) || $today->gt($lowongan->tanggal_selesai_daftar)) {
+            throw new RedirectException(
+                redirect()->back()->with('error', 'Pendaftaran lowongan ini hanya dibuka antara ' .
+                    $lowongan->tanggal_mulai_daftar->translatedFormat('d F Y') . ' dan ' .
+                    $lowongan->tanggal_selesai_daftar->translatedFormat('d F Y'))
+            );
+        }
+
+        if ($lowongan->status !== 'buka') {
+            throw new RedirectException(
+                redirect()->back()->with('error', 'Lowongan ini tidak terbuka')
+            );
+        }
     }
 }

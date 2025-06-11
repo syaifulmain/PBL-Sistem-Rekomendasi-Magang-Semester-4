@@ -10,6 +10,8 @@
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>Mahasiswa</th>
+                    <th>NIM</th>
                     <th>Judul Lowongan</th>
                     <th>Perusahaan</th>
                     <th>Tanggal Pengajuan</th>
@@ -33,8 +35,10 @@
                     ajax: "",
                     columns: [
                         {data: 'id', name: 'id', visible: false},
-                        {data: 'judul_lowongan', name: 'lowonganMagang.judul'},
-                        {data: 'perusahaan', name: 'lowonganMagang.perusahaan.nama'},
+                        {data: 'mahasiswa', name: 'mahasiswa.nama'},
+                        {data: 'nim', name: 'mahasiswa.nim'},
+                        {data: 'judul_lowongan', name: 'lowongan.judul'},
+                        {data: 'perusahaan', name: 'lowongan.perusahaan.nama'},
                         {data: 'tanggal_pengajuan', name: 'tanggal_pengajuan'},
                         {
                             data: 'status', name: 'status', render: function (data, type, row) {

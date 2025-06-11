@@ -55,7 +55,8 @@ class LowonganMagangMahasiswaController extends Controller
                         <p class="card-text mb-1">
                             <small class="text-muted">' . ($row['nama_lokasi'] ?? '-') . '</small>
                         </p>
-                        <div class="row">
+                        '.(config('app.debug') ? 
+                        '<div class="row">
                             <div class="col-6">
                                 <p class="card-text mb-1">
                                     <small class="text-info">Fuzzy: ' . $row['skor_fuzzy'] . '</small>
@@ -69,7 +70,8 @@ class LowonganMagangMahasiswaController extends Controller
                         </div>
                         <p class="card-text mb-1">
                             <small class="text-success"><strong>Skor Gabungan: ' . $row['skor_gabungan'] . '</strong></small>
-                        </p>
+                        </p>'
+                        : '').'
                     </div>
                 ';
                 })
@@ -77,7 +79,7 @@ class LowonganMagangMahasiswaController extends Controller
                 ->make(true);
         }
 
-        $title = 'Lowongan Magang';
+        $title = 'Rekomendasi Magang';
         $breadcrumb = [
             'title' => $title,
             'list' => [$title]
@@ -94,8 +96,8 @@ class LowonganMagangMahasiswaController extends Controller
     private function getBobotGabungan()
     {
         return [
-            'fuzzy' => 0.4,     // 60% bobot untuk Fuzzy Tsukamoto
-            'wsm' => 0.5        // 40% bobot untuk WSM
+            'fuzzy' => 0.6,     // 60% bobot untuk Fuzzy Tsukamoto
+            'wsm' => 0.4        // 40% bobot untuk WSM
         ];
     }
 

@@ -41,14 +41,28 @@ if (!function_exists('get_magang_status_badge')) {
 if (!function_exists('get_user_name')) {
     function get_user_name($user)
     {
+        $fullName = '';
         if (has_role('MAHASISWA')) {
-            return $user->mahasiswa->nama;
+            $fullName = $user->mahasiswa->nama;
         } elseif (has_role('DOSEN')) {
-            return $user->dosen->nama;
+            $fullName = $user->dosen->nama;
         } elseif (has_role('ADMIN')) {
-            return $user->admin->nama;
+            $fullName = $user->admin->nama;
+        } else {
+            return $user->username;
         }
-        return $user->username;
+        
+        $nameParts = explode(' ', $fullName);
+        if (count($nameParts) <= 1) {
+            return $fullName;
+        }
+        
+        $firstName = array_shift($nameParts);
+        $initials = array_map(function($part) {
+            return $part[0] . '.';
+        }, $nameParts);
+        
+        return $firstName . ' ' . implode(' ', $initials);
     }
 }
 
