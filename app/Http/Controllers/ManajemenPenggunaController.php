@@ -12,6 +12,7 @@ use App\Models\UserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -292,7 +293,7 @@ class ManajemenPenggunaController extends Controller
     {
         $validated = $request->validate([
             'level' => ['required', Rule::in(['ADMIN', 'DOSEN', 'MAHASISWA'])],
-            'file_import' => 'required|file|mimes:xlsx,csv,xls|max:2048',
+            'file_import' => 'required|file|mimes:xlsx,xls|max:2048',
         ]);
 
         try {
@@ -304,20 +305,54 @@ class ManajemenPenggunaController extends Controller
 
             $insertData = [];
             if (count($sheetData) > 1) {
-                foreach ($sheetData as $row) {
-                    if (count($row) < 2) continue; // skip empty rows
-                    $user = UserModel::firstOrCreate(
-                        ['username' => $row[0]],
-                        [
-                            'password' => bcrypt($row[0]),
-                            'level' => $validated['level'],
-                        ]
-                    );
-                    if (!$user) {
-                        continue;
+                $header = array_map('strtolower', array_shift($sheetData));
+                if ($validated['level'] === 'ADMIN' && $header !== ['username', 'nama']) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Format file tidak sesuai untuk level ADMIN.'
+                    ]);
+                } elseif ($validated['level'] === 'DOSEN' && $header !== ['nip', 'nama']) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Format file tidak sesuai untuk level DOSEN.'
+                    ]);
+                } elseif ($validated['level'] === 'MAHASISWA' && $header !== ['nim', 'nama', 'kode_program_studi', 'angkatan', 'status']) {
+                    DB::rollBack();
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Format file tidak sesuai untuk level MAHASISWA.'
+                    ]);
+                }
+                foreach ($sheetData as $index => $row) {
+                    if (count($row) < 2) continue;
+                    $user = UserModel::where('username', $row[0])->first();
+                    if ($user) {
+                        DB::rollBack();
+                        return response()->json([
+                            'status' => false,
+                            'message' => ($validated['level'] === 'ADMIN' ? 'Username ' : ($validated['level'] === 'DOSEN' ? 'NIP ' : 'NIM ')) . $row[0] . ' sudah digunakan pada baris: ' . ($index + 2),]);
                     }
+                    $user = UserModel::create([
+                        'username' => $row[0],
+                        'password' => bcrypt($row[0]),
+                        'level' => $validated['level'],
+                    ]);
                     switch ($validated['level']) {
                         case 'ADMIN':
+                            $rules = [
+                                'nama' => 'required|regex:' . RegexPatterns::SAFE_INPUT . '|string|max:100',
+                            ];
+                            $validatedRow = Validator::make(['nama' => $row[1]], $rules);
+                            if ($validatedRow->fails()) {
+                                DB::rollBack();
+                                return response()->json([
+                                    'status' => false,
+                                    'message' => 'Data tidak valid pada baris ' . ($index + 2),
+                                    'errors' => $validatedRow->errors()
+                                ]);
+                            }
                             $insertData[] = [
                                 'user_id' => $user->id,
                                 'nama' => $row[1],
@@ -325,6 +360,22 @@ class ManajemenPenggunaController extends Controller
                             break;
 
                         case 'DOSEN':
+                            $rules = [
+                                'nip' => 'required|regex:/^[0-9]+$/|max:25|unique:m_dosen,nip',
+                                'nama' => 'required|regex:' . RegexPatterns::SAFE_INPUT . '|string|max:100',
+                            ];
+                            $validatedRow = Validator::make([
+                                'nip' => $row[0],
+                                'nama' => $row[1]
+                            ], $rules);
+                            if ($validatedRow->fails()) {
+                                DB::rollBack();
+                                return response()->json([
+                                    'status' => false,
+                                    'message' => 'Data tidak valid pada baris ' . ($index + 2),
+                                    'errors' => $validatedRow->errors()
+                                ]);
+                            }
                             $insertData[] = [
                                 'user_id' => $user->id,
                                 'nip' => $row[0],
@@ -333,16 +384,44 @@ class ManajemenPenggunaController extends Controller
                             break;
 
                         case 'MAHASISWA':
+                            $rules = [
+                                'nim' => 'required|regex:/^[0-9]+$/|max:15|unique:m_mahasiswa,nim',
+                                'nama' => 'required|regex:' . RegexPatterns::SAFE_INPUT . '|string|max:100',
+                                'kode_program_studi' => 'required|exists:m_program_studi,kode',
+                                'angkatan' => 'required|regex:/^[0-9]+$/|max:4',
+                                'status' => 'required|in:aktif,nonaktif',
+                            ];
+                            $validatedRow = Validator::make([
+                                'nim' => $row[0],
+                                'nama' => $row[1],
+                                'kode_program_studi' => $row[2],
+                                'angkatan' => $row[3],
+                                'status' => $row[4],
+                            ], $rules);
+                            if ($validatedRow->fails()) {
+                                DB::rollBack();
+                                return response()->json([
+                                    'status' => false,
+                                    'message' => 'Data tidak valid pada baris ' . ($index + 2),
+                                    'errors' => $validatedRow->errors()
+                                ]);
+                            }
                             $insertData[] = [
                                 'user_id' => $user->id,
                                 'nim' => $row[0],
                                 'nama' => $row[1],
-                                'program_studi_id' => $row[2],
+                                'program_studi_id' => ProgramStudiModel::where('kode', $row[2])->value('id'),
                                 'angkatan' => $row[3],
                                 'status' => $row[4],
                             ];
                             break;
 
+                        default:
+                            DB::rollBack();
+                            return response()->json([
+                                'status' => false,
+                                'message' => 'Level pengguna tidak valid.'
+                            ]);
                     }
                 }
                 if (count($insertData) > 0) {
@@ -359,25 +438,25 @@ class ManajemenPenggunaController extends Controller
                             MahasiswaModel::insertOrIgnore($insertData);
                             break;
                     }
+                    DB::commit();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Data berhasil diimpor.',
+                    ]);
                 }
-                DB::commit();
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diimpor.',
-                ]);
-            } else {
-                DB::rollBack();
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Tidak ada data yang ditemukan di file yang diunggah.'
-                ]);
             }
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data yang ditemukan di file yang diunggah.'
+            ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
                 'status' => false,
                 'message' => 'Terjadi kesalahan saat mengimpor data.',
-                'error' => $e->getMessage()
+                'errors' => $e->getMessage()
             ]);
         }
     }
