@@ -17,10 +17,11 @@ class KegiatanMagangController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])->where('status', 'diajukan');
+            $data = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan'])->where('t_pengajuan_magang.status', 'diajukan');
 
             return DataTables::of($data)
                 ->addColumn('mahasiswa', fn($row) => $row->mahasiswa->nama ?? '-')
+                ->addColumn('nim', fn($row) => $row->mahasiswa->nim ?? '-')
                 ->addColumn('lowongan', fn($row) => $row->lowongan->judul ?? '-')
                 ->addColumn('perusahaan', fn($row) => $row->lowongan->perusahaan->nama ?? '-')
                 ->editColumn('tanggal_pengajuan', fn($row) => Carbon::parse($row->tanggal_pengajuan)->translatedFormat('d F Y'))
@@ -88,7 +89,7 @@ class KegiatanMagangController extends Controller
                     $dosen->user_id,
                     'Mahasiswa bimbingan baru: ' . $mahasiswa->nama . ' (' . $mahasiswa->nim . ')',
                     'Bimbingan Magang Mahasiswa',
-                    route('dosen.bimbingan-magang.monitoring', $magang->id)
+                    url()->route('dosen.bimbingan-magang.monitoring', $magang->id, false)
                 );
             }
 
@@ -100,7 +101,7 @@ class KegiatanMagangController extends Controller
                     'ditolak' => 'Pengajuan magang anda ditolak',
                 },
                 'Pengajuan Magang',
-                route('mahasiswa.pengajuan-magang.show', $pengajuan->id)
+                url()->route('mahasiswa.pengajuan-magang.show', $pengajuan->id, false)
             );
 
             DB::commit();

@@ -42,7 +42,7 @@ class DashboardController extends Controller
         // 2. Data untuk chart tren peminatan
         $trenPeminatan = DB::table('t_pengajuan_magang')
             ->join('t_lowongan_magang', 't_pengajuan_magang.lowongan_magang_id', '=', 't_lowongan_magang.id')
-            ->select('t_lowongan_magang.judul', DB::raw('COUNT(*) as total'))
+            ->select('t_lowongan_magang.judul', DB::raw('COUNT(t_pengajuan_magang.mahasiswa_id) as total'))
             ->groupBy('t_lowongan_magang.judul')
             ->orderByDesc('total')
             ->limit(5)

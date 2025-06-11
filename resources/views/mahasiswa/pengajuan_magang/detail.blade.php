@@ -4,6 +4,8 @@
 <div class="card">
     <div class="card-body">
         <h4 class="card-title">Detail Pengajuan Magang</h4>
+        <p><strong>Mahasiswa:</strong> {{ $data->mahasiswa->nama }}</p>
+        <p><strong>NIM:</strong> {{ $data->mahasiswa->nim }}</p>
         <p><strong>Judul Lowongan:</strong> {{ $data->lowongan->judul }}</p>
         <p><strong>Perusahaan:</strong> {{ $data->lowongan->perusahaan->nama ?? '-' }}</p>
         <p><strong>Tanggal Pengajuan:</strong> {{ $data->tanggal_pengajuan }}</p>

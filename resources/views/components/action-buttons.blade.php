@@ -11,7 +11,7 @@
 @endif
 
 @if (isset($editUrl))
-    <a href="{{ $editUrl }}" class="btn btn-warning btn-sm">
+    <a href="{{ $editUrl }}" class="btn btn-warning btn-sm text-white">
         <i class="fa fa-edit"></i> Edit
     </a>
 @endif

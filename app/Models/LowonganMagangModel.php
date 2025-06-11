@@ -28,6 +28,10 @@ class LowonganMagangModel extends Model
 
     protected $casts = [
         'minimal_ipk' => 'float',
+        'tanggal_mulai_daftar' => 'date',
+        'tanggal_selesai_daftar' => 'date',
+        'tanggal_mulai_magang' => 'date',
+        'tanggal_selesai_magang' => 'date',
     ];
 
     public function perusahaan()

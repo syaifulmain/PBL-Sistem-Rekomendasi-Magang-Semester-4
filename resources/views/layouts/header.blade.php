@@ -1,20 +1,20 @@
 <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
-    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+    <div class="bg-primary text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
         <a class="navbar-brand brand-logo mr-5" href="{{route('index')}}"><img src="{{ asset('images/logo.svg') }}"
                                                                                class="mr-2" alt="logo"/></a>
         <a class="navbar-brand brand-logo-mini" href="{{route('index')}}"><img src="{{ asset('images/logo-mini.svg') }}"
                                                                                alt="logo"/></a>
     </div>
-    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+    <div class="bg-primary navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
-            <span class="icon-menu"></span>
+            <span class="icon-menu text-white"></span>
         </button>
         <ul class="navbar-nav navbar-nav-right">
             <li class="nav-item dropdown">
                 @if (has_any_role('DOSEN','MAHASISWA'))
                 <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#"
                    data-toggle="dropdown">
-                    <i class="icon-bell mx-0"></i>
+                    <i class="icon-bell mx-0 text-white"></i>
                     <span class="count">{{ auth()->user()->unreadNotifications->count() }}</span>
                 </a>
                 @endif
@@ -48,8 +48,8 @@
                                 }
                             @endphp
                             
-                            <a class="dropdown-item preview-item" href="{{ $url }}" onclick="markNotificationRead('{{ $notification->id }}')">
-                                <div class="preview-thumbnail">
+                            <a class="dropdown-item preview-item" href="{{ url($url) }}" onclick="markNotificationRead('{{ $notification->id }}')">
+                                <div class="preview-thumbnail text-white">
                                     <div class="preview-icon {{ $iconClass }}">
                                         <i class="{{ $icon }} mx-0"></i>
                                     </div>
@@ -77,22 +77,28 @@
                     @endif
                 </div>
             </li>
+            @php
+                $id = '';
+                $name = get_user_name(auth()->user());
+                if(has_role('MAHASISWA')){
+                    $id = auth()->user()->mahasiswa->nim;
+
+                }elseif(has_role('DOSEN')){
+                    $id = auth()->user()->dosen->nip;
+                }
+            @endphp
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="{{auth()->user()->getFotoProfilPath()}}" alt="profile"/>
+                    <img src="{{auth()->user()->getFotoProfilPath()}}" alt="profile"/><span class="ml-2 text-white">{{ $name }} @if($id) / {{ $id }} @endif</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                     <div class="dropdown-item">
                         <div class="d-flex align-items-center">
                             <img src="{{ auth()->user()->getFotoProfilPath() }}" alt="profile" class="rounded-circle mr-3" style="width: 40px; height: 40px;">
                             <div>
-                                <h6 class="mb-1">{{ get_user_name(auth()->user()) }}</h6>
+                                <h6 class="mb-1">{{ $name }}</h6>
                                 <small class="text-muted">
-                                    @if(has_role('MAHASISWA'))
-                                        NIM: {{ auth()->user()->mahasiswa->nim }}
-                                    @elseif(has_role('DOSEN'))
-                                        NIP: {{ auth()->user()->dosen->nip }}
-                                    @endif
+                                    {{ $id }}
                                 </small>
                             </div>
                         </div>

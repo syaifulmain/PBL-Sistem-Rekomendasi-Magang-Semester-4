@@ -20,6 +20,10 @@ class LogMagangMahasiswaModel extends Model
         'dokumentasi',
     ];
 
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
     public function getDokumenPath()
     {
         if ($this->dokumentasi && file_exists(storage_path('app/public/' . $this->dokumentasi))) {

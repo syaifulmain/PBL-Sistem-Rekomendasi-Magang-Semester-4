@@ -4,9 +4,6 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title">Daftar Pengajuan Magang</h4>
-            <a class="btn btn-primary mb-4" href="{{ route('mahasiswa.pengajuan-magang.create') }}">
-                <i class="fa fa-plus"></i> Buat Pengajuan
-            </a>
             <table id="pengajuan-table"
                 class="display table table-hover expandable-table table-striped table-borderless"
                 style="width:100%">
@@ -36,8 +33,8 @@
                     ajax: "",
                     columns: [
                         {data: 'id', name: 'id', visible: false},
-                        {data: 'judul_lowongan', name: 'lowonganMagang.judul'},
-                        {data: 'perusahaan', name: 'lowonganMagang.perusahaan.nama'},
+                        {data: 'judul_lowongan', name: 'lowongan.judul'},
+                        {data: 'perusahaan', name: 'lowongan.perusahaan.nama'},
                         {data: 'tanggal_pengajuan', name: 'tanggal_pengajuan'},
                         {
                             data: 'status', name: 'status', render: function (data, type, row) {

@@ -11,6 +11,7 @@
                 <tr>
                     <th>Id</th>
                     <th>Mahasiswa</th>
+                    <th>NIM</th>
                     <th>Lowongan</th>
                     <th>Perusahaan</th>
                     <th>Tanggal Pengajuan</th>
@@ -34,8 +35,9 @@
             columns: [
                 { data: 'id', name: 'id', visible: false},
                 { data: 'mahasiswa', name: 'mahasiswa.nama' },
+                { data: 'nim', name: 'mahasiswa.nim' },
                 { data: 'lowongan', name: 'lowongan.judul' },
-                { data: 'perusahaan', name: 'perusahaan.nama', defaultContent: '-' },
+                { data: 'perusahaan', name: 'lowongan.perusahaan.nama', defaultContent: '-' },
                 { data: 'tanggal_pengajuan', name: 'tanggal_pengajuan' },
                 { data: 'action', name: 'action', orderable: false, searchable: false }
             ],

@@ -27,7 +27,7 @@
 
                         @if (has_role('MAHASISWA'))
                             <p>{{$data->nim}}</p>
-                            <p>{{$data->getProgramStudiNameAttribute()}}}</p>
+                            <p>{{$data->getProgramStudiNameAttribute()}}</p>
                             <p>{{$data->alamat}}</p>
                         @endif
                     </div>
