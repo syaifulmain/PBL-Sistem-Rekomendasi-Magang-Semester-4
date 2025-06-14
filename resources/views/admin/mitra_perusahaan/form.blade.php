@@ -12,11 +12,39 @@
             </div>
             <form
                 action="{{ isset($data) ? route('admin.mitra-perusahaan.edit', $data->id) : route('admin.mitra-perusahaan.create') }}"
-                method="POST" id="form-mitra-perusahaan">
+                method="POST" id="form-mitra-perusahaan" enctype="multipart/form-data">
                 @csrf
                 @if(isset($data))
                     @method('PUT')
                 @endif
+
+                <div class="form-group">
+                    <div class="text-center mb-3">
+                        <label for="path_foto_profil" style="cursor: pointer;">
+                            <img id="preview_foto_profil" src="{{ isset($data) ? $data->getFotoProfilPath() : asset('images/default-profile-perusahaan.png') }}"
+                                 alt="Profile Picture"
+                                 class="rounded-circle shadow @error('path_foto_profil') is-invalid @enderror"
+                                 width="250" height="250" style="object-fit: cover;">
+                            <input type="file" id="path_foto_profil" name="path_foto_profil" class="d-none" accept="image/*"
+                                   onchange="previewImage(this);">
+                        </label>
+                        <small class="d-block mt-2">Klik untuk mengganti foto profil</small>
+                        @error('path_foto_profil')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <script>
+                            function previewImage(input) {
+                                if (input.files && input.files[0]) {
+                                    let reader = new FileReader();
+                                    reader.onload = function (e) {
+                                        document.getElementById('preview_foto_profil').src = e.target.result;
+                                    }
+                                    reader.readAsDataURL(input.files[0]);
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label for="nama">Nama Perusahaan</label>
@@ -280,6 +308,10 @@
     <script>
         $(document).ready(function () {
             const rules = {
+                path_foto_profil: {
+                    required: false,
+                    extension: "jpg,jpeg,png,gif"
+                },
                 nama: {
                     required: true,
                     minlength: 3,

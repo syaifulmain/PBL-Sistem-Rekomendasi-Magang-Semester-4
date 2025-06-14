@@ -53,6 +53,7 @@ class LowonganMagangMahasiswaController extends Controller
                     'keahlian_yang_dibutuhkan' => $item->getKeahlianTeknis(),
                     'min_ipk' => $item->minimal_ipk,
                     'lokasi' => $item->getCorLokasi(),
+                    'path_foto_profil' => $item->perusahaan->getFotoProfilPath()
                 ];
             })->toArray();
 
@@ -62,7 +63,9 @@ class LowonganMagangMahasiswaController extends Controller
             return DataTables::of(collect($data))
                 ->addColumn('action', function ($row) {
                     return '
-                    <div class="clickable-row cursor-pointer" data-id="' . $row['id'] . '" onclick="loadLowonganDetail(' . $row['id'] . ')">
+                    <div class="clickable-row cursor-pointer d-flex align-items-center" data-id="' . $row['id'] . '" onclick="loadLowonganDetail(' . $row['id'] . ')">
+                        <img src="' . $row['path_foto_profil'] . '" alt="Logo" class="mr-3" style="width:50px;height:50px;object-fit:cover;">
+                    <div>
                         <h6 class="card-title mb-2 text-primary">' . $row['judul'] . '</h6>
                         <span class="mb-2">' . $row['nama_perusahaan'] . '</span>
                         <p class="card-text mb-1">
@@ -85,6 +88,7 @@ class LowonganMagangMahasiswaController extends Controller
                             <small class="text-success"><strong>Skor Gabungan: ' . $row['skor_gabungan'] . '</strong></small>
                         </p>'
                             : '') . '
+                        </div>
                     </div>
                 ';
                 })
@@ -141,6 +145,7 @@ class LowonganMagangMahasiswaController extends Controller
                     'judul' => $fuzzy['judul'],
                     'nama_lokasi' => $fuzzy['nama_lokasi'],
                     'skor_fuzzy' => $fuzzy['skor'],
+                    'path_foto_profil' => $fuzzy['path_foto_profil'],
                     'skor_wsm' => $wsm['skor'],
                     'skor_gabungan' => round($skor_gabungan, 2),
                     'detail_fuzzy' => $fuzzy['detail'],
@@ -702,6 +707,7 @@ class LowonganMagangMahasiswaController extends Controller
                 'id' => $perusahaan['id'],
                 'nama_perusahaan' => $perusahaan['nama'],
                 'judul' => $perusahaan['judul'],
+                'path_foto_profil' => $perusahaan['path_foto_profil'],
                 'nama_lokasi' => $perusahaan['alamat'],
                 'skor' => $fuzzy_result['skor_akhir'],
                 'detail' => $fuzzy_result['nilai_crisp'],

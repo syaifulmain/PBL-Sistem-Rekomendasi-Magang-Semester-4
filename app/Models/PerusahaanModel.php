@@ -16,11 +16,21 @@ class PerusahaanModel extends Model
         'alamat',
         'website',
         'email',
-        'no_telepon'
+        'no_telepon',
+        'path_foto_profil'
     ];
 
     public function lokasi()
     {
         return $this->hasOne(LokasiPerusahaanModel::class, 'perusahaan_id');
+    }
+
+    public function getFotoProfilPath()
+    {
+        if ($this->path_foto_profil && file_exists(storage_path('app/public/' . $this->path_foto_profil))) {
+            return asset('storage/' . $this->path_foto_profil);
+        } else {
+            return asset('images/default-profile-perusahaan.png');
+        }
     }
 }
