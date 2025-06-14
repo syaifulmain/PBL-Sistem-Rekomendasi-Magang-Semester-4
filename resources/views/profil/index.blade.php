@@ -151,29 +151,31 @@
 
                                 <div class="mb-2 " style="cursor: pointer;">
                                     <a href="{{ $dokumen->getDokumenIdUser($data->user_id) ? route('dokumen.download-dokumen-user', $dokumen->getDokumenIdUser($data->user_id)) : '#' }}">
-                                    <img id="preview_dokumen_{{$dokumen->id}}"
-                                         src="{{$dokumen->getDokumenPathFromUser($data->user_id) ?? "#"}}"
-                                         alt="Upload File"
-                                         width="150" height="150">
+                                        <img id="preview_dokumen_{{$dokumen->id}}"
+                                             src="{{$dokumen->getDokumenPathFromUser($data->user_id) ?? "#"}}"
+                                             alt="Upload File"
+                                             width="150" height="150">
                                     </a>
                                 </div>
 
                                 <form
                                     action="{{ $dokumen->getDokumenIdUser($data->user_id) !== null ? route('dokumen.update-dokumen-user', $dokumen->getDokumenIdUser($data->user_id)) : route('dokumen.upload-dokumen-user') }}"
                                     enctype="multipart/form-data"
-                                    method="POST">
+                                    method="POST" id="form-upload-dokumen_{{$dokumen->id}}">
                                     @csrf
                                     @if($dokumen->getDokumenIdUser($data->user_id) !== null)
                                         @method('PUT')
                                     @endif
                                     <div class="input-group">
-                                            <input type="file" class="form-control" id="file"
-                                                   onchange="previewImage(this, {{$dokumen->id}});"
-                                                   name="file">
-                                            <input type="hidden" name="default" value="1">
-                                            <input type="hidden" name="jenis_dokumen_id" value="{{$dokumen->id}}">
+                                        <input type="file" class="form-control" id="file"
+                                               onchange="previewImage(this, {{$dokumen->id}});"
+                                               name="file">
+                                        <input type="hidden" name="default" value="1">
+                                        <input type="hidden" name="jenis_dokumen_id" value="{{$dokumen->id}}">
                                         <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary" type="submit">Simpan</button>
+                                            <button class="btn btn-outline-secondary btn-submit" type="button" onclick="submitForm({{$dokumen->id}})">
+                                                Simpan
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -219,39 +221,39 @@
             </div>
         @endif
 
-{{--        <div class="mb-3">--}}
-{{--            <div class="card">--}}
-{{--                <div class="card-body">--}}
-{{--                    <div class="d-flex justify-content-between align-items-center">--}}
-{{--                        <p class="card-title mb-0">DOKUMEN TAMBAHAN</p>--}}
-{{--                        <button onclick="modalAction('{{route('profil.dokumen.index')}}')"--}}
-{{--                                class="btn btn-outline-secondary btn-sm">--}}
-{{--                            <i class="ti-pencil-alt"></i>--}}
-{{--                        </button>--}}
-{{--                    </div>--}}
-{{--                    <hr>--}}
-{{--                    <div class="template-demo col-md-6">--}}
-{{--                        @foreach($data->getDokumenTambahan() as $dokumen)--}}
-{{--                            <div--}}
-{{--                                class="alert alert-fill-primary mb-2 mr-2 d-flex justify-content-between align-items-center">--}}
-{{--                                <span>{{ $dokumen->getLabelNamaAttribute() }}</span>--}}
-{{--                                <button type="button"--}}
-{{--                                        class="btn btn-close btn-close-white btn-sm text-white btn-delete ms-auto"--}}
-{{--                                        data-url="{{ route('dokumen.delete-dokumen-user', $dokumen->id) }}">--}}
-{{--                                    X--}}
-{{--                                </button>--}}
-{{--                            </div>--}}
-{{--                            <a href="{{route('dokumen.download-dokumen-user', $dokumen->id)}}">--}}
-{{--                                <img src="{{$dokumen->getDokumenPath()}}"--}}
-{{--                                     alt="Dokumen"--}}
-{{--                                     width="150" height="150">--}}
-{{--                            </a>--}}
-{{--                            <hr>--}}
-{{--                        @endforeach--}}
-{{--                    </div>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
+        {{--        <div class="mb-3">--}}
+        {{--            <div class="card">--}}
+        {{--                <div class="card-body">--}}
+        {{--                    <div class="d-flex justify-content-between align-items-center">--}}
+        {{--                        <p class="card-title mb-0">DOKUMEN TAMBAHAN</p>--}}
+        {{--                        <button onclick="modalAction('{{route('profil.dokumen.index')}}')"--}}
+        {{--                                class="btn btn-outline-secondary btn-sm">--}}
+        {{--                            <i class="ti-pencil-alt"></i>--}}
+        {{--                        </button>--}}
+        {{--                    </div>--}}
+        {{--                    <hr>--}}
+        {{--                    <div class="template-demo col-md-6">--}}
+        {{--                        @foreach($data->getDokumenTambahan() as $dokumen)--}}
+        {{--                            <div--}}
+        {{--                                class="alert alert-fill-primary mb-2 mr-2 d-flex justify-content-between align-items-center">--}}
+        {{--                                <span>{{ $dokumen->getLabelNamaAttribute() }}</span>--}}
+        {{--                                <button type="button"--}}
+        {{--                                        class="btn btn-close btn-close-white btn-sm text-white btn-delete ms-auto"--}}
+        {{--                                        data-url="{{ route('dokumen.delete-dokumen-user', $dokumen->id) }}">--}}
+        {{--                                    X--}}
+        {{--                                </button>--}}
+        {{--                            </div>--}}
+        {{--                            <a href="{{route('dokumen.download-dokumen-user', $dokumen->id)}}">--}}
+        {{--                                <img src="{{$dokumen->getDokumenPath()}}"--}}
+        {{--                                     alt="Dokumen"--}}
+        {{--                                     width="150" height="150">--}}
+        {{--                            </a>--}}
+        {{--                            <hr>--}}
+        {{--                        @endforeach--}}
+        {{--                    </div>--}}
+        {{--                </div>--}}
+        {{--            </div>--}}
+        {{--        </div>--}}
     @endif
 
     <div class="mb-3">
@@ -327,8 +329,8 @@
             });
         });
 
-        $(document).ready(function() {
-            $(document).on('click', '[data-dismiss="modal"]', function() {
+        $(document).ready(function () {
+            $(document).on('click', '[data-dismiss="modal"]', function () {
                 var modal = $(this).closest('.modal');
                 if (modal.length && modal.hasClass('show')) {
                     location.reload();
@@ -337,5 +339,24 @@
                 }
             });
         });
+    </script>
+    <script>
+        function submitForm(formId) {
+            var form = $('#form-upload-dokumen_' + formId);
+            var formData = new FormData(form[0]);
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    swal('Berhasil!', response.success ?? 'Tindakan berhasil dilakukan.', 'success');
+                },
+                error: function (xhr) {
+                    swal('Gagal!', 'Terjadi kesalahan saat memproses data.', 'error');
+                }
+            });
+        }
     </script>
 @endpush
