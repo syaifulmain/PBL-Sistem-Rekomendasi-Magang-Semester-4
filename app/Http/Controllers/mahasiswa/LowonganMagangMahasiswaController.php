@@ -13,8 +13,21 @@ class LowonganMagangMahasiswaController extends Controller
 {
     public function index(Request $request)
     {
+
+        $title = 'Rekomendasi Magang';
+        $breadcrumb = [
+            'title' => $title,
+            'list' => [$title]
+        ];
+
+        $user = auth()->user();
+
+        if ($user->mahasiswa->ipk == null || $user->mahasiswa->ipk == 0) {
+            $pesan = 'Mohon lengkapi data profil Anda terlebih dahulu, terutama IPK, sebelum mengakses rekomendasi lowongan magang.';
+            return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb', 'pesan'));
+        }
+
         if ($request->ajax()) {
-            $user = auth()->user();
 
             $mahasiswa = [
                 'id' => $user->mahasiswa->id,
@@ -55,8 +68,8 @@ class LowonganMagangMahasiswaController extends Controller
                         <p class="card-text mb-1">
                             <small class="text-muted">' . ($row['nama_lokasi'] ?? '-') . '</small>
                         </p>
-                        '.(config('app.debug') ? 
-                        '<div class="row">
+                        ' . (config('app.debug') ?
+                            '<div class="row">
                             <div class="col-6">
                                 <p class="card-text mb-1">
                                     <small class="text-info">Fuzzy: ' . $row['skor_fuzzy'] . '</small>
@@ -71,19 +84,13 @@ class LowonganMagangMahasiswaController extends Controller
                         <p class="card-text mb-1">
                             <small class="text-success"><strong>Skor Gabungan: ' . $row['skor_gabungan'] . '</strong></small>
                         </p>'
-                        : '').'
+                            : '') . '
                     </div>
                 ';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
         }
-
-        $title = 'Rekomendasi Magang';
-        $breadcrumb = [
-            'title' => $title,
-            'list' => [$title]
-        ];
 
         return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb'));
     }
@@ -118,7 +125,7 @@ class LowonganMagangMahasiswaController extends Controller
         // Gabungkan hasil berdasarkan ID perusahaan
         foreach ($hasil_fuzzy as $fuzzy) {
             // Cari hasil WSM yang sesuai
-            $wsm_match = array_filter($hasil_wsm, function($wsm) use ($fuzzy) {
+            $wsm_match = array_filter($hasil_wsm, function ($wsm) use ($fuzzy) {
                 return $wsm['id'] == $fuzzy['id'];
             });
 
@@ -226,7 +233,7 @@ class LowonganMagangMahasiswaController extends Controller
 
         foreach ($hasil_fuzzy as $fuzzy) {
             // Cari hasil WSM yang sesuai
-            $wsm_match = array_filter($hasil_wsm, function($wsm) use ($fuzzy) {
+            $wsm_match = array_filter($hasil_wsm, function ($wsm) use ($fuzzy) {
                 return $wsm['id'] == $fuzzy['id'];
             });
 
@@ -763,6 +770,7 @@ class LowonganMagangMahasiswaController extends Controller
             ]
         ]);
     }
+
     public function perbandinganMetode(Request $request)
     {
         $user = auth()->user();
