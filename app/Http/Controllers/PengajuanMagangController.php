@@ -198,8 +198,8 @@ class PengajuanMagangController extends Controller
         if ($today->lt($lowongan->tanggal_mulai_daftar) || $today->gt($lowongan->tanggal_selesai_daftar)) {
             throw new RedirectException(
                 redirect()->back()->with('error', 'Pendaftaran lowongan ini hanya dibuka antara ' .
-                    $lowongan->tanggal_mulai_daftar->translatedFormat('d F Y') . ' dan ' .
-                    $lowongan->tanggal_selesai_daftar->translatedFormat('d F Y'))
+                    Carbon::parse($lowongan->tanggal_mulai_daftar)->translatedFormat('d F Y') . ' dan ' .
+                    Carbon::parse($lowongan->tanggal_selesai_daftar)->translatedFormat('d F Y'))
             );
         }
 

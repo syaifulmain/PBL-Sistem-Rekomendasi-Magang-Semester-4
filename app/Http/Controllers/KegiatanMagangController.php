@@ -63,9 +63,21 @@ class KegiatanMagangController extends Controller
             'catatan' => 'required_if:status,ditolak'
         ]);
 
-        $pengajuan = PengajuanMagangModel::findOrFail($id);
+        $pengajuan = PengajuanMagangModel::with(['lowongan.periodeMagang'])->findOrFail($id);
         $mahasiswa = $pengajuan->mahasiswa;
         $user = UserModel::findOrFail($mahasiswa->user_id);
+        $kuota = $pengajuan->lowongan->kuota;
+        $terima = PengajuanMagangModel::where('lowongan_magang_id', $pengajuan->lowongan_magang_id)->where('status', 'disetujui')->count();
+
+
+        if ($request->status === 'disetujui') {
+            if ($kuota <= $terima) {
+                return redirect()->back()->with('error', 'Kuota lowongan magang ini sudah penuh');
+            }
+            if ($pengajuan->mahasiswa->ipk < $pengajuan->lowongan->minimal_ipk) {
+                return redirect()->back()->with('error', 'IPK mahasiswa tidak memenuhi syarat');
+            }
+        }
 
         DB::beginTransaction();
             try {
@@ -75,6 +87,18 @@ class KegiatanMagangController extends Controller
             ]);
 
             if ($request->status === 'disetujui') {
+                $samePeriodePengajuan = PengajuanMagangModel::join('t_lowongan_magang', 't_pengajuan_magang.lowongan_magang_id', '=', 't_lowongan_magang.id')
+                ->where('t_pengajuan_magang.mahasiswa_id', $mahasiswa->id)
+                ->where('t_lowongan_magang.periode_magang_id', $pengajuan->lowongan->periode_magang_id)
+                ->whereNot('t_pengajuan_magang.id', $pengajuan->id);
+
+                if ($samePeriodePengajuan->exists()) {
+                    $samePeriodePengajuan->update([
+                        't_pengajuan_magang.status' => 'batal',
+                        't_pengajuan_magang.catatan' => '(Otomatis) Mahasiswa sudah terdaftar magang di lowongan magang lain dalam periode magang yang sama'
+                    ]);
+                }
+
                 $magang = MagangModel::create([
                     'pengajuan_magang_id' => $pengajuan->id,
                     'dosen_id' => $request->dosen_id,
@@ -109,6 +133,8 @@ class KegiatanMagangController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
             Log::error($th);
+
+            dd($th);
             return redirect()->back()->with('error', 'Terjadi kesalahan.');
         }
     }

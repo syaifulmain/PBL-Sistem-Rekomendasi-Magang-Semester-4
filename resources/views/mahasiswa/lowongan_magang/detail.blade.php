@@ -23,22 +23,22 @@
         </div>
         <div class="col-lg-6 col-md-12 mt-md-3 mt-lg-0">
             <dl class="row mb-0">
-                <dt class="col-sm-5 text-secondary">Kuota</dt>
+                <dt class="col-sm-5 text-dark">Kuota</dt>
                 <dd class="col-sm-7 text-dark">{{ $data->kuota }}</dd>
 
-                <dt class="col-sm-5 text-secondary">Mulai Daftar</dt>
+                <dt class="col-sm-5 text-dark">Mulai Daftar</dt>
                 <dd class="col-sm-7 text-dark">{{ \Carbon\Carbon::parse($data->tanggal_mulai_daftar)->format('d F Y') }}</dd>
 
-                <dt class="col-sm-5 text-secondary">Selesai Daftar</dt>
+                <dt class="col-sm-5 text-dark">Selesai Daftar</dt>
                 <dd class="col-sm-7 text-dark">{{ \Carbon\Carbon::parse($data->tanggal_selesai_daftar)->format('d F Y') }}</dd>
 
-                <dt class="col-sm-5 text-secondary">Mulai Magang</dt>
+                <dt class="col-sm-5 text-dark">Mulai Magang</dt>
                 <dd class="col-sm-7 text-dark">{{ \Carbon\Carbon::parse($data->tanggal_mulai_magang)->format('d F Y') }}</dd>
 
-                <dt class="col-sm-5 text-secondary">Selesai Magang</dt>
+                <dt class="col-sm-5 text-dark">Selesai Magang</dt>
                 <dd class="col-sm-7 text-dark">{{ \Carbon\Carbon::parse($data->tanggal_selesai_magang)->format('d F Y') }}</dd>
 
-                <dt class="col-sm-5 text-secondary">Status</dt>
+                <dt class="col-sm-5 text-dark">Status</dt>
                 <dd class="col-sm-7 text-dark"><span
                         class="badge badge-pill badge-{{ $data->status == 'aktif' ? 'success' : 'warning' }}">{{ ucfirst($data->status) }}</span>
                 </dd>

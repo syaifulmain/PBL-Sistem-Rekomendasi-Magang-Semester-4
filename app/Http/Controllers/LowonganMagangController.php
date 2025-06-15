@@ -101,6 +101,11 @@ class LowonganMagangController extends Controller
             'keahlian_teknis_levels.*' => [Rule::in(LevelTeknis::cases())],
         ]);
 
+        $validated['tanggal_mulai_daftar'] = Carbon::parse($validated['tanggal_mulai_daftar'])->format('Y-m-d');
+        $validated['tanggal_selesai_daftar'] = Carbon::parse($validated['tanggal_selesai_daftar'])->format('Y-m-d');
+        $validated['tanggal_mulai_magang'] = Carbon::parse($validated['tanggal_mulai_magang'])->format('Y-m-d');
+        $validated['tanggal_selesai_magang'] = Carbon::parse($validated['tanggal_selesai_magang'])->format('Y-m-d');
+
         DB::transaction(function () use ($validated) {
             $lowongan = LowonganMagangModel::create($validated);
 
@@ -152,7 +157,10 @@ class LowonganMagangController extends Controller
         ];
 
         $levelKeahlianTeknis = LevelTeknis::cases();
-
+        $data->tanggal_mulai_daftar = Carbon::parse($data->tanggal_mulai_daftar)->format('d-m-Y');
+        $data->tanggal_selesai_daftar = Carbon::parse($data->tanggal_selesai_daftar)->format('d-m-Y');
+        $data->tanggal_mulai_magang = Carbon::parse($data->tanggal_mulai_magang)->format('d-m-Y');
+        $data->tanggal_selesai_magang = Carbon::parse($data->tanggal_selesai_magang)->format('d-m-Y');
         return view('admin.lowongan_magang.form', compact('data', 'title', 'breadcrumb', 'levelKeahlianTeknis'));
     }
 
@@ -182,6 +190,11 @@ class LowonganMagangController extends Controller
             'keahlian_teknis_ids.*' => 'exists:m_keahlian_teknis,id',
             'keahlian_teknis_levels.*' => [Rule::in(LevelTeknis::cases())],
         ]);
+
+        $validated['tanggal_mulai_daftar'] = Carbon::parse($validated['tanggal_mulai_daftar'])->format('Y-m-d');
+        $validated['tanggal_selesai_daftar'] = Carbon::parse($validated['tanggal_selesai_daftar'])->format('Y-m-d');
+        $validated['tanggal_mulai_magang'] = Carbon::parse($validated['tanggal_mulai_magang'])->format('Y-m-d');
+        $validated['tanggal_selesai_magang'] = Carbon::parse($validated['tanggal_selesai_magang'])->format('Y-m-d');
 
         DB::transaction(function () use ($validated, $lowongan) {
             $lowongan->update($validated);
@@ -286,9 +299,16 @@ class LowonganMagangController extends Controller
     {
         $search = $request->input('q');
 
-        $data = KeahlianTeknisModel::when($search, function ($query, $search) {
+        $query = KeahlianTeknisModel::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%{$search}%");
-        })->select('id', 'nama as text')->limit(20)->get();
+        })->select('id', 'nama as text');
+
+        if (!empty($request->input('selected'))) {
+            $selected = $request->input('selected');
+            $query->whereNotIn('id', $selected);
+        }
+
+        $data = $query->get();
 
         return response()->json($data);
     }
