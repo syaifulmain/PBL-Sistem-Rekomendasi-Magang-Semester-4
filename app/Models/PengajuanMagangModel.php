@@ -16,6 +16,7 @@ class PengajuanMagangModel extends Model
         'tanggal_pengajuan',
         'status',
         'catatan',
+        'rekomendasi',
     ];
 
     public function mahasiswa()

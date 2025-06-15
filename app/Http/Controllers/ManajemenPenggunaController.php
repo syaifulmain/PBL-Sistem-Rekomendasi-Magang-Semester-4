@@ -27,32 +27,41 @@ class ManajemenPenggunaController extends Controller
         }
 
         if ($request->ajax()) {
-            $data = UserModel::query()
+            $query = UserModel::query()
                 ->with(['admin', 'dosen', 'mahasiswa'])
                 ->where('level', $level);
 
-            return DataTables::of($data)
-                ->editColumn('username', fn($data) => $data->username)
-                ->editColumn('nama', fn($data) => $data->getNama())
-                ->addColumn('status', function ($row) use ($level) {
-                    if (strtoupper($level) === 'MAHASISWA' && $row->mahasiswa) {
-                        return $row->mahasiswa->status ?? '-';
-                    }
-                    return '-';
-                })
-                ->addColumn('action', function ($row) {
-                    $editUrl = route('admin.manajemen-pengguna.edit', $row->id);
-                    $deleteUrl = route('admin.manajemen-pengguna.delete', $row->id);
-                    return view('components.action-buttons', compact('editUrl', 'deleteUrl'))->render();
-                })
+            $dataTable = DataTables::of($query)
+                ->editColumn('username', fn($data) => $data->username);
+
+            switch ($level) {
+                case 'mahasiswa':
+                    $dataTable->editColumn('nama', fn($data) => $data->mahasiswa->nama ?? '-')
+                        ->addColumn('status', function ($row) {
+                            return $row->mahasiswa->status ?? '-';
+                        });
+                    break;
+                case 'dosen':
+                    $dataTable->editColumn('nama', fn($data) => $data->dosen->nama ?? '-');
+                    break;
+                case 'admin':
+                    $dataTable->editColumn('nama', fn($data) => $data->admin->nama ?? '-');
+                    break;
+            }
+
+            return $dataTable->addColumn('action', function ($row) {
+                $editUrl = route('admin.manajemen-pengguna.edit', $row->id);
+                $deleteUrl = route('admin.manajemen-pengguna.delete', $row->id);
+                return view('components.action-buttons', compact('editUrl', 'deleteUrl'))->render();
+            })
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        $title = 'Manajemen Pengguna' . ($level ? ' - ' . $level : '');
+        $title = 'Manajemen Pengguna' . ($level ? ' - ' . ucfirst(strtolower($level)) : '');
         $breadcrumb = [
             'title' => 'Manajemen Pengguna',
-            'list' => ['Manajemen Pengguna', $level ? ucfirst($level) : '']
+            'list' => ['Manajemen Pengguna', $level ? ucfirst(strtolower($level)) : '']
         ];
 
         return view('admin.manajemen_pengguna.index', compact('title', 'breadcrumb', 'level'));

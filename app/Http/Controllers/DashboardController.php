@@ -86,8 +86,8 @@ class DashboardController extends Controller
         ];
 
         // 8. Data untuk chart efektivitas rekomendasi
-        $totalPengajuan = DB::table('t_pengajuan_magang')->whereNot('status', 'batal')->count();
-        $pengajuanDisetujui = DB::table('t_pengajuan_magang')->where('status', 'disetujui')->count();
+        $totalPengajuan = DB::table('t_pengajuan_magang')->whereNot('status', 'batal')->where('rekomendasi', true)->count();
+        $pengajuanDisetujui = DB::table('t_pengajuan_magang')->where('status', 'disetujui')->where('rekomendasi', true)->count();
         $pengajuanTidakDisetujui = $totalPengajuan - $pengajuanDisetujui;
         $efektivitasRekomendasi = $totalPengajuan > 0 ? round($pengajuanDisetujui / $totalPengajuan * 100, 2) : 0;
 

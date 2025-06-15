@@ -45,7 +45,7 @@ class KegiatanMagangController extends Controller
     public function process($id)
     {
         $pengajuan = PengajuanMagangModel::with(['mahasiswa', 'lowongan.perusahaan', 'dokumen.jenisDokumen'])->findOrFail($id);
-        $dosen = DosenModel::whereNull('deleted_at')->get();
+        $dosen = DosenModel::with('minat.bidangKeahlian')->whereNull('deleted_at')->get();
 
         $title = 'Proses Kegiatan Magang';
         $breadcrumb = [
@@ -113,28 +113,36 @@ class KegiatanMagangController extends Controller
                     $dosen->user_id,
                     'Mahasiswa bimbingan baru: ' . $mahasiswa->nama . ' (' . $mahasiswa->nim . ')',
                     'Bimbingan Magang Mahasiswa',
-                    url()->route('dosen.bimbingan-magang.monitoring', $magang->id, false)
+                    url()->route('dosen.bimbingan-magang.monitoring', $pengajuan->id, false)
+                );
+                // Notifikasi untuk mahasiswa
+                NotificationController::createNotification(
+                    $user->id,
+                    match($request->status) {
+                        'disetujui' => 'Pengajuan magang anda disetujui',
+                        'ditolak' => 'Pengajuan magang anda ditolak',
+                    },
+                    'Pengajuan Magang',
+                    url()->route('mahasiswa.evaluasi-magang.monitoring', $pengajuan->id, false)
+                );
+            } else {
+                // Notifikasi untuk mahasiswa
+                NotificationController::createNotification(
+                    $user->id,
+                    match($request->status) {
+                        'disetujui' => 'Pengajuan magang anda disetujui',
+                        'ditolak' => 'Pengajuan magang anda ditolak',
+                    },
+                    'Pengajuan Magang',
+                    url()->route('mahasiswa.pengajuan-magang.show', $pengajuan->id, false)
                 );
             }
-
-            // Notifikasi untuk mahasiswa
-            NotificationController::createNotification(
-                $user->id,
-                match($request->status) {
-                    'disetujui' => 'Pengajuan magang anda disetujui',
-                    'ditolak' => 'Pengajuan magang anda ditolak',
-                },
-                'Pengajuan Magang',
-                url()->route('mahasiswa.pengajuan-magang.show', $pengajuan->id, false)
-            );
 
             DB::commit();
             return redirect()->route('admin.kegiatan-magang.index')->with('success', 'Pengajuan berhasil diperbarui');
         } catch (\Throwable $th) {
             DB::rollBack();
             Log::error($th);
-
-            dd($th);
             return redirect()->back()->with('error', 'Terjadi kesalahan.');
         }
     }

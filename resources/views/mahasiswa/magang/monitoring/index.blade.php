@@ -212,7 +212,7 @@
                                                                         style="max-width: 200px;">
                                                                 </div>
                                                                 <a href="{{ asset('storage/' . $data->magang->evaluasiMagangMahasiswa->sertifikat_path) }}"
-                                                                   target="_blank">
+                                                                   download>
                                                                     Download Sertifikat
                                                                 </a>
                                                             @else
@@ -470,21 +470,6 @@
             // Set active tab on initial load
             setActiveTabFromUrl();
 
-            // Handle tab clicks to update URL
-            $('#internshipTabs a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
-                const tabId = $(e.target).data('tab-id');
-                const newUrl = window.location.pathname + '?page=' + tabId;
-                window.history.pushState({path: newUrl}, '', newUrl);
-                if (tabId === 0) {
-                    location.reload()
-                }
-
-                // Optional: Smooth scroll to tabs if you still want this behavior
-                // $('html, body').animate({
-                //     scrollTop: $("#internshipTabs").offset().top - 20
-                // }, 500);
-            });
-
             // Listen for browser back/forward navigation
             $(window).on('popstate', function () {
                 setActiveTabFromUrl();
@@ -505,6 +490,7 @@
     <script src="{{ asset('assets/plugins/filepond/filepond-plugin-image-preview.min.js') }}"></script>
     <script src="{{ asset('assets/plugins/filepond/filepond.jquery.js') }}"></script>
     <script>
+        let logTable;
         $(document).on('click', '.btn-delete', function (e) {
             e.preventDefault();
 
@@ -568,7 +554,7 @@
 
         $(document).ready(function () {
             // Initialize DataTable
-            $('#logTable').DataTable({
+            logTable = $('#logTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '', // Make sure this is correctly set if you are loading data via AJAX
@@ -586,6 +572,22 @@
                 language: {
                     url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
+            });
+
+            
+            // Handle tab clicks to update URL
+            $('#internshipTabs a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+                const tabId = $(e.target).data('tab-id');
+                const newUrl = window.location.pathname + '?page=' + tabId;
+                window.history.pushState({path: newUrl}, '', newUrl);
+                if (tabId === 0) {
+                    logTable.clear().draw();
+                }
+
+                // Optional: Smooth scroll to tabs if you still want this behavior
+                // $('html, body').animate({
+                //     scrollTop: $("#internshipTabs").offset().top - 20
+                // }, 500);
             });
 
             // Star Rating System

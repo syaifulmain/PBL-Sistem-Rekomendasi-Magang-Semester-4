@@ -88,8 +88,12 @@
                 }
             @endphp
             <li class="nav-item nav-profile dropdown">
-                <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                    <img src="{{auth()->user()->getFotoProfilPath()}}" alt="profile"/><span class="ml-2 text-white">{{ $name }} @if($id) / {{ $id }} @endif</span>
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-toggle="dropdown" id="profileDropdown">
+                    <img src="{{auth()->user()->getFotoProfilPath()}}" alt="profile" class="mr-2"/>
+                    <div class="d-flex flex-column">
+                        <span class="text-white">{{ $name }} @if($id) / {{ $id }} @endif</span>
+                        <small class="text-white">{{ ucfirst(get_role_name(auth()->user())) }}</small>
+                    </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                     <div class="dropdown-item">

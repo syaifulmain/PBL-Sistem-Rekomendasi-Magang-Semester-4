@@ -9,8 +9,7 @@
     <meta name="keywords" content="">
 
     <!-- Favicons -->
-    <link href="{{ asset('arsha-1.0.0/assets/img/favicon.png')}}" rel="icon">
-    <link href="{{ asset('arsha-1.0.0/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
+    <link rel="shortcut icon" href="{{asset('images/logo-mini.svg')}}"/>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -413,15 +412,13 @@
 
 <body class="index-page">
 
-<header id="header" class="header d-flex align-items-center fixed-top">
+<header id="header" class="header d-flex align-items-center fixed-top p-2">
     <div class="container-fluid container-xl position-relative d-flex align-items-center">
 
         <a href="#" class="logo d-flex align-items-center me-auto">
             <!-- Uncomment the line below if you also wish to use an image logo -->
-            <img src="{{ asset('arsha-1.0.0/assets/img/logo_jti.png')}}" alt="">
-            <span class="sitename"
-                  style="font-size:24px; font-weight:bold; font-family:'Poppins', sans-serif; color:white;">SIMagang</span>
-
+            <img src="{{ asset('images/logo.svg') }}"
+                 class="mr-2" alt="logo"/>
         </a>
 
         <nav id="navmenu" class="navmenu">

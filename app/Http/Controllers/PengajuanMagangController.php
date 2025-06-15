@@ -55,6 +55,7 @@ class PengajuanMagangController extends Controller
         ];
 
         $lowonganId = null;
+        $rekomendasi = $request->get('rekomendasi', false);
 
         try {
             $lowonganId = $request->get('lowongan_id');
@@ -64,7 +65,7 @@ class PengajuanMagangController extends Controller
             return $redirect;
         }
 
-        return view('mahasiswa.pengajuan_magang.form', compact('title', 'breadcrumb', 'lowonganId'));
+        return view('mahasiswa.pengajuan_magang.form', compact('title', 'breadcrumb', 'lowonganId', 'rekomendasi'));
     }
     
    public function store(Request $request)
@@ -88,6 +89,7 @@ class PengajuanMagangController extends Controller
             $pengajuan->lowongan_magang_id = $request->lowongan_id;
             $pengajuan->status = 'diajukan';
             $pengajuan->tanggal_pengajuan = now();
+            $pengajuan->rekomendasi = $request->rekomendasi ? true : false;
             $pengajuan->save();
     
             $dokumen = [];
