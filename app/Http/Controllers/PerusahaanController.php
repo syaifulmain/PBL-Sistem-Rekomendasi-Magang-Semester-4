@@ -55,6 +55,7 @@ class PerusahaanController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'path_foto_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'nama' => 'required|max:255|regex:' . RegexPatterns::SAFE_INPUT . '|unique:m_perusahaan,nama',
             'provinsi_id' => 'required|exists:m_provinsi,id',
             'kabupaten_id' => 'required|exists:m_kabupaten,id',
@@ -68,6 +69,15 @@ class PerusahaanController extends Controller
 
         DB::beginTransaction();
         try {
+            if ($request->hasFile('path_foto_profil')) {
+                $file = $request->file('path_foto_profil');
+                $extension = $file->getClientOriginalExtension();
+                $fileName = uniqid('profile_') . '_' . time() . '.' . $extension;
+                $file->storeAs('public/perusahaan/foto_profil', $fileName);
+                $path_foto_profil = 'perusahaan/foto_profil/' . $fileName;
+            } else {
+                $path_foto_profil = null;
+            }
 
             $perusahaan = PerusahaanModel::create([
                 'nama' => $validated['nama'],
@@ -79,6 +89,7 @@ class PerusahaanController extends Controller
                 'website' => $validated['website'] ?? null,
                 'email' => $validated['email'] ?? null,
                 'no_telepon' => $validated['no_telepon'] ?? null,
+                'path_foto_profil' => $path_foto_profil ?? null,
             ]);
 
             LokasiPerusahaanModel::create([
@@ -135,11 +146,22 @@ class PerusahaanController extends Controller
             'website' => 'nullable|url|max:255',
             'email' => 'nullable|email|max:255',
             'no_telepon' => 'nullable|string|max:20',
+            'path_foto_profil' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
             $perusahaan = PerusahaanModel::findOrFail($id);
+
+            if ($request->hasFile('path_foto_profil')) {
+                $file = $request->file('path_foto_profil');
+                $extension = $file->getClientOriginalExtension();
+                $fileName = uniqid('profile_') . '_' . time() . '.' . $extension;
+                $file->storeAs('public/perusahaan/foto_profil', $fileName);
+                $validated['path_foto_profil'] = 'perusahaan/foto_profil/' . $fileName;
+            } else {
+                unset($validated['path_foto_profil']);
+            }
 
             $perusahaan->update([
                 'nama' => $validated['nama'],
@@ -151,6 +173,7 @@ class PerusahaanController extends Controller
                 'website' => $validated['website'] ?? null,
                 'email' => $validated['email'] ?? null,
                 'no_telepon' => $validated['no_telepon'] ?? null,
+                'path_foto_profil' => $validated['path_foto_profil'] ?? $perusahaan->path_foto_profil,
             ]);
 
             LokasiPerusahaanModel::updateOrCreate(

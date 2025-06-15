@@ -389,6 +389,10 @@
                 // Update URL without page reload
                 window.history.pushState({path: newUrl}, '', newUrl);
 
+                if (page === 0) {
+                    location.reload()
+                }
+
                 // Show the selected tab
                 $(this).tab('show');
             });

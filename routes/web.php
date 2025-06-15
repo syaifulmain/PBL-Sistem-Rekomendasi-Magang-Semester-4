@@ -127,8 +127,13 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:MAHASISWA')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function () {
+        Route::prefix('rekomendasi-magang')->name('rekomendasi-magang.')->group(function () {
             Route::get('/', [LowonganMagangMahasiswaController::class, 'index'])->name('index');
+            Route::get('/{id}/detail', [LowonganMagangMahasiswaController::class, 'show'])->name('detail');
+        });
+
+        Route::prefix('lowongan-magang')->name('lowongan-magang.')->group(function () {
+            Route::get('/', [LowonganMagangMahasiswaController::class, 'lowonganAll'])->name('index');
             Route::get('/{id}/detail', [LowonganMagangMahasiswaController::class, 'show'])->name('detail');
         });
 

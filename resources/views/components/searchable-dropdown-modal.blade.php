@@ -20,7 +20,7 @@
             placeholder="{{ $placeholder }}"
             aria-label="{{ $placeholder }}"
             id="{{ $id }}-input"
-            name="{{ $id }}-input"
+            name="{{ $id }}_input"
             value="{{ $selectedName }}"
             @if($required) required @endif
             @if($autofocus) autofocus @endif

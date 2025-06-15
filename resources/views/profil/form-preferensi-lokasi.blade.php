@@ -19,6 +19,7 @@
                             <button class="btn btn-sm btn-primary" type="button" id="btn-tambah">Tambah</button>
                         </div>
                     </div>
+                    <small id="error-preferensi-lokasi-input" class="text-danger d-none"></small>
                 </div>
             </form>
             <hr>
@@ -48,10 +49,13 @@
                         $('#preferensi_lokasi_id-hidden').val('').trigger('change');
                         $('#preferensi_lokasi_id-input').val('');
                         $('#preferensi_lokasi_id-type').val('');
+                    } else {
+                        $('#error-preferensi-lokasi-input').removeClass('d-none').text(response.message);
                     }
                 },
                 error: function (xhr) {
                     console.error(xhr.responseText);
+                    $('#error-preferensi-lokasi-input').removeClass('d-none').text('Periksa kembali data yang dimasukkan.');
                 }
             });
         });

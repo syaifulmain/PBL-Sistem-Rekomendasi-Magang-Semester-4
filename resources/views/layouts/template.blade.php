@@ -195,10 +195,11 @@
                 // Disable submit button untuk mencegah double submit
                 $('button[type="submit"]').prop('disabled', true).text('Menyimpan...');
 
-                $.ajax({
+                // Cek apakah form ada file
+                var hasFile = $(form).find('input[type="file"]').length > 0;
+                var ajaxOptions = {
                     url: form.action,
                     type: form.method,
-                    data: $(form).serialize(),
                     success: function (response) {
                         if (response.success) {
                             swal({
@@ -255,7 +256,18 @@
                         // Re-enable submit button
                         $('button[type="submit"]').prop('disabled', false).text(btnSubmitText);
                     }
-                });
+                };
+
+                if (hasFile) {
+                    var formData = new FormData(form);
+                    ajaxOptions.data = formData;
+                    ajaxOptions.processData = false;
+                    ajaxOptions.contentType = false;
+                } else {
+                    ajaxOptions.data = $(form).serialize();
+                }
+
+                $.ajax(ajaxOptions);
                 return false;
             },
             errorElement: 'span',
@@ -272,7 +284,6 @@
         });
     }
 </script>
-
 
 @stack('js')
 

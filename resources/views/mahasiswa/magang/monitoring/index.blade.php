@@ -475,6 +475,9 @@
                 const tabId = $(e.target).data('tab-id');
                 const newUrl = window.location.pathname + '?page=' + tabId;
                 window.history.pushState({path: newUrl}, '', newUrl);
+                if (tabId === 0) {
+                    location.reload()
+                }
 
                 // Optional: Smooth scroll to tabs if you still want this behavior
                 // $('html, body').animate({

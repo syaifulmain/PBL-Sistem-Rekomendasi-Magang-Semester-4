@@ -22,6 +22,7 @@
                         </div>
                     </div>
                 </div>
+                    <small id="error-minat-input" class="text-danger d-none"></small>
             </form>
             <hr>
             <div id="tag-cross-delete">
@@ -50,10 +51,14 @@
                         $('#tag-cross-delete').html(response.html);
                         $('#minat_id-hidden').val('').trigger('change');
                         $('#minat_id-input').val('');
+                        $('#error-minat-input').addClass('d-none').text('');
+                    } else {
+                        $('#error-minat-input').removeClass('d-none').text(response.message);
                     }
                 },
                 error: function (xhr) {
                     console.error(xhr.responseText);
+                    $('#error-minat-input').removeClass('d-none').text('Periksa kembali input Anda.');
                 }
             });
         });
