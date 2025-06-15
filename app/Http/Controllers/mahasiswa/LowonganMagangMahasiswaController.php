@@ -852,4 +852,67 @@ class LowonganMagangMahasiswaController extends Controller
 
         return view('mahasiswa.lowongan_magang.detail', compact('data'));
     }
+
+    public function lowonganAll(Request $request)
+    {
+        $title = 'Lowongan Magang';
+        $breadcrumb = [
+            'title' => $title,
+            'list' => [$title]
+        ];
+
+        if ($request->ajax()) {
+
+            $query = LowonganMagangModel::with([
+                'perusahaan',
+                'keahlian',
+                'teknis'
+            ])->where('status', 'buka');
+
+            if ($request->filled('search_query')) {
+                $searchTerm = '%' . $request->input('search_query') . '%';
+
+                $query->where(function ($q) use ($searchTerm) {
+                    $q->where('judul', 'LIKE', $searchTerm) // Search by vacancy title
+                    ->orWhereHas('perusahaan', function ($perusahaanQuery) use ($searchTerm) {
+                        $perusahaanQuery->where('nama', 'LIKE', $searchTerm) // Search by company name
+                        ->orWhere('alamat', 'LIKE', $searchTerm); // Search by company address
+                    })
+                        ->orWhereHas('keahlian', function ($bidangQuery) use ($searchTerm) {
+                            $bidangQuery->where('nama', 'LIKE', $searchTerm); // Search by field of expertise name
+                        })
+                        ->orWhereHas('teknis', function ($keahlianTeknisQuery) use ($searchTerm) {
+                            $keahlianTeknisQuery->where('nama', 'LIKE', $searchTerm);
+                        });
+                });
+            }
+
+            return DataTables::of($query)
+                ->addColumn('action', function ($lowongan) {
+                    $companyName = $lowongan->perusahaan ? htmlspecialchars($lowongan->perusahaan->nama) : 'N/A';
+                    $lowonganTitle = htmlspecialchars($lowongan->judul);
+                    $profileImage = $lowongan->perusahaan ? $lowongan->perusahaan->getFotoProfilPath() : asset('images/default_company.png');
+                    $alamat = htmlspecialchars($lowongan->perusahaan->alamat ?? 'N/A');
+
+                    return '
+                    <div class="clickable-row cursor-pointer d-flex align-items-center" data-id="' . $lowongan->id . '" onclick="loadLowonganDetail(' . $lowongan->id . ')">
+                        <img src="' . $profileImage . '" alt="Logo" class="mr-3" style="width:50px;height:50px;object-fit:cover;">
+                    <div>
+                        <h6 class="card-title mb-2 text-primary">' . $lowonganTitle . '</h6>
+                        <span class="mb-2">' . $companyName . '</span>
+                        <p class="card-text mb-1">
+                            <small class="text-muted">' . ($alamat ?? '-') . '</small>
+                        </p>
+                        </div>
+                    </div>
+                ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        $all = true;
+
+        return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb', 'all'));
+    }
 }

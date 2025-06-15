@@ -13,11 +13,23 @@
         <div class="card h-100">
 
             <div class="card-body d-flex flex-column">
-                <div class="row mb-3">
-                    {{--                <div class="col-auto pr-0">--}}
-                    {{--                    <button class="btn btn-outline-primary mr-2">Untuk Anda</button>--}}
-                    {{--                </div>--}}
-                </div>
+                @isset($all)
+                    <div class="mb-3">
+                        {{--                <div class="col-auto pr-0">--}}
+                        {{--                    <button class="btn btn-outline-primary mr-2">Untuk Anda</button>--}}
+                        {{--                </div>--}}
+                        <div class="input-group">
+                            <input type="text" id="search-lowongan" class="form-control"
+                                   placeholder="Cari lowongan atau perusahaan...">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="button" id="btn-cari-lowongan">
+                                    <i class="fa fa-search"></i> Cari
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                @endisset
+
                 <div class="row flex-grow-1">
                     <div class="col-md-5 mb-3 mb-md-0 pr-3 pr-md-0 border-right">
                         <div class="card h-100">
@@ -94,11 +106,16 @@
                         });
                     }
 
-                    $('#lowongan-table').DataTable({
+                    let lowonganTable = $('#lowongan-table').DataTable({
                         processing: true,
                         serverSide: true,
                         lengthChange: false,
-                        ajax: '{{ route("mahasiswa.lowongan-magang.index") }}', // Make sure this route exists
+                        ajax: {
+                            url: '',
+                            data: function (d) {
+                                d.search_query = $('#search-lowongan').val();
+                            }
+                        },
                         columns: [
                             {data: 'action', name: 'action', orderable: false, searchable: false}
                         ],
@@ -111,6 +128,38 @@
                             url: '{{ asset("assets/js/datatables/language/id.json") }}'
                         }
                     });
+
+                    @isset($all)
+                    $('#btn-cari-lowongan').on('click', function () {
+                        showEmptyLowonganMessage();
+                        lowonganTable.ajax.reload();
+                    });
+
+                    $('#search-lowongan').on('keypress', function (e) {
+                        if (e.which == 13) {
+                            showEmptyLowonganMessage();
+                            lowonganTable.ajax.reload();
+                            return false;
+                        }
+                    });
+
+                    let searchTimeout;
+                    $('#search-lowongan').on('keyup', function () {
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(function () {
+                            showEmptyLowonganMessage();
+                            lowonganTable.ajax.reload();
+                        }, 500);
+                    });
+                    @endisset
+
+                    function showEmptyLowonganMessage() {
+                        $('#detail-content').html('<div class="text-center p-5 text-muted">Pilih lowongan dari daftar untuk melihat detail atau gunakan pencarian.</div>');
+                    }
+
+                    if (lowonganTable.rows().count() === 0) {
+                        showEmptyLowonganMessage();
+                    }
                 })
             </script>
         @endpush
