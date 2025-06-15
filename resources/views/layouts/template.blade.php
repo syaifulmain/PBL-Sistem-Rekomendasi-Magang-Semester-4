@@ -32,7 +32,7 @@
     @stack('css')
 
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{asset('skydash-v.01/images/favicon.png')}}"/>
+    <link rel="shortcut icon" href="{{asset('images/logo-mini.svg')}}"/>
 </head>
 <body>
 <div class="container-scroller">

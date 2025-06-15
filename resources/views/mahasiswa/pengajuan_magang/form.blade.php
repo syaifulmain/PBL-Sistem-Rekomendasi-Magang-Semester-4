@@ -38,6 +38,7 @@
                         @if ($lowonganId)
                             <input type="hidden" name="lowongan_id" value="{{ $lowonganId }}">
                         @endif
+                        <input type="hidden" name="rekomendasi" value="{{ $rekomendasi ? true : false }}" readonly>
                     </div>
                     <div class="form-group">
                         <label>Nama</label>

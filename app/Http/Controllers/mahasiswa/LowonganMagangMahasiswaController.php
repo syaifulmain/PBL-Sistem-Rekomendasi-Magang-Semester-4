@@ -19,6 +19,7 @@ class LowonganMagangMahasiswaController extends Controller
             'title' => $title,
             'list' => [$title]
         ];
+        $rekomendasi = true;
 
         $user = auth()->user();
 
@@ -96,7 +97,7 @@ class LowonganMagangMahasiswaController extends Controller
                 ->make(true);
         }
 
-        return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb'));
+        return view('mahasiswa.lowongan_magang.index', compact('title', 'breadcrumb', 'rekomendasi'));
     }
 
     // ========== METODE GABUNGAN (FUZZY + WSM) ==========
@@ -846,11 +847,13 @@ class LowonganMagangMahasiswaController extends Controller
         return $perbandingan;
     }
 
-    public function show($id)
+    public function show($id, Request $request)
     {
         $data = LowonganMagangModel::with(['perusahaan', 'periodeMagang', 'keahlian', 'dokumen'])->findOrFail($id);
 
-        return view('mahasiswa.lowongan_magang.detail', compact('data'));
+        $rekomendasi = $request->get('rekomendasi', false);
+
+        return view('mahasiswa.lowongan_magang.detail', compact('data', 'rekomendasi'));
     }
 
     public function lowonganAll(Request $request)

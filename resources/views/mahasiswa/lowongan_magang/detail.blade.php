@@ -102,7 +102,7 @@
     <hr class="my-4">
 
     <div class="text-right">
-        <a href="{{ route('mahasiswa.pengajuan-magang.create') }}?lowongan_id={{ $data->id }}"
+        <a href="{{ route('mahasiswa.pengajuan-magang.create') }}?lowongan_id={{ $data->id }}{{ $rekomendasi ? '&rekomendasi='. $rekomendasi : '' }}"
            class="btn btn-primary btn-lg">Melamar Sekarang</a>
     </div>
 </div>

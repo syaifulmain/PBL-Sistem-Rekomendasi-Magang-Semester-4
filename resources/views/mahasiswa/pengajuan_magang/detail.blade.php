@@ -7,8 +7,8 @@
 
         <!-- Informasi Pengajuan -->
         <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Informasi Pengajuan</h5>
+            <div class="card-header bg-primary">
+                <h5 class="card-title text-white mb-0">Informasi Pengajuan</h5>
             </div>
             <div class="card-body p-0">
                 <table class="table table-profile mb-3">
@@ -36,8 +36,8 @@
 
         <!-- Lowongan Information -->
         <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Informasi Lowongan</h5>
+            <div class="card-header bg-primary">
+                <h5 class="card-title text-white mb-0">Informasi Lowongan</h5>
             </div>
             <div class="card-body p-0">
                 <table class="table table-profile mb-3">
@@ -54,8 +54,8 @@
         </div>
         <!-- Informasi Mahasiswa -->
         <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Informasi Mahasiswa</h5>
+            <div class="card-header bg-primary">
+                <h5 class="card-title text-white mb-0">Informasi Mahasiswa</h5>
             </div>
             <div class="card-body p-0">
                 <table class="table table-profile mb-3">
@@ -97,8 +97,8 @@
         
         <!-- Lampiran -->
         <div class="card mb-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Lampiran</h5>
+            <div class="card-header bg-primary">
+                <h5 class="card-title text-white mb-0">Lampiran</h5>
             </div>
             <div class="card-body p-0">
                 @if($data->dokumen)

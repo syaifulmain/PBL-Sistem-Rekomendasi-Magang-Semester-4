@@ -95,7 +95,7 @@
                 $(document).ready(function () {
                     window.loadLowonganDetail = function (id) {
                         $.ajax({
-                            url: '{{ route('mahasiswa.lowongan-magang.detail', ':id') }}'.replace(':id', id),
+                            url: '{{ route('mahasiswa.lowongan-magang.detail', ':id') }}?rekomendasi={{ $rekomendasi ?? false }}'.replace(':id', id),
                             method: 'GET',
                             success: function (response) {
                                 $('#detail-content').html(response);

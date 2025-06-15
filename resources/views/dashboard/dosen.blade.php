@@ -8,8 +8,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <p class="mb-1">Total Mahasiswa Bimbingan</p>
-                            <h3 class="mb-0">{{ number_format($stats['total_magang']) }}</h3>
+                            <p class="mb-1 h4 font-weight-bold">Total Mahasiswa Bimbingan</p>
+                            <h3 class="mb-0 text-primary">{{ number_format($stats['total_magang']) }}</h3>
                         </div>
                         <div class="icon bg-primary p-2">
                             <i class="mdi mdi-48px mdi-account-group text-white"></i>
@@ -25,8 +25,8 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <p class="mb-1">Mahasiswa Bimbingan Aktif</p>
-                            <h3 class="mb-0">{{ number_format($stats['mahasiswa_aktif']) }}</h3>
+                            <p class="mb-1 h4 font-weight-bold">Mahasiswa Bimbingan Aktif</p>
+                            <h3 class="mb-0 text-primary">{{ number_format($stats['mahasiswa_aktif']) }}</h3>
                         </div>
                         <div class="icon bg-success p-2">
                             <i class="mdi mdi-48px mdi-account-check text-white"></i>

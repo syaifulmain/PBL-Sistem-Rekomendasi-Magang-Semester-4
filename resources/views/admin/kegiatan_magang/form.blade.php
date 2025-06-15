@@ -8,8 +8,8 @@
             <input type="hidden" name="id" value="{{ $pengajuan->id }}" readonly>
             <!-- Lowongan Information -->
             <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Informasi Lowongan</h5>
+                <div class="card-header bg-primary">
+                    <h5 class="card-title text-white mb-0">Informasi Lowongan</h5>
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-profile mb-3">
@@ -26,8 +26,8 @@
             </div>
             <!-- Informasi Mahasiswa -->
             <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Informasi Mahasiswa</h5>
+                <div class="card-header bg-primary">
+                    <h5 class="card-title text-white mb-0">Informasi Mahasiswa</h5>
                 </div>
                 <div class="card-body p-0">
                     <table class="table table-profile mb-3">
@@ -69,8 +69,8 @@
  
             <!-- Lampiran -->
             <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Lampiran</h5>
+                <div class="card-header bg-primary">
+                    <h5 class="card-title text-white mb-0">Lampiran</h5>
                 </div>
                 <div class="card-body p-0">
                     @if($pengajuan->dokumen)
@@ -110,11 +110,11 @@
             <!-- Dosen -->
             <div class="form-group dosen-group" style="display: none;">
                 <label for="dosen_id">Dosen Pembimbing</label>
-                <select name="dosen_id" id="dosen_id" class="form-control" required>
+                <select name="dosen_id" id="dosen_id" class="form-control select2" required>
                     <option value="">-- Pilih Dosen --</option>
                     @foreach ($dosen as $item)
                         <option value="{{ $item->id }}" {{ $pengajuan->dosen_id == $item->id ? 'selected' : '' }}>
-                            {{ $item->nama }}
+                            {{ $item->nama }} ({{ !empty($item->minat) ? implode(', ', $item->minat->pluck('bidangKeahlian.nama')->toArray()) : '' }})
                         </option>
                     @endforeach
                 </select>
@@ -135,6 +135,9 @@
 @endsection
 @push('js')
     <script>
+        $('.select2').select2({
+            width: "100%"
+        });
         $(document).ready(function() {
             let status = $('#status').val();
             let dosenGroup = $('.dosen-group');

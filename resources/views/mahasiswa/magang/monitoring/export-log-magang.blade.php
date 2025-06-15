@@ -45,9 +45,9 @@
             <td>{{ $log->keterangan }}</td>
             <td>
                 @if($log->dokumentasi)
-                    <img src="{{ public_path('storage/' . $log->dokumentasi) }}" alt="Dokumen">
+                    <img src="{{ public_path('storage/' . $log->dokumentasi) }}" alt="-">
                 @else
-                    Tidak ada
+                    -
                 @endif
             </td>
         </tr>

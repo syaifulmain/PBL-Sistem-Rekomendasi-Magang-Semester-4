@@ -58,7 +58,7 @@
                 columns: [
                     // {data: 'DT_RowIndex', className: 'text-center'},
                     {data: 'username', name: 'username'},
-                    {data: 'nama', name: 'nama', orderable: false},
+                    {data: 'nama', name: '{{ $level }}.nama', orderable: false},
                         @if($level === 'mahasiswa')
                     {
                         data: 'status', name: 'status', orderable: false, searchable: false

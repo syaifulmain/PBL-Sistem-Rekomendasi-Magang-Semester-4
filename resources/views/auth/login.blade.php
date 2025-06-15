@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIMagang - Sistem Informasi Magang Mahasiswa</title>
     <meta name="description" content="Portal login untuk Sistem Informasi Magang Mahasiswa">
+    <link rel="shortcut icon" href="{{asset('images/logo-mini.svg')}}"/>
     <link rel="stylesheet" href="{{asset('assets/bootstrap-5.3.6/bootstrap.css')}}">
 {{--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">--}}
     <style>
@@ -180,6 +181,7 @@
 
         .btn:hover {
             background-color: #152c5b;
+            color: white;
         }
 
         .error-message {
@@ -229,7 +231,7 @@
         <div class="right-panel">
             <div class="login-container" style="">
                 <div class="login-card">
-                    <h1 class="login-title">Log Masuk</h1>
+                    <h1 class="login-title">Login</h1>
                     @if ($errors->any())
                         @foreach ($errors->all() as $error)
                             <div class="alert alert-danger" role="alert">
