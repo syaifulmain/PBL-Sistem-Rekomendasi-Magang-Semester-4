@@ -66,7 +66,37 @@
                     </table>
                 </div>
             </div>
-            
+ 
+            <!-- Lampiran -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Lampiran</h5>
+                </div>
+                <div class="card-body p-0">
+                    @if($pengajuan->dokumen)
+                        <div class="list-group list-group-flush">
+                            @foreach($pengajuan->dokumen as $dokumen)
+                                <div class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <div class="icon-wrapper me-3">
+                                        <i class="mdi mdi-file-document-outline text-primary mdi-24px"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <a href="{{ Storage::url($dokumen->path) }}" target="_blank" class="text-decoration-none">
+                                            <h6 class="mb-0">{{ $dokumen->jenisDokumen->nama }}</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="p-3 text-center text-muted">
+                            <i class="mdi mdi-file-outline mdi-48px mb-2"></i>
+                            <p class="mb-0">Tidak ada lampiran yang tersedia</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+             
             <!-- Status -->
             <div class="form-group">
                 <label for="status">Status</label>
@@ -96,36 +126,6 @@
                 <textarea name="catatan" id="catatan" class="form-control" rows="3" 
                         placeholder="Wajib diisi jika status ditolak" 
                         required></textarea>
-            </div>
-            
-            <!-- Lampiran -->
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Lampiran</h5>
-                </div>
-                <div class="card-body p-0">
-                    @if($pengajuan->dokumen)
-                        <div class="list-group list-group-flush">
-                            @foreach($pengajuan->dokumen as $dokumen)
-                                <div class="list-group-item list-group-item-action d-flex align-items-center">
-                                    <div class="icon-wrapper me-3">
-                                        <i class="mdi mdi-file-document-outline text-primary mdi-24px"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <a href="{{ Storage::url($dokumen->path) }}" target="_blank" class="text-decoration-none">
-                                            <h6 class="mb-0">{{ $dokumen->jenisDokumen->nama }}</h6>
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="p-3 text-center text-muted">
-                            <i class="mdi mdi-file-outline mdi-48px mb-2"></i>
-                            <p class="mb-0">Tidak ada lampiran yang tersedia</p>
-                        </div>
-                    @endif
-                </div>
             </div>
             
             <button type="submit" id="btn-submit" class="btn btn-success float-right">Simpan</button>

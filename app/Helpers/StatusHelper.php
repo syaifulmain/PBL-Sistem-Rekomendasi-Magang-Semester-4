@@ -9,6 +9,7 @@ class StatusHelper
         $badgeClass = match($status) {
             'disetujui' => 'success',
             'ditolak' => 'danger',
+            'batal' => 'secondary',
             default => 'warning'
         };
         

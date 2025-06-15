@@ -289,6 +289,12 @@
             ajax: {
                 url: '{{ route("admin.lowongan-magang.teknis") }}',
                 dataType: 'json',
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        selected: selectedTeknisForm()
+                    };
+                },
                 delay: 250,
                 processResults: function (data) {
                     return {
@@ -326,6 +332,17 @@
                 }
             }
         });
+    }
+
+    function selectedTeknisForm() {
+        const selected = [];
+        $('select.select2-keahlian').each(function () {
+            const id = $(this).val();
+            if (id) {
+                selected.push(id);
+            }
+        });
+        return selected;
     }
 </script>
 
