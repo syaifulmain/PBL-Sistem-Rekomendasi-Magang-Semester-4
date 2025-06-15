@@ -12,6 +12,6 @@ class PeriodeMagangModel extends Model
     protected $fillable = [
         'nama', 'tanggal_mulai', 'tanggal_selesai',
         'tahun_akademik', 'semester',
-        'tanggal_pendaftaran_mulai', 'tanggal_pendaftaran_selesai'
+        // 'tanggal_pendaftaran_mulai', 'tanggal_pendaftaran_selesai'
     ];
 }
