@@ -22,7 +22,7 @@
             <div class="form-group">
                 <label for="periode_magang_id">Periode Magang</label>
                 <select id="periode_magang_id" name="periode_magang_id"
-                    class="form-control select2-ajax @error('periode_magang_id') is-invalid @enderror"
+                    class="form-control select2-ajax-periode @error('periode_magang_id') is-invalid @enderror"
                     data-url="{{ route('admin.lowongan-magang.periode-magang') }}" required></select>
                 @error('periode_magang_id')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -143,7 +143,7 @@
 
             <div class="form-group">
                 <label for="tanggal_mulai_magang">Tanggal Mulai Magang</label>
-                <input required type="text" name="tanggal_mulai_magang" class="form-control datepicker @error('tanggal_mulai_magang') is-invalid @enderror"
+                <input required type="text" name="tanggal_mulai_magang" class="form-control datepicker datepicker-periode-start @error('tanggal_mulai_magang') is-invalid @enderror"
                     value="{{ old('tanggal_mulai_magang', $data->tanggal_mulai_magang ?? '') }}">
                 @error('tanggal_mulai_magang')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -152,7 +152,7 @@
 
             <div class="form-group">
                 <label for="tanggal_selesai_magang">Tanggal Selesai Magang</label>
-                <input required type="text" name="tanggal_selesai_magang" class="form-control datepicker @error('tanggal_selesai_magang') is-invalid @enderror"
+                <input required type="text" name="tanggal_selesai_magang" class="form-control datepicker datepicker-periode-end @error('tanggal_selesai_magang') is-invalid @enderror"
                     value="{{ old('tanggal_selesai_magang', $data->tanggal_selesai_magang ?? '') }}">
                 @error('tanggal_selesai_magang')
                     <div class="invalid-feedback">{{ $message }}</div>
@@ -194,6 +194,51 @@
     let keahlianIndex = 0;
     const teknisOptions = @json($levelKeahlianTeknis);
     $(function () {
+        $('.select2-ajax-periode').select2({
+            width: '100%',
+            placeholder: 'Pilih data',
+            allowClear: true,
+            ajax: {
+                delay: 250,
+                url: function (params) {
+                    return $(this).data('url');
+                },
+                data: function (params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.map(function (item) {
+                            return {
+                                id: item.id,
+                                text: item.text,
+                                tanggal_mulai: item.tanggal_mulai,
+                                tanggal_selesai: item.tanggal_selesai
+                            };
+                        })
+                    };
+                },
+                cache: true,
+            }
+        });
+
+        $('#periode_magang_id').on('select2:select', function(e) {
+            const data = e.params.data;
+
+            // Set start and end date for all elements with class `.datepicker-with-periode`
+            $('.datepicker-periode-start')
+                .datepicker('setStartDate', data.tanggal_mulai)
+                .datepicker('setEndDate', data.tanggal_selesai)
+                .datepicker('update', data.tanggal_mulai);
+
+            $('.datepicker-periode-end')
+                .datepicker('setStartDate', data.tanggal_mulai)
+                .datepicker('setEndDate', data.tanggal_selesai)
+                .datepicker('update', data.tanggal_selesai);
+        });
+
         $('.select2-ajax').select2({
             width: '100%',
             placeholder: 'Pilih data',

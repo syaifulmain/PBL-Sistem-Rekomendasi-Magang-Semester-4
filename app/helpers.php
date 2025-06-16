@@ -59,6 +59,9 @@ if (!function_exists('get_user_name')) {
         
         $firstName = array_shift($nameParts);
         $initials = array_map(function($part) {
+            if (str_contains($part, '.')) {
+                return $part;
+            }
             return $part[0] . '.';
         }, $nameParts);
         

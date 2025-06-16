@@ -268,7 +268,12 @@ class LowonganMagangController extends Controller
 
         $data = PeriodeMagangModel::when($search, function ($query, $search) {
             return $query->where('nama', 'like', "%{$search}%");
-        })->select('id', 'nama as text')->limit(20)->get();
+        })->select('id', 'nama as text', 'tanggal_mulai', 'tanggal_selesai')->limit(20)->get();
+
+        $data->each(function ($item) {
+            $item->tanggal_mulai = Carbon::parse($item->tanggal_mulai)->format('d-m-Y');
+            $item->tanggal_selesai = Carbon::parse($item->tanggal_selesai)->format('d-m-Y');
+        });
 
         return response()->json($data);
     }

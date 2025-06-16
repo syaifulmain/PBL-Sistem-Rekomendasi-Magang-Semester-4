@@ -29,7 +29,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <p class="mb-1 text-muted">Mahasiswa Magang</p>
+                            <p class="mb-1 font-weight-bold h4">Mahasiswa Magang</p>
                             <h3 class="mb-0">{{ number_format($totalMagang) }}</h3>
                         </div>
                         <div class="icon bg-success rounded-circle p-3 d-flex align-items-center justify-content-center">
@@ -46,7 +46,7 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <p class="mb-1 text-muted">Dosen Pembimbing</p>
+                            <p class="mb-1 font-weight-bold h4">Dosen Pembimbing</p>
                             <h3 class="mb-0">{{ number_format($totalDosen) }}</h3>
                         </div>
                         <div class="icon bg-primary rounded-circle p-3 d-flex align-items-center justify-content-center">

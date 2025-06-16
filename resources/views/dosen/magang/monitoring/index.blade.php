@@ -62,6 +62,14 @@
                                     <i class="mdi mdi-comments mr-2"></i>Evaluasi Bimbingan
                                 </a>
                             </li>
+                            @if($data->magang->status === 'selesai')
+                                <li class="nav-item" role="presentation">
+                                    <a class="nav-link" id="evaluasi-mahasiswa-tab" data-toggle="pill"
+                                       href="#evaluasi-mahasiswa-content" role="tab" data-page="2">
+                                        <i class="mdi mdi-user-graduate mr-2"></i>Evaluasi Mahasiswa
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
 
                         <!-- Tab Content -->
@@ -187,6 +195,88 @@
                                     @endforelse
                                 </div>
                             </div>
+                            <!-- Evaluasi Mahasiswa Tab -->
+                            @if($data->magang->status === 'selesai')
+                                <div class="tab-pane fade" id="evaluasi-mahasiswa-content" role="tabpanel">
+                                    <h4 class="card-title mb-4">
+                                        <i class="mdi mdi-user-graduate text-primary mr-2"></i>Evaluasi Akhir Mahasiswa
+                                    </h4>
+                                    @if($data->magang->evaluasiMagangMahasiswa)
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <form id="evaluasiMahasiswaForm"
+                                                  method="POST" enctype="multipart/form-data">
+                                                @csrf
+                                                <input type="hidden" name="magang_id" value="{{ $data->magang->id }}">
+                                                <div class="card">
+                                                    <div class="card-header bg-gradient-success text-white">
+                                                        <h5 class="mb-0"><i class="mdi mdi-certificate mr-2"></i>Upload
+                                                            Sertifikat & Feedback</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                            @if (!empty($data->magang->evaluasiMagangMahasiswa->sertifikat_path))
+                                                                <div class="mb-2">
+                                                                    <img
+                                                                        src="{{ $data->magang->evaluasiMagangMahasiswa->getDokumenPath() }}"
+                                                                        alt="Sertifikat"
+                                                                        class="img-thumbnail mb-2"
+                                                                        style="max-width: 200px;">
+                                                                </div>
+                                                                <a href="{{ asset('storage/' . $data->magang->evaluasiMagangMahasiswa->sertifikat_path) }}"
+                                                                   download>
+                                                                    Download Sertifikat
+                                                                </a>
+                                                            @else
+                                                                <label for="sertifikat_path" class="font-weight-bold">
+                                                                    <i class="mdi mdi-upload text-primary mr-2"></i>Upload
+                                                                    Sertifikat Magang
+                                                                </label>
+                                                                <input type="file" id="sertifikat_path"
+                                                                       name="sertifikat_path"
+                                                                       class="filepond"
+                                                                       accept=".jpg,.jpeg,.png,.pdf" required>
+                                                                <small class="form-text text-muted">
+                                                                    Format yang didukung: JPG, PNG, PDF (Max. 5MB)
+                                                                </small>
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label for="umpan_balik_mahasiswa" class="font-weight-bold">
+                                                                <i class="mdi mdi-comment-dots text-primary mr-2"></i>Umpan
+                                                                Balik untuk Perusahaan
+                                                            </label>
+                                                            <textarea class="form-control" id="umpan_balik_mahasiswa"
+                                                                      name="umpan_balik_mahasiswa"
+                                                                      rows="6"
+                                                                      @if(!empty($data->magang->evaluasiMagangMahasiswa->umpan_balik_mahasiswa)) disabled @endif
+                                                                      >{{$data->magang->evaluasiMagangMahasiswa->umpan_balik_mahasiswa ?? ''}}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    @if(empty($data->magang->evaluasiMagangMahasiswa->umpan_balik_mahasiswa))
+                                                        <div class="card-footer text-right">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="mdi mdi-content-save mr-2"></i>Simpan Evaluasi
+                                                            </button>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    @else
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="text-center py-5">
+                                                    <i class="mdi mdi-user-graduate fa-3x text-muted mb-3"></i>
+                                                    <h5 class="text-muted">Belum Ada Evaluasi Akhir Dari Mahasiswa</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -365,6 +455,9 @@
             if (page === '1') {
                 activeTab = 'evaluasi-bimbingan-tab';
                 activeContent = 'evaluasi-bimbingan-content';
+            } else if (page === '2') {
+                activeTab = 'evaluasi-mahasiswa-tab';
+                activeContent = 'evaluasi-mahasiswa-content';
             }
 
             // Remove all active classes
@@ -379,23 +472,6 @@
         $(document).ready(function () {
             // Set active tab on page load
             setActiveTab();
-
-            // Handle tab clicks and update URL
-            $('.nav-link[data-toggle="pill"]').on('click', function (e) {
-                e.preventDefault();
-                var page = $(this).data('page');
-                var newUrl = updateUrlParameter(window.location.href, 'page', page);
-
-                // Update URL without page reload
-                window.history.pushState({path: newUrl}, '', newUrl);
-
-                if (page === 0) {
-                    location.reload()
-                }
-
-                // Show the selected tab
-                $(this).tab('show');
-            });
 
             // Handle browser back/forward buttons
             window.addEventListener('popstate', function (e) {
@@ -447,6 +523,7 @@
     </script>
 
     <script>
+        let logTable;
         // FilePond Configuration
         $.fn.filepond.registerPlugin(FilePondPluginImagePreview);
         $.fn.filepond.setDefaults({
@@ -493,7 +570,7 @@
 
         $(document).ready(function () {
             // Initialize DataTable
-            $('#logTable').DataTable({
+            logTable =$('#logTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '',
@@ -511,6 +588,24 @@
                 language: {
                     url: '{{ asset("assets/js/datatables/language/id.json") }}'
                 }
+            });
+
+            
+            // Handle tab clicks and update URL
+            $('.nav-link[data-toggle="pill"]').on('click', function (e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                var newUrl = updateUrlParameter(window.location.href, 'page', page);
+
+                // Update URL without page reload
+                window.history.pushState({path: newUrl}, '', newUrl);
+
+                if (page === 0) {
+                    logTable.clear().draw();
+                }
+
+                // Show the selected tab
+                $(this).tab('show');
             });
 
             // Star Rating System
